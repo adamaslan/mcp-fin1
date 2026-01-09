@@ -1,0 +1,68 @@
+import { PricingCards } from '@/components/landing/PricingCards';
+
+export default function PricingPage() {
+  return (
+    <div className="py-16">
+      <div className="container">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Start free. Upgrade when you&apos;re ready for more power. No contracts, cancel anytime.
+          </p>
+        </div>
+
+        <PricingCards />
+
+        {/* FAQ */}
+        <div className="mt-16 max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold mb-2">Can I upgrade or downgrade anytime?</h3>
+              <p className="text-muted-foreground">
+                Yes! You can change your tier at any time. Changes take effect immediately.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">Is there a free trial?</h3>
+              <p className="text-muted-foreground">
+                Our Free tier is your trial. Get 5 analyses/day, 1 scan/day, and full signal/indicator education.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
+              <p className="text-muted-foreground">
+                Coming soon. We&apos;ll support all major credit cards and digital payment methods.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">Do you offer refunds?</h3>
+              <p className="text-muted-foreground">
+                Coming soon. We&apos;ll have a clear refund policy for new subscribers.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">What&apos;s included in the Pro tier?</h3>
+              <p className="text-muted-foreground">
+                All timeframes (Swing, Day, Scalp), 50 analyses/day, 10 scans/day with top 25 results, portfolio risk
+                tracking, trade journal, and more.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">Can I use this for algorithmic trading?</h3>
+              <p className="text-muted-foreground">
+                Max tier includes API access for programmatic access to all tools and data.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
