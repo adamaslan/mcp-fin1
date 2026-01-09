@@ -22,12 +22,12 @@ export async function GET(request: Request) {
     const format = searchParams.get('format') || 'json';
 
     const trades = await db.query.tradeJournal.findMany({
-      where: eq(tradeJournal.user_id, userId),
-      orderBy: (tradeJournal, { desc }) => desc(tradeJournal.entry_date),
+      where: eq(tradeJournal.userId, userId),
+      orderBy: (tj: any, { desc }: any) => desc(tj.entryDate),
     });
 
     const userPositions = await db.query.positions.findMany({
-      where: eq(positions.user_id, userId),
+      where: eq(positions.userId, userId),
     });
 
     if (format === 'csv') {

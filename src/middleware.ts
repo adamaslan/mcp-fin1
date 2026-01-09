@@ -12,6 +12,7 @@ const isPublicRoute = createRouteMatcher([
 const isMaxOnlyRoute = createRouteMatcher([
   '/dashboard/alerts(.*)',
   '/dashboard/export(.*)',
+  '/dashboard/signals(.*)',
   '/api/admin/(.*)',
 ]);
 
@@ -25,14 +26,14 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
 
-  const { userId, sessionClaims } = auth();
+  const { userId, sessionClaims } = await auth();
 
   if (!userId) {
-    return auth().redirectToSignIn();
+    return (await auth()).redirectToSignIn();
   }
 
   // Get tier from Clerk metadata (admin-controlled, defaults to 'free')
-  const tier = (sessionClaims?.metadata?.tier as string) || 'free';
+  const tier = ((sessionClaims?.publicMetadata as any)?.tier as string) || 'free';
 
   // Check Max-only routes
   if (isMaxOnlyRoute(req) && tier !== 'max') {
