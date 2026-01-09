@@ -20,8 +20,8 @@ export async function GET(request: Request) {
 
   try {
     const userAlerts = await db.query.alerts.findMany({
-      where: eq(alerts.user_id, userId),
-      orderBy: (alerts, { desc }) => desc(alerts.created_at),
+      where: eq(alerts.userId, userId),
+      orderBy: (alertsTable: any, { desc }: any) => desc(alertsTable.createdAt),
     });
 
     return Response.json(userAlerts);
@@ -47,19 +47,21 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { symbol, condition_type, condition_value } = body;
+    const { symbol, alertType, condition } = body;
 
-    if (!symbol || !condition_type || condition_value === undefined) {
+    if (!symbol || !alertType || !condition) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const newAlert = await db.insert(alerts).values({
-      user_id: userId,
+      id: crypto.randomUUID(),
+      userId,
       symbol: symbol.toUpperCase(),
-      condition_type,
-      condition_value: parseFloat(condition_value),
-      is_active: true,
-      created_at: new Date(),
+      alertType,
+      condition,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }).returning();
 
     return Response.json(newAlert[0], { status: 201 });
@@ -85,16 +87,16 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, is_active } = body;
+    const { id, isActive } = body;
 
-    if (!id || is_active === undefined) {
+    if (!id || isActive === undefined) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const updatedAlert = await db
       .update(alerts)
-      .set({ is_active })
-      .where(and(eq(alerts.id, id), eq(alerts.user_id, userId)))
+      .set({ isActive, updatedAt: new Date() })
+      .where(and(eq(alerts.id, id), eq(alerts.userId, userId)))
       .returning();
 
     if (updatedAlert.length === 0) {
@@ -132,7 +134,7 @@ export async function DELETE(request: Request) {
 
     const deletedAlert = await db
       .delete(alerts)
-      .where(and(eq(alerts.id, id), eq(alerts.user_id, userId)))
+      .where(and(eq(alerts.id, id), eq(alerts.userId, userId)))
       .returning();
 
     if (deletedAlert.length === 0) {

@@ -1,6 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+################################################################################
+# DEPENDENCIES
+################################################################################
 /node_modules
 /.pnp
 .pnp.*
@@ -10,32 +12,253 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+################################################################################
+# TESTING & COVERAGE
+################################################################################
 /coverage
+*.lcov
+.nyc_output
 
-# next.js
+################################################################################
+# NEXT.JS & BUILD ARTIFACTS
+################################################################################
 /.next/
 /out/
-
-# production
 /build
+/dist
+*.tsbuildinfo
+next-env.d.ts
 
-# misc
-.DS_Store
+################################################################################
+# ENVIRONMENT & SECRETS (CRITICAL FOR SECURITY)
+################################################################################
+# Local environment files - DO NOT commit these
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.example
+
+# Private keys and certificates
+*.key
 *.pem
+*.p12
+*.pfx
+*.p8
+*.jks
 
-# debug
+# Credentials and secrets
+secrets.json
+credentials.json
+.credentials
+.secrets
+*.secret
+
+################################################################################
+# IDE & EDITOR FILES
+################################################################################
+# VS Code
+.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*.code-workspace
+
+# JetBrains IDEs (IntelliJ, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+.gradle
+.gradle/*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim/Neovim
+.vim/
+.netrwhist
+*~
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+.\#*
+*.tern-port
+
+# Other editors
+*.swn
+.DS_Store
+.AppleDouble
+.LSOverride
+
+################################################################################
+# OPERATING SYSTEM FILES
+################################################################################
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Xauthority
+.Xdefaults
+
+################################################################################
+# LOGS
+################################################################################
+# npm/yarn logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+lerna-debug.log*
+pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Application logs
+logs/
+*.log
+.log
+debug.log
 
-# vercel
+# Database logs
+database*.log
+
+################################################################################
+# TEMPORARY & CACHE FILES
+################################################################################
+# Node modules cache
+.npm
+.eslintcache
+.stylelintcache
+
+# Build cache
+.cache
+.turbo
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+database.db
+
+# Local development database backups
+*.dump
+*.sql
+
+# Temporary files
+.tmp
+tmp/
+temp/
+*.temp
+*.tmp
+
+# OS temporary files
+$RECYCLE.BIN
+*.bak
+*.backup
+~*
+
+################################################################################
+# VERCEL & DEPLOYMENT
+################################################################################
 .vercel
+.vercel/*
+vercel.json.local
+.now
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Production
+.env.production
+.env.production.local
+
+################################################################################
+# DATABASE MIGRATIONS & SCHEMAS
+################################################################################
+# Drizzle ORM
+drizzle/*.log
+drizzle.config.*.js
+.drizzle
+
+# Database connection files
+*.pgpass
+pgpass
+.pgpass
+
+################################################################################
+# DOCUMENTATION & PLANS
+################################################################################
+# Local planning files (not to be committed)
+.claude/plans/
+.claude/notes/
+*.plan.md
+*.todo.md
+
+################################################################################
+# TESTING & COVERAGE
+################################################################################
+/coverage
+.nyc_output
+*.lcov
+
+################################################################################
+# SECURITY SCANNING
+################################################################################
+# Dependency vulnerability reports
+npm-audit-report.html
+yarn-audit-report.html
+
+# OWASP reports
+owasp-*.json
+
+################################################################################
+# MISCELLANEOUS
+################################################################################
+# Lock files (optional - uncomment if you want to commit these)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Duplicate files
+*.bak
+*.orig
+
+# Test videos/screenshots
+videos/
+screenshots/
+
+# Local configuration overrides
+.local
+local/
+.local.json
+
+# Generated files that shouldn't be committed
+generated/
+dist/
+coverage/
+
+# Socket files
+*.sock
+
+# PIDs
+*.pid
+*.pid.lock
+
+# clerk configuration (can include secrets)
+/.clerk/

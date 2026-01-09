@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { getMCPClient } from '@/lib/mcp/client';
-import { TIER_LIMITS } from '@/lib/auth/tiers';
+import { TIER_LIMITS, type UserTier } from '@/lib/auth/tiers';
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const tier = (sessionClaims?.metadata?.tier as string) || 'free';
+    const tier = (((sessionClaims?.publicMetadata as any)?.tier as string) || 'free') as UserTier;
 
     // Check if user has access to portfolio risk (Pro+)
     if (tier === 'free') {
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       ...filteredResult,
-      tierLimit: TIER_LIMITS[tier as any],
+      tierLimit: TIER_LIMITS[tier],
     });
   } catch (error) {
     console.error('Portfolio risk API error:', error);

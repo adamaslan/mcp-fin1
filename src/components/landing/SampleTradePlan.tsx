@@ -53,7 +53,7 @@ export function SampleTradePlan() {
 
             <div className="mb-6">
               <p className="text-xs text-muted-foreground mb-2">Primary Signal</p>
-              <Badge variant="outline" className="bg-blue-500/10">Golden Cross (MA50 > MA200)</Badge>
+              <Badge variant="outline" className="bg-blue-500/10">Golden Cross (MA50 &gt; MA200)</Badge>
             </div>
 
             <div>

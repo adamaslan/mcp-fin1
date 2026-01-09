@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { getMCPClient } from '@/lib/mcp/client';
-import { canAccessUniverse, TIER_LIMITS } from '@/lib/auth/tiers';
+import { canAccessUniverse, TIER_LIMITS, type UserTier } from '@/lib/auth/tiers';
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const tier = (sessionClaims?.metadata?.tier as string) || 'free';
+    const tier = (((sessionClaims?.publicMetadata as any)?.tier as string) || 'free') as UserTier;
     const { universe = 'sp500', maxResults = 10 } = await request.json();
 
     // Check if user can access this universe
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const tierLimits = TIER_LIMITS[tier as any];
+    const tierLimits = TIER_LIMITS[tier];
     const resultsLimit = tierLimits.scanResultsLimit;
 
     // Call MCP server
