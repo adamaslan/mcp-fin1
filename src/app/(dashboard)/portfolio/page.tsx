@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RiskDashboard } from '@/components/portfolio/RiskDashboard';
+import { DividendTracker } from '@/components/portfolio/DividendTracker';
+import { CorrelationMatrix } from '@/components/portfolio/CorrelationMatrix';
 import { PortfolioRiskResult } from '@/lib/mcp/types';
 import { Loader2, AlertCircle, Plus, Trash2 } from 'lucide-react';
 
@@ -174,6 +176,12 @@ export default function PortfolioPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Correlation Matrix */}
+      {positions.length >= 2 && <CorrelationMatrix />}
+
+      {/* Dividend Tracker */}
+      <DividendTracker />
     </div>
   );
 }

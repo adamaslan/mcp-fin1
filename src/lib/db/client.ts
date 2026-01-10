@@ -1,11 +1,7 @@
 import * as schema from './schema';
 
-// Stub database client for development
-// In production, this will be properly initialized with a real database
-// For now, this prevents build errors and allows the app to run in development mode
-
 // Mock database for development without DATABASE_URL
-const mockDb = {
+const createMockDb = () => ({
   query: {
     users: {
       findFirst: () => Promise.resolve(null),
@@ -45,11 +41,41 @@ const mockDb = {
       returning: () => Promise.resolve([]),
     }),
   }),
-} as any;
+} as any);
 
-// Export mock database
-// In production with DATABASE_URL set, real database would be initialized here
-export const db = mockDb;
+// Initialize database based on environment
+let db: any;
+
+// Use mock database by default for development
+// When DATABASE_URL is set in production, install postgres: npm install postgres
+db = createMockDb();
+
+// If DATABASE_URL is set, try to initialize real database at runtime
+if (process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
+  // In production, expect postgres to be installed
+  try {
+    const { drizzle } = require('drizzle-orm/postgres-js');
+    const postgres = require('postgres');
+    const client = postgres(process.env.DATABASE_URL);
+    db = drizzle(client, { schema });
+    console.info('✓ Connected to PostgreSQL database');
+  } catch (error) {
+    console.error('Failed to connect to PostgreSQL:', error);
+    console.error('Make sure to install: npm install postgres');
+    throw new Error('Database initialization failed');
+  }
+}
+
+// Development without DATABASE_URL or before NODE_ENV set
+if (!process.env.DATABASE_URL && !db) {
+  console.warn(
+    'DATABASE_URL not set. Using in-memory mock database for development.\n' +
+      'For production, set DATABASE_URL and install postgres: npm install postgres'
+  );
+  db = createMockDb();
+}
+
+export { db };
 
 // Re-export schema for convenience
 export * from './schema';

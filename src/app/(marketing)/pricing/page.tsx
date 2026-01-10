@@ -35,14 +35,16 @@ export default function PricingPage() {
             <div>
               <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
               <p className="text-muted-foreground">
-                Coming soon. We&apos;ll support all major credit cards and digital payment methods.
+                We accept all major credit cards (Visa, Mastercard, American Express) via Stripe.
+                Apple Pay and Google Pay are also supported.
               </p>
             </div>
 
             <div>
               <h3 className="font-semibold mb-2">Do you offer refunds?</h3>
               <p className="text-muted-foreground">
-                Coming soon. We&apos;ll have a clear refund policy for new subscribers.
+                Yes! If you&apos;re not satisfied within the first 14 days, contact us for a full refund.
+                After that, you can cancel anytime and continue using your plan until the end of the billing period.
               </p>
             </div>
 
