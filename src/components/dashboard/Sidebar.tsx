@@ -16,6 +16,9 @@ import {
   Briefcase,
   Bookmark,
   Sparkles,
+  Calendar,
+  Code,
+  Newspaper,
 } from 'lucide-react';
 
 interface NavItem {
@@ -82,13 +85,29 @@ export function Sidebar() {
       requiresTier: 'max',
     },
     {
+      label: 'Calendar',
+      href: '/calendar',
+      icon: <Calendar className="h-5 w-5" />,
+    },
+    {
+      label: 'News',
+      href: '/news',
+      icon: <Newspaper className="h-5 w-5" />,
+    },
+    {
+      label: 'API Docs',
+      href: '/api-docs',
+      icon: <Code className="h-5 w-5" />,
+      requiresTier: 'max',
+    },
+    {
       label: 'Learn',
-      href: '/dashboard/learn/signals',
+      href: '/learn/signals',
       icon: <BookOpen className="h-5 w-5" />,
     },
     {
       label: 'Settings',
-      href: '/dashboard/settings',
+      href: '/settings',
       icon: <Settings className="h-5 w-5" />,
     },
   ];
