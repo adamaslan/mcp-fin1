@@ -1,0 +1,446 @@
+{
+  "skill": {
+    "name": "clerk-auth-pages",
+    "version": "1.0.0",
+    "displayName": "Clerk Authentication Pages",
+    "description": "Creates production-ready sign-up and sign-in pages for Next.js using Clerk with full design system integration",
+    "category": "authentication",
+    "tags": ["clerk", "nextjs", "authentication", "auth", "sign-up", "sign-in", "tailwind"],
+
+    "triggers": [
+      "create clerk sign-up page",
+      "add clerk authentication",
+      "implement clerk auth",
+      "create auth pages with clerk",
+      "add sign up page",
+      "create sign in page"
+    ],
+
+    "prerequisites": {
+      "required": [
+        {
+          "name": "Next.js",
+          "version": ">=13.4.0",
+          "check": "Check for app/ directory and Next.js in package.json"
+        },
+        {
+          "name": "@clerk/nextjs",
+          "version": ">=5.0.0",
+          "check": "Check package.json",
+          "autoInstall": true,
+          "installCommand": "npm install @clerk/nextjs"
+        },
+        {
+          "name": "Tailwind CSS",
+          "check": "Check for tailwind.config.js or tailwind.config.ts"
+        }
+      ],
+      "optional": [
+        {
+          "name": "next-themes",
+          "purpose": "Dark mode support",
+          "installCommand": "npm install next-themes"
+        }
+      ]
+    },
+
+    "environmentVariables": {
+      "required": [
+        {
+          "name": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+          "description": "Clerk publishable key (starts with pk_)",
+          "example": "pk_test_...",
+          "source": "Clerk Dashboard > API Keys"
+        },
+        {
+          "name": "CLERK_SECRET_KEY",
+          "description": "Clerk secret key (starts with sk_)",
+          "example": "sk_test_...",
+          "source": "Clerk Dashboard > API Keys",
+          "sensitive": true
+        }
+      ],
+      "optional": [
+        {
+          "name": "NEXT_PUBLIC_CLERK_SIGN_IN_URL",
+          "default": "/sign-in",
+          "description": "URL for sign-in page"
+        },
+        {
+          "name": "NEXT_PUBLIC_CLERK_SIGN_UP_URL",
+          "default": "/sign-up",
+          "description": "URL for sign-up page"
+        },
+        {
+          "name": "NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL",
+          "default": "/dashboard",
+          "description": "Redirect URL after sign-in"
+        },
+        {
+          "name": "NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL",
+          "default": "/dashboard",
+          "description": "Redirect URL after sign-up"
+        }
+      ]
+    },
+
+    "files": {
+      "create": [
+        {
+          "path": "src/app/(marketing)/sign-up/page.tsx",
+          "template": "sign-up-page",
+          "description": "Sign-up page with Clerk component"
+        },
+        {
+          "path": "src/app/(marketing)/sign-in/page.tsx",
+          "template": "sign-in-page",
+          "description": "Sign-in page with Clerk component"
+        }
+      ],
+      "modify": [
+        {
+          "path": "src/app/layout.tsx",
+          "action": "ensure-clerk-provider",
+          "description": "Add ClerkProvider if missing"
+        },
+        {
+          "path": "src/middleware.ts",
+          "action": "add-public-routes",
+          "description": "Configure public routes for auth pages"
+        }
+      ],
+      "optional": [
+        {
+          "path": "src/app/(marketing)/layout.tsx",
+          "action": "create-if-missing",
+          "template": "marketing-layout",
+          "description": "Marketing layout with auth navigation"
+        }
+      ]
+    },
+
+    "templates": {
+      "sign-up-page": {
+        "imports": [
+          "import { SignUp } from '@clerk/nextjs';",
+          "import { useEffect, useState } from 'react';"
+        ],
+        "directive": "'use client';",
+        "component": "SignUpPage",
+        "props": {
+          "redirectUrl": "/dashboard",
+          "signInUrl": "/sign-in"
+        },
+        "layout": "center-aligned",
+        "features": [
+          "hydration-safe-mounting",
+          "gradient-background",
+          "custom-appearance"
+        ]
+      },
+      "sign-in-page": {
+        "imports": [
+          "import { SignIn } from '@clerk/nextjs';",
+          "import { useEffect, useState } from 'react';"
+        ],
+        "directive": "'use client';",
+        "component": "SignInPage",
+        "props": {
+          "redirectUrl": "/dashboard",
+          "signUpUrl": "/sign-up"
+        },
+        "layout": "center-aligned",
+        "features": [
+          "hydration-safe-mounting",
+          "gradient-background",
+          "custom-appearance"
+        ]
+      },
+      "marketing-layout": {
+        "imports": [
+          "import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';",
+          "import { Button } from '@/components/ui/button';",
+          "import Link from 'next/link';"
+        ],
+        "features": [
+          "sticky-header",
+          "conditional-auth-buttons",
+          "user-menu"
+        ]
+      }
+    },
+
+    "customization": {
+      "questions": [
+        {
+          "id": "layout-style",
+          "question": "What layout style do you prefer for auth pages?",
+          "type": "choice",
+          "options": [
+            {
+              "value": "center-aligned",
+              "label": "Center-aligned (Default)",
+              "description": "Auth form centered on the page with gradient background"
+            },
+            {
+              "value": "side-by-side",
+              "label": "Side-by-side",
+              "description": "Auth form on one side, marketing content on the other"
+            },
+            {
+              "value": "modal",
+              "label": "Modal/Dialog",
+              "description": "Auth form in a modal dialog for inline flows"
+            }
+          ],
+          "default": "center-aligned"
+        },
+        {
+          "id": "redirect-url",
+          "question": "Where should users be redirected after sign-up?",
+          "type": "text",
+          "default": "/dashboard",
+          "validation": "^/[a-z-/]*$"
+        },
+        {
+          "id": "add-logo",
+          "question": "Add logo above the auth form?",
+          "type": "boolean",
+          "default": false,
+          "followUp": {
+            "if": true,
+            "question": "What is the logo file path?",
+            "type": "text",
+            "default": "/logo.svg"
+          }
+        },
+        {
+          "id": "heading-text",
+          "question": "Custom heading for sign-up page (optional)",
+          "type": "text",
+          "default": "Create your account",
+          "optional": true
+        },
+        {
+          "id": "description-text",
+          "question": "Custom description for sign-up page (optional)",
+          "type": "text",
+          "default": "Start your journey today",
+          "optional": true
+        }
+      ]
+    },
+
+    "appearance": {
+      "cssVariables": {
+        "required": [
+          "--background",
+          "--foreground",
+          "--card",
+          "--primary",
+          "--primary-foreground",
+          "--input",
+          "--border",
+          "--ring",
+          "--muted",
+          "--muted-foreground"
+        ],
+        "detection": "Read from globals.css or app/globals.css"
+      },
+      "elements": {
+        "rootBox": "w-full",
+        "card": "bg-card border border-border rounded-lg shadow-sm",
+        "formButtonPrimary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-md h-10 text-sm font-medium",
+        "formFieldInput": "bg-input border border-input rounded-md h-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:focus:ring-offset-background",
+        "footerActionLink": "text-primary hover:text-primary/90 hover:underline",
+        "dividerLine": "bg-border",
+        "dividerText": "text-muted-foreground text-sm",
+        "formFieldLabel": "text-sm font-medium text-foreground"
+      },
+      "adaptToExisting": {
+        "buttonHeight": "Detect from components/ui/button.tsx",
+        "inputHeight": "Detect from components/ui/input.tsx",
+        "borderRadius": "Detect from components/ui/card.tsx or tailwind.config"
+      }
+    },
+
+    "middleware": {
+      "path": "src/middleware.ts",
+      "publicRoutes": [
+        "/",
+        "/sign-in(.*)",
+        "/sign-up(.*)",
+        "/api/webhooks(.*)"
+      ],
+      "template": "clerk-middleware",
+      "protectAllOtherRoutes": true
+    },
+
+    "testing": {
+      "checklist": [
+        {
+          "id": "page-loads",
+          "description": "Page loads without console errors",
+          "critical": true
+        },
+        {
+          "id": "light-mode",
+          "description": "Styling correct in light mode",
+          "critical": true
+        },
+        {
+          "id": "dark-mode",
+          "description": "Styling correct in dark mode",
+          "critical": true
+        },
+        {
+          "id": "mobile-responsive",
+          "description": "Responsive on mobile (375px width)",
+          "critical": true
+        },
+        {
+          "id": "signup-flow",
+          "description": "Sign-up flow completes successfully",
+          "critical": true
+        },
+        {
+          "id": "redirect-works",
+          "description": "Redirects to correct URL after sign-up",
+          "critical": true
+        },
+        {
+          "id": "signin-link",
+          "description": "'Already have an account?' link works",
+          "critical": false
+        },
+        {
+          "id": "email-verification",
+          "description": "Email verification flow works",
+          "critical": true
+        },
+        {
+          "id": "error-display",
+          "description": "Error messages display correctly",
+          "critical": false
+        },
+        {
+          "id": "keyboard-nav",
+          "description": "Keyboard navigation works",
+          "critical": false
+        }
+      ],
+      "urls": [
+        {
+          "path": "/sign-up",
+          "description": "Sign-up page"
+        },
+        {
+          "path": "/sign-in",
+          "description": "Sign-in page"
+        }
+      ]
+    },
+
+    "postImplementation": {
+      "recommendations": [
+        {
+          "title": "Configure OAuth Providers",
+          "description": "Add Google, GitHub, or other OAuth providers in Clerk Dashboard",
+          "priority": "medium",
+          "link": "https://clerk.com/docs/authentication/social-connections"
+        },
+        {
+          "title": "Customize Email Templates",
+          "description": "Personalize verification and notification emails",
+          "priority": "medium",
+          "link": "https://clerk.com/docs/how-to/email-templates"
+        },
+        {
+          "title": "Enable MFA",
+          "description": "Add multi-factor authentication for enhanced security",
+          "priority": "high",
+          "link": "https://clerk.com/docs/authentication/configuration/multi-factor"
+        },
+        {
+          "title": "Set Up Webhooks",
+          "description": "Sync user data to your database",
+          "priority": "high",
+          "link": "https://clerk.com/docs/integrations/webhooks"
+        },
+        {
+          "title": "Add User Metadata",
+          "description": "Collect additional user information during sign-up",
+          "priority": "low",
+          "link": "https://clerk.com/docs/users/metadata"
+        }
+      ]
+    },
+
+    "troubleshooting": {
+      "common-issues": [
+        {
+          "issue": "Hydration mismatch error",
+          "symptoms": ["Console error about hydration", "Styles flash on load"],
+          "solution": "Ensure 'mounted' state pattern is implemented",
+          "severity": "high"
+        },
+        {
+          "issue": "Styles not applying",
+          "symptoms": ["Clerk form looks unstyled", "Default Clerk styling showing"],
+          "solution": "Check that CSS variables are defined in globals.css",
+          "severity": "medium"
+        },
+        {
+          "issue": "Dark mode not working",
+          "symptoms": ["Form doesn't adapt to dark theme"],
+          "solution": "Add suppressHydrationWarning to <html> tag and verify ThemeProvider setup",
+          "severity": "medium"
+        },
+        {
+          "issue": "Redirect fails after sign-up",
+          "symptoms": ["Stays on auth page", "Gets redirected to wrong page"],
+          "solution": "Verify redirectUrl prop and middleware configuration",
+          "severity": "high"
+        },
+        {
+          "issue": "OAuth buttons not showing",
+          "symptoms": ["No Google/GitHub buttons"],
+          "solution": "Configure OAuth providers in Clerk Dashboard",
+          "severity": "low"
+        }
+      ]
+    },
+
+    "metrics": {
+      "estimatedTime": "15-30 minutes",
+      "difficulty": "beginner-intermediate",
+      "linesOfCode": "~150",
+      "filesCreated": 2,
+      "filesModified": "1-3"
+    },
+
+    "documentation": {
+      "references": [
+        {
+          "title": "Clerk Documentation",
+          "url": "https://clerk.com/docs"
+        },
+        {
+          "title": "Clerk Component Customization",
+          "url": "https://clerk.com/docs/components/customization/overview"
+        },
+        {
+          "title": "Next.js App Router",
+          "url": "https://nextjs.org/docs/app"
+        }
+      ],
+      "examples": [
+        {
+          "name": "MCP Finance",
+          "description": "NextJS SaaS with Clerk auth and tiered subscriptions",
+          "path": "/Users/adamaslan/code/gcp app w mcp/nextjs-mcp-finance"
+        }
+      ]
+    }
+  }
+}
