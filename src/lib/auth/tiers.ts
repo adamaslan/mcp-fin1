@@ -36,6 +36,7 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     timeframes: ['swing', 'day', 'scalp'],
     universes: ['sp500', 'nasdaq100', 'etf_large_cap'],
     features: [
+      'basic_trade_plan',
       'full_trade_plan',
       'all_timeframes',
       'portfolio_risk',
@@ -44,6 +45,8 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
       'trade_journal',
       'option_suggestions',
       'morning_brief_full',
+      'signal_help',
+      'indicator_help',
     ],
   },
   max: {
@@ -55,9 +58,14 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     timeframes: ['swing', 'day', 'scalp'],
     universes: ['sp500', 'nasdaq100', 'etf_large_cap', 'crypto'],
     features: [
+      'basic_trade_plan',
       'full_trade_plan',
       'all_timeframes',
       'portfolio_risk',
+      'sector_concentration',
+      'position_tracking',
+      'trade_journal',
+      'option_suggestions',
       'hedge_suggestions',
       'raw_signals',
       'raw_indicators',
