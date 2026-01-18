@@ -33,7 +33,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full gap-2">
-              <a href="/dashboard/analyze/AAPL">
+              <a href="/analyze/AAPL">
                 Start Analysis <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full gap-2">
-              <a href="/dashboard/scanner">
+              <a href="/scanner">
                 Start Scan <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" className="w-full gap-2">
-              <a href="/dashboard/learn/signals">
+              <a href="/learn/signals">
                 View Signals <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
