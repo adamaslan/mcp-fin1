@@ -217,6 +217,14 @@ pgpass
 .nyc_output
 *.lcov
 
+# Playwright E2E testing
+.auth/
+playwright-report/
+.env.test
+test-results/
+blob-report/
+playwright/.cache/
+
 ################################################################################
 # SECURITY SCANNING
 ################################################################################

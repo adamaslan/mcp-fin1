@@ -6,7 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:free": "playwright test e2e/features/*-free.spec.ts",
+    "test:e2e:auth": "playwright test e2e/auth/",
+    "test:e2e:api": "playwright test e2e/api/",
+    "test:e2e:production": "playwright test -c playwright.config.production.ts",
+    "test:e2e:smoke": "playwright test e2e/production/smoke-tests.spec.ts",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.7",
@@ -32,10 +42,12 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
