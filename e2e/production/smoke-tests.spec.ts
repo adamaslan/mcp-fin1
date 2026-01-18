@@ -96,9 +96,8 @@ test.describe('Production Smoke Tests', () => {
     // Try accessing protected route
     await page.goto('/dashboard', { waitUntil: 'networkidle' });
 
-    // Should redirect to sign-in or show auth
-    const url = page.url();
-    expect(url.includes('sign-in') || url.includes('auth') || page.url().includes('dashboard')).toBe(true);
+    // Should redirect to sign-in for unauthenticated users
+    expect(page.url()).toContain('/sign-in');
   });
 
   test('no 5xx server errors on critical pages', async ({ page }) => {

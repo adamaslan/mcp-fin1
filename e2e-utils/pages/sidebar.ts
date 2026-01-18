@@ -30,10 +30,10 @@ export class Sidebar {
     this.portfolioLink = page.locator(SELECTORS.SIDEBAR.PORTFOLIO_LINK);
     this.journalLink = page.locator(SELECTORS.SIDEBAR.JOURNAL_LINK);
     this.alertsLink = page.locator(SELECTORS.SIDEBAR.ALERTS_LINK);
-    this.calendarLink = page.page.locator('a:has-text("Calendar")');
-    this.newsLink = page.page.locator('a:has-text("News")');
-    this.settingsLink = page.page.locator('a:has-text("Settings")');
-    this.learnLink = page.page.locator('a:has-text("Learn")');
+    this.calendarLink = page.locator('a:has-text("Calendar")');
+    this.newsLink = page.locator('a:has-text("News")');
+    this.settingsLink = page.locator('a:has-text("Settings")');
+    this.learnLink = page.locator('a:has-text("Learn")');
   }
 
   /**

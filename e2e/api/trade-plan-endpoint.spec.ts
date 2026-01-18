@@ -233,8 +233,8 @@ test.describe('API: /api/mcp/trade-plan - Error Handling', () => {
       data: { symbol: 'NOTREAL999', period: '1mo' },
     });
 
-    // Could return 200 with empty plans or 400
-    expect([200, 400]).toContain(response.status());
+    // Should return 200 since symbol parameter is provided (returns empty plans)
+    expect(response.status()).toBe(200);
   });
 
   test('missing symbol parameter returns error', async ({ request }) => {

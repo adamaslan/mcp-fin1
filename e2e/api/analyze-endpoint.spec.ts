@@ -73,13 +73,13 @@ test.describe('API: /api/mcp/analyze - Free Tier', () => {
   });
 
   test('invalid symbols return appropriate response', async () => {
-    // Invalid symbol may return 400 or empty signals
+    // Invalid symbol should return 200 with empty signals (symbol parameter is provided)
     const response = await test.request?.post('/api/mcp/analyze', {
       data: { symbol: 'NOTREAL999', period: '1mo' },
     });
 
-    // Could be 400 (bad request) or 200 with error info
-    expect([200, 400]).toContain(response?.status());
+    // Should return 200 since symbol parameter is provided
+    expect(response?.status()).toBe(200);
   });
 
   test('analyze accepts period parameter', async () => {
