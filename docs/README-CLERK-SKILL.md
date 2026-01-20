@@ -5,15 +5,18 @@ This directory contains comprehensive documentation for implementing Clerk authe
 ## 📚 Documentation Files
 
 ### 1. **clerk-signup-skill.md** - Complete Skill Guide
+
 **Purpose:** Comprehensive guide with detailed explanations and best practices
 
 **Use when:**
+
 - Learning how to implement Clerk auth for the first time
 - Understanding design patterns and architectural decisions
 - Need detailed troubleshooting guidance
 - Want to understand customization options deeply
 
 **Contains:**
+
 - Full implementation pattern with explanations
 - Design system integration details
 - Common patterns and variations
@@ -27,15 +30,18 @@ This directory contains comprehensive documentation for implementing Clerk authe
 ---
 
 ### 2. **clerk-auth-quick-reference.md** - Quick Reference
+
 **Purpose:** Fast copy-paste templates for experienced developers
 
 **Use when:**
+
 - You know what you're doing and just need the code
 - Quick implementation without reading explanations
 - Reference for common modifications
 - Quick troubleshooting lookup
 
 **Contains:**
+
 - Ready-to-copy templates
 - Prerequisites checklist
 - Environment variables
@@ -48,15 +54,18 @@ This directory contains comprehensive documentation for implementing Clerk authe
 ---
 
 ### 3. **claude-skill-clerk-auth.md** - Claude Instructions
+
 **Purpose:** Instructions for Claude AI to implement this skill
 
 **Use when:**
+
 - You want Claude to create auth pages for you
 - Automating the implementation
 - Ensuring consistent implementation across projects
 - Training other AI assistants
 
 **Contains:**
+
 - Step-by-step execution instructions for AI
 - Decision points and questions to ask users
 - Customization options to offer
@@ -68,15 +77,18 @@ This directory contains comprehensive documentation for implementing Clerk authe
 ---
 
 ### 4. **clerk-auth-skill.json** - Structured Specification
+
 **Purpose:** Machine-readable skill definition
 
 **Use when:**
+
 - Building tooling around this skill
 - Creating IDE extensions or VS Code snippets
 - Integrating with Claude SDK or other frameworks
 - Need programmatic access to skill metadata
 
 **Contains:**
+
 - JSON schema of the skill
 - Prerequisites and dependencies
 - File operations and templates
@@ -125,6 +137,7 @@ This directory contains comprehensive documentation for implementing Clerk authe
 Use this checklist regardless of which documentation you follow:
 
 ### Before Starting
+
 - [ ] Next.js 13+ with App Router installed
 - [ ] Clerk account created at clerk.com
 - [ ] API keys obtained from Clerk Dashboard
@@ -132,6 +145,7 @@ Use this checklist regardless of which documentation you follow:
 - [ ] Design system CSS variables defined
 
 ### During Implementation
+
 - [ ] Install `@clerk/nextjs` package
 - [ ] Add environment variables to `.env.local`
 - [ ] Verify ClerkProvider in root layout
@@ -142,6 +156,7 @@ Use this checklist regardless of which documentation you follow:
 - [ ] Match design system styling
 
 ### After Implementation
+
 - [ ] Test sign-up flow end-to-end
 - [ ] Test sign-in flow end-to-end
 - [ ] Verify light mode styling
@@ -152,6 +167,7 @@ Use this checklist regardless of which documentation you follow:
 - [ ] Test keyboard navigation
 
 ### Optional Enhancements
+
 - [ ] Configure OAuth providers
 - [ ] Customize email templates
 - [ ] Enable MFA
@@ -163,9 +179,11 @@ Use this checklist regardless of which documentation you follow:
 ## 🎯 Use Cases
 
 ### Use Case 1: New Project Setup
+
 **Goal:** Add authentication to a new Next.js SaaS app
 
 **Best approach:**
+
 1. Start with `clerk-signup-skill.md` (full guide)
 2. Follow all implementation steps
 3. Use testing checklist
@@ -176,9 +194,11 @@ Use this checklist regardless of which documentation you follow:
 ---
 
 ### Use Case 2: Existing Project Migration
+
 **Goal:** Replace custom auth with Clerk
 
 **Best approach:**
+
 1. Review `clerk-signup-skill.md` prerequisites
 2. Use `clerk-auth-quick-reference.md` for templates
 3. Adapt styling to match existing design system
@@ -189,9 +209,11 @@ Use this checklist regardless of which documentation you follow:
 ---
 
 ### Use Case 3: Multi-Project Deployment
+
 **Goal:** Add Clerk auth to multiple Next.js projects
 
 **Best approach:**
+
 1. Create automation using `clerk-auth-skill.json`
 2. Use Claude with `claude-skill-clerk-auth.md`
 3. Reference `clerk-auth-quick-reference.md` for validation
@@ -202,9 +224,11 @@ Use this checklist regardless of which documentation you follow:
 ---
 
 ### Use Case 4: Learning and Understanding
+
 **Goal:** Learn best practices for Next.js authentication
 
 **Best approach:**
+
 1. Read `clerk-signup-skill.md` completely
 2. Try implementing by hand first
 3. Experiment with customizations
@@ -236,11 +260,13 @@ Need all details? ──→ Start with clerk-signup-skill.md,
 All documentation supports these customization options:
 
 ### Layout Styles
+
 1. **Center-aligned** (default) - Form centered on page
 2. **Side-by-side** - Form + marketing content
 3. **Modal/Dialog** - Inline auth flow
 
 ### Visual Customizations
+
 - Custom logo above form
 - Custom headings and descriptions
 - Custom background gradients
@@ -248,6 +274,7 @@ All documentation supports these customization options:
 - Custom button/input styling
 
 ### Functional Customizations
+
 - Custom redirect URLs
 - OAuth provider selection
 - MFA configuration
@@ -255,6 +282,7 @@ All documentation supports these customization options:
 - Email template customization
 
 ### How to Customize
+
 - **Manual:** See "Common Patterns" in `clerk-signup-skill.md`
 - **Quick:** See "Common Modifications" in `clerk-auth-quick-reference.md`
 - **AI-assisted:** Answer questions from `claude-skill-clerk-auth.md`
@@ -266,30 +294,33 @@ All documentation supports these customization options:
 
 Common issues are documented in all files, but start here:
 
-| Issue | Quick Fix | Full Details |
-|-------|-----------|--------------|
-| Hydration error | Add `mounted` state pattern | See clerk-signup-skill.md § "Troubleshooting" |
-| Styles not working | Check CSS variables in globals.css | See clerk-auth-quick-reference.md table |
-| Dark mode broken | Add `suppressHydrationWarning` to `<html>` | See clerk-signup-skill.md § "Issue: Dark Mode Not Working" |
-| Redirect fails | Verify `redirectUrl` prop and middleware | All documents have this section |
+| Issue              | Quick Fix                                  | Full Details                                               |
+| ------------------ | ------------------------------------------ | ---------------------------------------------------------- |
+| Hydration error    | Add `mounted` state pattern                | See clerk-signup-skill.md § "Troubleshooting"              |
+| Styles not working | Check CSS variables in globals.css         | See clerk-auth-quick-reference.md table                    |
+| Dark mode broken   | Add `suppressHydrationWarning` to `<html>` | See clerk-signup-skill.md § "Issue: Dark Mode Not Working" |
+| Redirect fails     | Verify `redirectUrl` prop and middleware   | All documents have this section                            |
 
 ---
 
 ## 📖 Learning Path
 
 ### Beginner Path
+
 1. Read **clerk-signup-skill.md** § "Core Principles"
 2. Follow **clerk-signup-skill.md** § "Implementation Steps"
 3. Complete testing checklist
 4. Bookmark **clerk-auth-quick-reference.md** for future use
 
 ### Intermediate Path
+
 1. Skim **clerk-signup-skill.md** § "Overview"
 2. Use **clerk-auth-quick-reference.md** templates
 3. Reference **clerk-signup-skill.md** § "Advanced Customization" as needed
 4. Implement customizations from patterns section
 
 ### Advanced Path
+
 1. Use **clerk-auth-quick-reference.md** exclusively
 2. Build custom templates for your use cases
 3. Contribute improvements back to this documentation
@@ -300,12 +331,14 @@ Common issues are documented in all files, but start here:
 ## 🔗 External Resources
 
 ### Official Documentation
+
 - [Clerk Documentation](https://clerk.com/docs)
 - [Clerk Component Customization](https://clerk.com/docs/components/customization/overview)
 - [Next.js App Router](https://nextjs.org/docs/app)
 - [Tailwind CSS](https://tailwindcss.com/docs)
 
 ### Related Topics
+
 - Next.js Middleware
 - Route Protection Patterns
 - OAuth Integration
@@ -329,18 +362,18 @@ Please contribute your findings back to improve this documentation.
 
 ## 📊 Comparison Matrix
 
-| Feature | Full Guide | Quick Ref | Claude Skill | JSON Schema |
-|---------|-----------|-----------|--------------|-------------|
-| **File** | clerk-signup-skill.md | clerk-auth-quick-reference.md | claude-skill-clerk-auth.md | clerk-auth-skill.json |
-| Code Templates | ✅ | ✅ | ✅ | ❌ |
-| Explanations | ✅✅✅ | ✅ | ✅✅ | ❌ |
-| Copy-Paste Ready | ✅ | ✅✅✅ | ✅ | ❌ |
-| Troubleshooting | ✅✅✅ | ✅✅ | ✅ | ✅ |
-| Customization | ✅✅✅ | ✅✅ | ✅✅✅ | ✅ |
-| AI Instructions | ❌ | ❌ | ✅✅✅ | ✅ |
-| Machine-Readable | ❌ | ❌ | ❌ | ✅✅✅ |
-| Best For | Learning | Speed | AI Agents | Automation |
-| Page Count | ~15 | ~5 | ~10 | N/A |
+| Feature          | Full Guide            | Quick Ref                     | Claude Skill               | JSON Schema           |
+| ---------------- | --------------------- | ----------------------------- | -------------------------- | --------------------- |
+| **File**         | clerk-signup-skill.md | clerk-auth-quick-reference.md | claude-skill-clerk-auth.md | clerk-auth-skill.json |
+| Code Templates   | ✅                    | ✅                            | ✅                         | ❌                    |
+| Explanations     | ✅✅✅                | ✅                            | ✅✅                       | ❌                    |
+| Copy-Paste Ready | ✅                    | ✅✅✅                        | ✅                         | ❌                    |
+| Troubleshooting  | ✅✅✅                | ✅✅                          | ✅                         | ✅                    |
+| Customization    | ✅✅✅                | ✅✅                          | ✅✅✅                     | ✅                    |
+| AI Instructions  | ❌                    | ❌                            | ✅✅✅                     | ✅                    |
+| Machine-Readable | ❌                    | ❌                            | ❌                         | ✅✅✅                |
+| Best For         | Learning              | Speed                         | AI Agents                  | Automation            |
+| Page Count       | ~15                   | ~5                            | ~10                        | N/A                   |
 
 ---
 

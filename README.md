@@ -40,7 +40,6 @@ cp .env.example .env.local
 # Edit .env.local with your credentials
 ```
 
-
 ### Development
 
 ```bash
@@ -55,12 +54,12 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## Documentation
 
-| Guide | Description |
-|-------|-------------|
-| [Frontend-Backend Connection](docs/FRONTEND_BACKEND_CONNECTION.md) | How to connect Next.js to the MCP backend |
-| [Claude Development Guide](docs/CLAUDE_DEVELOPMENT_GUIDE.md) | Best practices for AI-assisted development |
-| [Improvements](IMPROVEMENTS.md) | Product improvements and roadmap |
-| [Business Plan](BUSINESS_PLAN.md) | Business model and go-to-market strategy |
+| Guide                                                              | Description                                |
+| ------------------------------------------------------------------ | ------------------------------------------ |
+| [Frontend-Backend Connection](docs/FRONTEND_BACKEND_CONNECTION.md) | How to connect Next.js to the MCP backend  |
+| [Claude Development Guide](docs/CLAUDE_DEVELOPMENT_GUIDE.md)       | Best practices for AI-assisted development |
+| [Improvements](IMPROVEMENTS.md)                                    | Product improvements and roadmap           |
+| [Business Plan](BUSINESS_PLAN.md)                                  | Business model and go-to-market strategy   |
 
 ## Project Structure
 
@@ -89,14 +88,14 @@ src/
 
 ## Tier System
 
-| Feature | Free | Pro | Max |
-|---------|------|-----|-----|
-| Analyses/day | 5 | 50 | Unlimited |
-| Scan results | 5 | 25 | 50 |
-| Timeframes | Swing | All | All |
-| Portfolio Risk | No | Yes | Yes |
-| Alerts | No | No | Yes |
-| API Access | No | No | Yes |
+| Feature        | Free  | Pro | Max       |
+| -------------- | ----- | --- | --------- |
+| Analyses/day   | 5     | 50  | Unlimited |
+| Scan results   | 5     | 25  | 50        |
+| Timeframes     | Swing | All | All       |
+| Portfolio Risk | No    | Yes | Yes       |
+| Alerts         | No    | No  | Yes       |
+| API Access     | No    | No  | Yes       |
 
 ## Scripts
 

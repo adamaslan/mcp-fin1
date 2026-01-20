@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useTier } from '@/hooks/useTier';
-import { canAccessFeature, TIER_LIMITS } from '@/lib/auth/tiers';
-import { BlurredContent } from './BlurredContent';
-import { UpgradeCTA } from './UpgradeCTA';
+import { useTier } from "@/hooks/useTier";
+import { canAccessFeature, TIER_LIMITS } from "@/lib/auth/tiers";
+import { BlurredContent } from "./BlurredContent";
+import { UpgradeCTA } from "./UpgradeCTA";
 
 interface TierGateProps {
   feature: string;
-  requiredTier?: 'pro' | 'max';
+  requiredTier?: "pro" | "max";
   children: React.ReactNode;
   fallback?: React.ReactNode;
   blurContent?: boolean;
@@ -42,7 +42,7 @@ export function TierGate({
         {children}
         <UpgradeCTA
           currentTier={tier}
-          requiredTier={requiredTier || 'pro'}
+          requiredTier={requiredTier || "pro"}
           feature={feature}
         />
       </BlurredContent>
@@ -52,7 +52,7 @@ export function TierGate({
   return (
     <UpgradeCTA
       currentTier={tier}
-      requiredTier={requiredTier || 'pro'}
+      requiredTier={requiredTier || "pro"}
       feature={feature}
     />
   );

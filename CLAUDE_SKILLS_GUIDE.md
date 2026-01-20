@@ -9,6 +9,7 @@ This guide explains how to build Claude skills for the MCP Finance application *
 ### 1. Secrets Never in Skills
 
 Claude skills should:
+
 - ❌ Never contain hardcoded API keys or secrets
 - ❌ Never access `.env` files directly
 - ❌ Never make direct calls to Stripe/payment endpoints
@@ -21,6 +22,7 @@ Claude skills should:
 There are three categories of safe skills:
 
 #### Type A: Documentation & Code Analysis
+
 - Read and analyze public code
 - Understand architecture & patterns
 - Answer questions about the system
@@ -28,6 +30,7 @@ There are three categories of safe skills:
 - **No secrets exposed:** Uses public documentation
 
 #### Type B: Testing & Validation
+
 - Run tests that don't require secrets
 - Validate code without secrets
 - Check configuration integrity
@@ -35,6 +38,7 @@ There are three categories of safe skills:
 - **No secrets exposed:** Tests use mock data
 
 #### Type C: Development Assistance
+
 - Suggest code improvements
 - Fix bugs in non-sensitive code
 - Refactor features
@@ -52,11 +56,11 @@ There are three categories of safe skills:
  * Safety: No secrets required, uses public code only
  */
 
-import { Glob, Read, Grep } from '@/tools';
+import { Glob, Read, Grep } from "@/tools";
 
 export async function analyzeTierSystem() {
   // Read public tier configuration (NO SECRETS HERE)
-  const tiers = await Read('/src/lib/auth/tiers.ts');
+  const tiers = await Read("/src/lib/auth/tiers.ts");
 
   // Analyze feature distribution
   const features = extractFeatures(tiers);
@@ -69,7 +73,7 @@ export async function analyzeTierSystem() {
     tierCount: 3,
     features,
     tierOrder,
-    issues: [] // Any non-secret issues found
+    issues: [], // Any non-secret issues found
   };
 }
 
@@ -82,19 +86,20 @@ export async function analyzeTierSystem() {
 
 ```typescript
 // ❌ UNSAFE: Never do this!
-import * as fs from 'fs';
+import * as fs from "fs";
 
 export async function unsafeSkill() {
   // ❌ NEVER read .env directly
-  const env = fs.readFileSync('.env', 'utf-8');
+  const env = fs.readFileSync(".env", "utf-8");
 
   // ❌ NEVER expose secrets
-  const secretKey = env.split('\n')
-    .find(line => line.startsWith('STRIPE_SECRET_KEY='));
+  const secretKey = env
+    .split("\n")
+    .find((line) => line.startsWith("STRIPE_SECRET_KEY="));
 
   // ❌ NEVER make direct API calls
-  const response = await fetch('https://api.stripe.com/v1/...', {
-    headers: { 'Authorization': `Bearer ${secretKey}` }
+  const response = await fetch("https://api.stripe.com/v1/...", {
+    headers: { Authorization: `Bearer ${secretKey}` },
   });
 
   return response.json(); // EXPOSED SECRETS!
@@ -115,12 +120,14 @@ npx tsx __tests__/tiergating.test.ts
 ```
 
 **What Claude can do:**
+
 - Run test suite
 - Report test results
 - Suggest fixes for failing tests
 - Verify tier configuration
 
 **What Claude cannot do:**
+
 - Access actual Stripe API
 - View real API keys
 - Make changes to payment system
@@ -134,16 +141,16 @@ npx tsx __tests__/tiergating.test.ts
 export async function analyzeCodeQuality() {
   // Search for public code issues
   const results = await Grep({
-    pattern: 'TODO|FIXME|XXX|HACK',
-    type: 'typescript',
-    exclude: ['.env*', '.git', 'node_modules']
+    pattern: "TODO|FIXME|XXX|HACK",
+    type: "typescript",
+    exclude: [".env*", ".git", "node_modules"],
   });
 
   return {
     issues: results,
     recommendations: [
       // Safe recommendations based on code analysis
-    ]
+    ],
   };
 }
 ```
@@ -155,9 +162,9 @@ export async function analyzeCodeQuality() {
 ```typescript
 export async function generateFeatureDocs() {
   // Read public source files
-  const tierFile = await Read('/src/lib/auth/tiers.ts');
-  const middlewareFile = await Read('/src/middleware.ts');
-  const componentFile = await Read('/src/components/gating/TierGate.tsx');
+  const tierFile = await Read("/src/lib/auth/tiers.ts");
+  const middlewareFile = await Read("/src/middleware.ts");
+  const componentFile = await Read("/src/components/gating/TierGate.tsx");
 
   // Extract documentation
   const features = extractFeatures(tierFile);
@@ -168,7 +175,7 @@ export async function generateFeatureDocs() {
   return generateMarkdown({
     features,
     routes,
-    components
+    components,
   });
 }
 ```
@@ -237,18 +244,22 @@ export async function generateFeatureDocs() {
 ## Safety Level: [Public/Internal/Admin]
 
 ## Purpose
+
 What problem does this solve?
 
 ## Secret Requirements
+
 - Does it need API keys? NO ✅
 - Does it access .env files? NO ✅
 - Does it modify sensitive code? NO ✅
 
 ## Capabilities
+
 - What can it do? (Safe operations only)
 - What can't it do? (Unsafe operations)
 
 ## Example Usage
+
 How would Claude use this skill?
 ```
 
@@ -256,18 +267,18 @@ How would Claude use this skill?
 
 ```typescript
 // 1. Only use public tools
-import { Glob, Read, Write, Grep } from '@tools';
+import { Glob, Read, Write, Grep } from "@tools";
 
 // 2. Never access secrets
 async function mySkill(input: string) {
   // Safe: Read public code
-  const code = await Read('/src/components/MyComponent.tsx');
+  const code = await Read("/src/components/MyComponent.tsx");
 
   // Safe: Analyze without modifying secrets
   const analysis = analyzeCode(code);
 
   // Safe: Write documentation
-  await Write('/docs/analysis.md', analysis);
+  await Write("/docs/analysis.md", analysis);
 
   // Safe: Return insights
   return analysis;
@@ -277,7 +288,7 @@ async function mySkill(input: string) {
 function validateInput(input: string): boolean {
   // Reject if input contains secret patterns
   if (/secret|key|token|password|credential/i.test(input)) {
-    throw new Error('Input contains sensitive keywords');
+    throw new Error("Input contains sensitive keywords");
   }
   return true;
 }
@@ -323,7 +334,7 @@ commands:
 ```typescript
 // Safe: Only reads & analyzes code
 export async function analyzeCodebase() {
-  const files = await Glob('src/**/*.ts');
+  const files = await Glob("src/**/*.ts");
 
   for (const file of files) {
     const content = await Read(file);
@@ -333,7 +344,7 @@ export async function analyzeCodebase() {
     return {
       codeMetrics: analysis,
       improvements: suggestImprovements(analysis),
-      testCoverage: checkTestFiles()
+      testCoverage: checkTestFiles(),
     };
   }
 }
@@ -344,7 +355,7 @@ export async function analyzeCodebase() {
 ```typescript
 // Safe: Reads code and generates docs
 export async function generateDocs() {
-  const components = await Glob('src/components/**/*.tsx');
+  const components = await Glob("src/components/**/*.tsx");
   const docs = [];
 
   for (const component of components) {
@@ -362,14 +373,12 @@ export async function generateDocs() {
 ```typescript
 // Safe: Runs existing tests
 export async function validateTests() {
-  const result = await executeCommand(
-    'npx tsx __tests__/tiers.test.ts'
-  );
+  const result = await executeCommand("npx tsx __tests__/tiers.test.ts");
 
   return {
     passed: result.exitCode === 0,
     output: result.stdout,
-    failures: parseFailures(result.stdout)
+    failures: parseFailures(result.stdout),
   };
 }
 ```
@@ -399,7 +408,7 @@ Before deploying a Claude skill:
  * WITHOUT accessing any secrets or credentials.
  */
 
-import { Read, Grep, Glob } from '@/tools';
+import { Read, Grep, Glob } from "@/tools";
 
 interface TierAnalysis {
   totalFeatures: number;
@@ -410,28 +419,27 @@ interface TierAnalysis {
 
 export async function analyzeTierSystem(): Promise<TierAnalysis> {
   // ✅ Safe: Read public tier configuration
-  const tiersContent = await Read('src/lib/auth/tiers.ts');
+  const tiersContent = await Read("src/lib/auth/tiers.ts");
   const tierLimits = extractTierLimits(tiersContent);
 
   // ✅ Safe: Count total features
-  const totalFeatures = Object.values(tierLimits)
-    .reduce((sum, tier) => sum + tier.features.length, 0);
+  const totalFeatures = Object.values(tierLimits).reduce(
+    (sum, tier) => sum + tier.features.length,
+    0,
+  );
 
   // ✅ Safe: Identify protected routes
-  const middlewareContent = await Read('src/middleware.ts');
+  const middlewareContent = await Read("src/middleware.ts");
   const protectedRoutes = extractProtectedRoutes(middlewareContent);
 
   // ✅ Safe: Generate recommendations
-  const recommendations = generateRecommendations(
-    tierLimits,
-    protectedRoutes
-  );
+  const recommendations = generateRecommendations(tierLimits, protectedRoutes);
 
   return {
     totalFeatures,
     tierLimits,
     protectedRoutes,
-    recommendations
+    recommendations,
   };
 }
 
@@ -449,10 +457,7 @@ function extractProtectedRoutes(content: string): string[] {
   return [];
 }
 
-function generateRecommendations(
-  tiers: object,
-  routes: string[]
-): string[] {
+function generateRecommendations(tiers: object, routes: string[]): string[] {
   return [
     // Safe recommendations based on analysis
   ];
@@ -464,15 +469,19 @@ export default analyzeTierSystem;
 ## Common Skill Requests (Safe Versions)
 
 ### ❌ Don't: "Access Stripe API"
+
 ### ✅ Do: "Analyze Stripe integration code"
 
 ### ❌ Don't: "Get user payment data"
+
 ### ✅ Do: "Document the payment flow"
 
 ### ❌ Don't: "Modify webhook secrets"
+
 ### ✅ Do: "Validate webhook implementation"
 
 ### ❌ Don't: "Change API keys"
+
 ### ✅ Do: "Suggest API security improvements"
 
 ## Testing Your Skill
@@ -496,12 +505,13 @@ grep -r "\.env\|getenv\|environ" my-skill.ts
 
 - [STRIPE_SETUP_GUIDE.md](./STRIPE_SETUP_GUIDE.md) - Safe integration guide
 - [src/lib/auth/tiers.ts](./src/lib/auth/tiers.ts) - Public tier configuration
-- [__tests__](.//__tests__) - Public test files (safe to run)
+- [**tests**](.//__tests__) - Public test files (safe to run)
 - [src/middleware.ts](./src/middleware.ts) - Route protection logic
 
 ## Summary
 
 Safe Claude skills:
+
 1. **Never access secrets** - Use .md documentation instead
 2. **Read public code** - Analyze without modifying sensitive parts
 3. **Run existing tests** - Validate without creating new ones

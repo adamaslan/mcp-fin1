@@ -3,6 +3,7 @@
 ## Overview
 
 This guide covers deploying the Next.js MCP Finance dashboard to Vercel with integration to:
+
 - Clerk authentication
 - GCP Cloud SQL PostgreSQL database
 - Cloud Run MCP API endpoint
@@ -42,6 +43,7 @@ npx vercel
 ```
 
 Or create project via Vercel dashboard:
+
 1. Go to https://vercel.com/new
 2. Select "Next.js" template
 3. Import from GitHub repository
@@ -83,6 +85,7 @@ CLERK_WEBHOOK_SECRET: whsec_XXXXX
 ```
 
 Get values from Clerk Dashboard:
+
 1. Go to https://dashboard.clerk.com
 2. Select application
 3. Go to API Keys → Copy keys
@@ -95,6 +98,7 @@ MCP_CLOUD_RUN_URL: https://technical-analysis-api-XXXXX.run.app
 ```
 
 Get from GCP Cloud Run deployment:
+
 1. Go to https://console.cloud.google.com/run
 2. Select service
 3. Copy service URL
@@ -106,6 +110,7 @@ DATABASE_URL: postgresql://user:password@/dbname?host=/cloudsql/project:region:i
 ```
 
 For Cloud SQL Unix socket (recommended for Vercel):
+
 - Format: `postgresql://user:password@/dbname?host=/cloudsql/project:region:instance`
 - Replace:
   - `user`: database user
@@ -247,6 +252,7 @@ gcloud run deploy technical-analysis-api \
 ### 5.2 Enable CORS (If Needed)
 
 Add CORS headers in Cloud Run response if calling from browser:
+
 - Update Cloud Run service to add Access-Control headers
 - Or use Cloud Armour policy
 
@@ -276,6 +282,7 @@ git push origin main
 ### 6.2 Automated Deployment
 
 Once project is linked:
+
 1. Push to main branch
 2. Vercel automatically builds and deploys
 3. Check deployment status at https://vercel.com/dashboard
@@ -303,6 +310,7 @@ curl https://yourdomain.vercel.app/api/health
 Go to Clerk Dashboard → Applications → Settings → URLs
 
 Update:
+
 - **Sign in URL**: `https://yourdomain.vercel.app/sign-in`
 - **Sign up URL**: `https://yourdomain.vercel.app/sign-up`
 - **Callback URL**: `https://yourdomain.vercel.app/auth/callback`
@@ -311,6 +319,7 @@ Update:
 ### 7.2 Update Domain in Code
 
 If using custom domain:
+
 1. Add domain to Vercel project
 2. DNS configuration (follow Vercel's guide)
 3. Update Clerk callback URLs to new domain
@@ -330,14 +339,17 @@ If using custom domain:
 ### 7.4 Set Up Monitoring
 
 **Vercel Analytics:**
+
 - Automatically enabled for Vercel Pro plans
 - View at https://vercel.com/dashboard/analytics
 
 **Clerk Events:**
+
 - Go to Clerk Dashboard → Webhooks → Events
 - Monitor authentication events
 
 **Cloud SQL Monitoring:**
+
 - Go to GCP Console → Cloud SQL → Instances
 - Monitor CPU, memory, connections
 
@@ -355,6 +367,7 @@ If using custom domain:
 ### 8.2 Update Clerk Redirect URLs
 
 Update Clerk settings with new domain URLs:
+
 ```
 https://finance.example.com/sign-in
 https://finance.example.com/sign-up
@@ -369,6 +382,7 @@ https://finance.example.com/sign-up
 **Error:** `Error: connect ECONNREFUSED`
 
 Solution:
+
 1. Verify `DATABASE_URL` format is correct
 2. Check Cloud SQL instance is running: `gcloud sql instances list`
 3. Verify Cloud SQL Proxy is running
@@ -379,6 +393,7 @@ Solution:
 **Error:** `Failed to fetch from Cloud Run`
 
 Solution:
+
 1. Verify Cloud Run service is deployed: `gcloud run list`
 2. Check service is public (allow-unauthenticated)
 3. Test endpoint with curl from Vercel logs
@@ -389,6 +404,7 @@ Solution:
 **Error:** User gets stuck on sign-in page
 
 Solution:
+
 1. Verify `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is for production
 2. Check Clerk redirect URLs match Vercel domain
 3. Clear browser cache and cookies
@@ -399,6 +415,7 @@ Solution:
 **Error:** `Build failed`
 
 Solution:
+
 1. Check build logs: `npx vercel logs`
 2. Run `npm run build` locally to reproduce
 3. Verify all TypeScript types are correct

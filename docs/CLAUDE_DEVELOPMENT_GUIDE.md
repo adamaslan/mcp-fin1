@@ -29,6 +29,7 @@ Create a `CLAUDE.md` in your project root with project-specific instructions:
 # MCP Finance Project
 
 ## Tech Stack
+
 - Next.js 14+ with App Router
 - TypeScript
 - Tailwind CSS + shadcn/ui
@@ -37,12 +38,14 @@ Create a `CLAUDE.md` in your project root with project-specific instructions:
 - MCP backend on Cloud Run
 
 ## Key Patterns
+
 - API routes in src/app/api/
 - Components in src/components/
 - Tier gating via Clerk metadata
 - All MCP calls go through MCPClient
 
 ## Tier System
+
 - free: Basic features, 5 analyses/day
 - pro: Portfolio risk, journal, 50 analyses/day
 - max: All features, unlimited
@@ -70,6 +73,7 @@ Current task: [describe what you're doing]
 ### Adding New Features
 
 **Template:**
+
 ```
 Create a [component/page/API route] that:
 - Does [specific functionality]
@@ -80,6 +84,7 @@ Create a [component/page/API route] that:
 ```
 
 **Example:**
+
 ```
 Create a new alert component for "Moving Average Crossover" alerts that:
 - Follows the pattern in src/components/alerts/PriceTargetAlerts.tsx
@@ -91,6 +96,7 @@ Create a new alert component for "Moving Average Crossover" alerts that:
 ### Bug Fixes
 
 **Template:**
+
 ```
 Fix the bug in [file path]:
 
@@ -104,6 +110,7 @@ Relevant context: [any additional info]
 ```
 
 **Example:**
+
 ```
 Fix the bug in src/app/(dashboard)/portfolio/page.tsx:
 
@@ -119,6 +126,7 @@ Context: I'm trying to pass portfolio symbols to the correlation matrix
 ### Refactoring
 
 **Template:**
+
 ```
 Refactor [component/file]:
 - From: [current pattern/problem]
@@ -128,6 +136,7 @@ Refactor [component/file]:
 ```
 
 **Example:**
+
 ```
 Refactor src/components/dashboard/ThemeToggle.tsx:
 - From: Simple toggle between light/dark
@@ -139,6 +148,7 @@ Refactor src/components/dashboard/ThemeToggle.tsx:
 ### Adding to Existing Files
 
 **Template:**
+
 ```
 Add [feature] to [file]:
 - New functionality: [description]
@@ -147,6 +157,7 @@ Add [feature] to [file]:
 ```
 
 **Example:**
+
 ```
 Add a "Copy to Clipboard" button to the API docs page:
 - New functionality: Copy code snippets with one click
@@ -160,18 +171,18 @@ Add a "Copy to Clipboard" button to the API docs page:
 
 Use these files as patterns when creating new features:
 
-| Task | Reference File | Key Pattern |
-|------|----------------|-------------|
-| New API route | `src/app/api/mcp/analyze/route.ts` | Auth + tier filtering |
-| New dashboard page | `src/app/(dashboard)/alerts/page.tsx` | Layout + tabs |
-| New component with state | `src/components/alerts/PriceTargetAlerts.tsx` | useState + CRUD |
-| New component with form | `src/components/settings/EmailDigestSettings.tsx` | Form handling |
-| Tier-gated content | `src/lib/auth/tiers.ts` | `canAccessFeature()` |
-| TypeScript types | `src/lib/mcp/types.ts` | Interface definitions |
-| Database schema | `src/lib/db/schema.ts` | Drizzle ORM |
-| UI components | `src/components/ui/*.tsx` | shadcn/ui |
-| Calendar component | `src/components/calendar/EarningsCalendar.tsx` | Date handling |
-| Chart/visualization | `src/components/portfolio/CorrelationMatrix.tsx` | Data display |
+| Task                     | Reference File                                    | Key Pattern           |
+| ------------------------ | ------------------------------------------------- | --------------------- |
+| New API route            | `src/app/api/mcp/analyze/route.ts`                | Auth + tier filtering |
+| New dashboard page       | `src/app/(dashboard)/alerts/page.tsx`             | Layout + tabs         |
+| New component with state | `src/components/alerts/PriceTargetAlerts.tsx`     | useState + CRUD       |
+| New component with form  | `src/components/settings/EmailDigestSettings.tsx` | Form handling         |
+| Tier-gated content       | `src/lib/auth/tiers.ts`                           | `canAccessFeature()`  |
+| TypeScript types         | `src/lib/mcp/types.ts`                            | Interface definitions |
+| Database schema          | `src/lib/db/schema.ts`                            | Drizzle ORM           |
+| UI components            | `src/components/ui/*.tsx`                         | shadcn/ui             |
+| Calendar component       | `src/components/calendar/EarningsCalendar.tsx`    | Date handling         |
+| Chart/visualization      | `src/components/portfolio/CorrelationMatrix.tsx`  | Data display          |
 
 ### Quick File Lookup
 
@@ -228,6 +239,7 @@ If there are errors, paste them and say:
 ### 4. Provide Full Error Context
 
 When fixing errors, include:
+
 - The complete error message
 - The file path
 - What you were trying to do
@@ -317,6 +329,7 @@ Implement the Morning Brief feature. Use TodoWrite to track:
 ### Parallel vs Sequential
 
 **Parallel (independent tasks):**
+
 ```
 Create these three components (they don't depend on each other):
 1. SectorHeatmap.tsx
@@ -325,6 +338,7 @@ Create these three components (they don't depend on each other):
 ```
 
 **Sequential (dependent tasks):**
+
 ```
 First: Create the TypeScript interface for SectorData
 Then: Create the API route that returns SectorData
@@ -336,40 +350,52 @@ Finally: Create the component that uses the API
 ## What Claude Excels At
 
 ### Pattern Replication
+
 ```
 "Create a new component like PriceTargetAlerts but for earnings alerts"
 ```
+
 Claude will replicate the structure, styling, and patterns exactly.
 
 ### TypeScript Accuracy
+
 ```
 "Add proper TypeScript types for this API response"
 ```
+
 Claude generates accurate interfaces matching your data.
 
 ### Boilerplate Generation
+
 ```
 "Create a new API route with auth, validation, and error handling"
 ```
+
 Claude writes complete, production-ready boilerplate.
 
 ### Bug Fixing with Context
+
 ```
 [paste error message]
 "Fix this error"
 ```
+
 Claude understands the error and applies the correct fix.
 
 ### Consistent Styling
+
 ```
 "Style this component to match the rest of the dashboard"
 ```
+
 Claude follows your existing Tailwind patterns.
 
 ### Documentation
+
 ```
 "Add JSDoc comments to the MCPClient methods"
 ```
+
 Claude writes clear, accurate documentation.
 
 ---
@@ -379,6 +405,7 @@ Claude writes clear, accurate documentation.
 ### Business Logic Decisions
 
 Claude will ask or you should specify:
+
 - What tier should access this feature?
 - What's the default value for X?
 - Should this be required or optional?
@@ -386,6 +413,7 @@ Claude will ask or you should specify:
 ### Design Choices
 
 Specify preferences:
+
 - "Use a card layout, not a table"
 - "Put the button on the right side"
 - "Use green for positive, red for negative"
@@ -393,6 +421,7 @@ Specify preferences:
 ### API Credentials
 
 Never paste secrets in chat. Instead:
+
 ```
 "Add the Stripe webhook secret from environment variables"
 ```
@@ -400,6 +429,7 @@ Never paste secrets in chat. Instead:
 ### Architecture Decisions
 
 For major changes, discuss first:
+
 ```
 "I want to add real-time updates. What approaches would work?"
 ```
@@ -407,6 +437,7 @@ For major changes, discuss first:
 ### External Service Integration
 
 Provide documentation links:
+
 ```
 "Integrate with Alpaca API. Here's their docs: [link]"
 ```
@@ -522,13 +553,13 @@ Review src/components/alerts/WebhookSettings.tsx:
 
 ## Summary
 
-| Situation | Approach |
-|-----------|----------|
-| New feature | Reference existing pattern + be specific |
-| Bug fix | Paste full error + file path |
-| Refactoring | State from/to + what to keep |
-| Multi-file | Use plan mode or TodoWrite |
-| Quick fix | Direct request with file path |
-| Architecture | Discuss options first |
+| Situation    | Approach                                 |
+| ------------ | ---------------------------------------- |
+| New feature  | Reference existing pattern + be specific |
+| Bug fix      | Paste full error + file path             |
+| Refactoring  | State from/to + what to keep             |
+| Multi-file   | Use plan mode or TodoWrite               |
+| Quick fix    | Direct request with file path            |
+| Architecture | Discuss options first                    |
 
 Happy coding with Claude!

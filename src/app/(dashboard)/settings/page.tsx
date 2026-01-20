@@ -1,18 +1,26 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/dashboard/ThemeToggle';
-import { SubscriptionManager } from '@/components/subscription/SubscriptionManager';
-import { EmailDigestSettings } from '@/components/settings/EmailDigestSettings';
-import { UserButton } from '@clerk/nextjs';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/dashboard/ThemeToggle";
+import { SubscriptionManager } from "@/components/subscription/SubscriptionManager";
+import { EmailDigestSettings } from "@/components/settings/EmailDigestSettings";
+import { UserButton } from "@clerk/nextjs";
 
 export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Settings</h1>
-        <p className="text-muted-foreground">Manage your account, subscription, and preferences.</p>
+        <p className="text-muted-foreground">
+          Manage your account, subscription, and preferences.
+        </p>
       </div>
 
       {/* Subscription */}
@@ -28,7 +36,9 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">Dark Mode</p>
-              <p className="text-sm text-muted-foreground">Toggle light/dark theme</p>
+              <p className="text-sm text-muted-foreground">
+                Toggle light/dark theme
+              </p>
             </div>
             <ThemeToggle />
           </div>
@@ -46,14 +56,15 @@ export default function SettingsPage() {
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: 'h-12 w-12',
+                  avatarBox: "h-12 w-12",
                 },
               }}
             />
             <div>
               <p className="font-medium">Profile Settings</p>
               <p className="text-sm text-muted-foreground">
-                Click the avatar to manage your profile, security, and connected accounts
+                Click the avatar to manage your profile, security, and connected
+                accounts
               </p>
             </div>
           </div>
@@ -85,7 +96,9 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Data & Privacy</CardTitle>
-          <CardDescription>Manage your data and privacy settings</CardDescription>
+          <CardDescription>
+            Manage your data and privacy settings
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">

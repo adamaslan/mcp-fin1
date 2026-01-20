@@ -1,5 +1,5 @@
-import { NewsFeed } from '@/components/news/NewsFeed';
-import { SectorRotation } from '@/components/analysis/SectorRotation';
+import { NewsFeed } from "@/components/news/NewsFeed";
+import { SectorRotation } from "@/components/analysis/SectorRotation";
 
 export default function NewsPage() {
   return (

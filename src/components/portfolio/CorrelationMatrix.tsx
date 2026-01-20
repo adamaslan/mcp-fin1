@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Grid3X3 } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Grid3X3 } from "lucide-react";
 
 interface CorrelationData {
   symbols: string[];
@@ -10,39 +16,41 @@ interface CorrelationData {
 
 // Mock data - in production, calculate from price history
 const MOCK_CORRELATION: CorrelationData = {
-  symbols: ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA'],
+  symbols: ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA"],
   matrix: [
     [1.0, 0.85, 0.78, 0.72, 0.45, 0.68],
     [0.85, 1.0, 0.82, 0.75, 0.48, 0.72],
-    [0.78, 0.82, 1.0, 0.80, 0.42, 0.65],
-    [0.72, 0.75, 0.80, 1.0, 0.38, 0.58],
+    [0.78, 0.82, 1.0, 0.8, 0.42, 0.65],
+    [0.72, 0.75, 0.8, 1.0, 0.38, 0.58],
     [0.45, 0.48, 0.42, 0.38, 1.0, 0.55],
     [0.68, 0.72, 0.65, 0.58, 0.55, 1.0],
   ],
 };
 
 function getCorrelationColor(value: number): string {
-  if (value >= 0.8) return 'bg-red-500';
-  if (value >= 0.6) return 'bg-orange-500';
-  if (value >= 0.4) return 'bg-yellow-500';
-  if (value >= 0.2) return 'bg-green-400';
-  if (value >= 0) return 'bg-green-500';
-  if (value >= -0.2) return 'bg-blue-400';
-  if (value >= -0.4) return 'bg-blue-500';
-  if (value >= -0.6) return 'bg-indigo-500';
-  return 'bg-purple-500';
+  if (value >= 0.8) return "bg-red-500";
+  if (value >= 0.6) return "bg-orange-500";
+  if (value >= 0.4) return "bg-yellow-500";
+  if (value >= 0.2) return "bg-green-400";
+  if (value >= 0) return "bg-green-500";
+  if (value >= -0.2) return "bg-blue-400";
+  if (value >= -0.4) return "bg-blue-500";
+  if (value >= -0.6) return "bg-indigo-500";
+  return "bg-purple-500";
 }
 
 function getCorrelationTextColor(value: number): string {
-  if (Math.abs(value) >= 0.6) return 'text-white';
-  return 'text-foreground';
+  if (Math.abs(value) >= 0.6) return "text-white";
+  return "text-foreground";
 }
 
 interface CorrelationMatrixProps {
   data?: CorrelationData;
 }
 
-export function CorrelationMatrix({ data = MOCK_CORRELATION }: CorrelationMatrixProps) {
+export function CorrelationMatrix({
+  data = MOCK_CORRELATION,
+}: CorrelationMatrixProps) {
   const { symbols, matrix } = data;
 
   // Calculate average correlation (excluding self-correlation)
@@ -78,7 +86,8 @@ export function CorrelationMatrix({ data = MOCK_CORRELATION }: CorrelationMatrix
           Correlation Matrix
         </CardTitle>
         <CardDescription>
-          Shows how correlated your holdings are (1 = move together, -1 = opposite)
+          Shows how correlated your holdings are (1 = move together, -1 =
+          opposite)
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -101,12 +110,14 @@ export function CorrelationMatrix({ data = MOCK_CORRELATION }: CorrelationMatrix
             <tbody>
               {symbols.map((rowSymbol, i) => (
                 <tr key={rowSymbol}>
-                  <td className="p-2 text-xs font-medium text-muted-foreground">{rowSymbol}</td>
+                  <td className="p-2 text-xs font-medium text-muted-foreground">
+                    {rowSymbol}
+                  </td>
                   {matrix[i].map((value, j) => (
                     <td key={j} className="p-1">
                       <div
                         className={`w-12 h-10 flex items-center justify-center rounded text-xs font-medium ${getCorrelationColor(
-                          value
+                          value,
                         )} ${getCorrelationTextColor(value)}`}
                         title={`${symbols[i]} vs ${symbols[j]}: ${value.toFixed(2)}`}
                       >
@@ -122,7 +133,9 @@ export function CorrelationMatrix({ data = MOCK_CORRELATION }: CorrelationMatrix
 
         {/* Legend */}
         <div className="mt-4 flex items-center justify-center gap-1">
-          <span className="text-xs text-muted-foreground mr-2">Correlation:</span>
+          <span className="text-xs text-muted-foreground mr-2">
+            Correlation:
+          </span>
           <div className="flex items-center gap-0.5">
             <div className="w-6 h-4 bg-purple-500 rounded-l" title="-1.0" />
             <div className="w-6 h-4 bg-indigo-500" title="-0.6" />
@@ -140,19 +153,25 @@ export function CorrelationMatrix({ data = MOCK_CORRELATION }: CorrelationMatrix
         {/* Summary */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 rounded-lg bg-muted">
-            <div className="text-sm text-muted-foreground mb-1">Average Correlation</div>
-            <div className="text-2xl font-bold">{avgCorrelation.toFixed(2)}</div>
+            <div className="text-sm text-muted-foreground mb-1">
+              Average Correlation
+            </div>
+            <div className="text-2xl font-bold">
+              {avgCorrelation.toFixed(2)}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">
               {avgCorrelation > 0.7
-                ? 'High - Consider diversifying'
+                ? "High - Consider diversifying"
                 : avgCorrelation > 0.4
-                ? 'Moderate - Reasonably diversified'
-                : 'Low - Well diversified'}
+                  ? "Moderate - Reasonably diversified"
+                  : "Low - Well diversified"}
             </div>
           </div>
 
           <div className="p-4 rounded-lg bg-muted">
-            <div className="text-sm text-muted-foreground mb-1">Most Correlated Pair</div>
+            <div className="text-sm text-muted-foreground mb-1">
+              Most Correlated Pair
+            </div>
             <div className="text-2xl font-bold">{pairs[0]?.pair}</div>
             <div className="text-xs text-muted-foreground mt-1">
               Correlation: {pairs[0]?.correlation.toFixed(2)}
@@ -165,7 +184,10 @@ export function CorrelationMatrix({ data = MOCK_CORRELATION }: CorrelationMatrix
           <h4 className="text-sm font-medium mb-2">Highest Correlations</h4>
           <div className="space-y-2">
             {pairs.slice(0, 5).map((pair) => (
-              <div key={pair.pair} className="flex items-center justify-between text-sm">
+              <div
+                key={pair.pair}
+                className="flex items-center justify-between text-sm"
+              >
                 <span>{pair.pair}</span>
                 <div className="flex items-center gap-2">
                   <div

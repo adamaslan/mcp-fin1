@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useTier } from '@/hooks/useTier';
-import { ThemeToggle } from './ThemeToggle';
-import { TierBadge } from './TierBadge';
+import { useTier } from "@/hooks/useTier";
+import { ThemeToggle } from "./ThemeToggle";
+import { TierBadge } from "./TierBadge";
 
 export function Header() {
   const { tier } = useTier();

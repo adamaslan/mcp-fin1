@@ -1,9 +1,9 @@
-export type BillingInterval = 'monthly' | 'yearly';
+export type BillingInterval = "monthly" | "yearly";
 
-export type SubscriptionTier = 'free' | 'pro' | 'max';
+export type SubscriptionTier = "free" | "pro" | "max";
 
 export interface CheckoutSessionRequest {
-  tier: 'pro' | 'max';
+  tier: "pro" | "max";
   interval: BillingInterval;
   successUrl?: string;
   cancelUrl?: string;
@@ -16,7 +16,7 @@ export interface CheckoutSessionResponse {
 
 export interface SubscriptionStatus {
   tier: SubscriptionTier;
-  status: 'active' | 'canceled' | 'past_due' | 'trialing' | 'none';
+  status: "active" | "canceled" | "past_due" | "trialing" | "none";
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
   interval: BillingInterval | null;
@@ -28,9 +28,9 @@ export interface CustomerPortalResponse {
 
 // Stripe webhook event types we handle
 export type StripeWebhookEvent =
-  | 'checkout.session.completed'
-  | 'customer.subscription.created'
-  | 'customer.subscription.updated'
-  | 'customer.subscription.deleted'
-  | 'invoice.payment_succeeded'
-  | 'invoice.payment_failed';
+  | "checkout.session.completed"
+  | "customer.subscription.created"
+  | "customer.subscription.updated"
+  | "customer.subscription.deleted"
+  | "invoice.payment_succeeded"
+  | "invoice.payment_failed";

@@ -1,5 +1,5 @@
-import { test as authenticatedTest } from './authenticated-user';
-import { TierHelper } from '../helpers/tier-helper';
+import { test as authenticatedTest } from "./authenticated-user";
+import { TierHelper } from "../helpers/tier-helper";
 
 /**
  * Fixture for free tier user testing
@@ -25,18 +25,18 @@ export const test = authenticatedTest.extend<{
     const helper = new TierHelper(authenticatedPage);
 
     // Verify user is on free tier
-    await authenticatedPage.goto('/dashboard');
+    await authenticatedPage.goto("/dashboard");
 
     const tier = await helper.getCurrentTier();
 
-    if (tier !== 'free') {
+    if (tier !== "free") {
       throw new Error(
         `Expected free tier user, but got '${tier}' tier.\n` +
-        `To fix this:\n` +
-        `1. Go to Clerk Dashboard\n` +
-        `2. Find the test user (${process.env.TEST_USER_EMAIL})\n` +
-        `3. Edit public metadata and set: { "tier": "free" }\n` +
-        `4. Re-run tests`,
+          `To fix this:\n` +
+          `1. Go to Clerk Dashboard\n` +
+          `2. Find the test user (${process.env.TEST_USER_EMAIL})\n` +
+          `3. Edit public metadata and set: { "tier": "free" }\n` +
+          `4. Re-run tests`,
       );
     }
 
@@ -44,4 +44,4 @@ export const test = authenticatedTest.extend<{
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";

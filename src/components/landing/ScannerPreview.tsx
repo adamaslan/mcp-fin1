@@ -1,26 +1,82 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
-const sampleTrades = [
-  { symbol: 'NVDA', entry: 142.30, stop: 135.50, target: 152.80, bias: 'Bullish', quality: 'HIGH' },
-  { symbol: 'MSFT', entry: 438.20, stop: 428.40, target: 455.80, bias: 'Bullish', quality: 'HIGH' },
-  { symbol: 'GOOGL', entry: 188.50, stop: 180.10, target: 201.30, bias: 'Bullish', quality: 'MEDIUM' },
+interface Trade {
+  symbol: string;
+  entry_price?: number;
+  stop_loss?: number;
+  target_price?: number;
+  timeframe?: string;
+  bias?: string;
+  signal_quality?: string;
+  risk_reward?: number;
+}
+
+const DEFAULT_TRADES: Trade[] = [
+  {
+    symbol: "NVDA",
+    entry_price: 142.3,
+    stop_loss: 135.5,
+    target_price: 152.8,
+    bias: "Bullish",
+    signal_quality: "HIGH",
+  },
+  {
+    symbol: "MSFT",
+    entry_price: 438.2,
+    stop_loss: 428.4,
+    target_price: 455.8,
+    bias: "Bullish",
+    signal_quality: "HIGH",
+  },
+  {
+    symbol: "GOOGL",
+    entry_price: 188.5,
+    stop_loss: 180.1,
+    target_price: 201.3,
+    bias: "Bullish",
+    signal_quality: "MEDIUM",
+  },
 ];
 
-export function ScannerPreview() {
+export function ScannerPreview({ trades }: { trades?: Trade[] | null }) {
+  const displayTrades =
+    trades && trades.length > 0 ? trades.slice(0, 5) : DEFAULT_TRADES;
+
+  const getQualityColor = (quality?: string) => {
+    if (!quality) return "bg-gray-500";
+    if (quality.toUpperCase() === "HIGH" || quality.toUpperCase() === "STRONG")
+      return "bg-green-500";
+    if (quality.toUpperCase() === "MEDIUM") return "bg-yellow-500";
+    return "bg-orange-500";
+  };
+
+  const getBiasColor = (bias?: string) => {
+    if (!bias) return "bg-gray-500/10";
+    if (bias.toUpperCase() === "BULLISH") return "bg-green-500/10";
+    if (bias.toUpperCase() === "BEARISH") return "bg-red-500/10";
+    return "bg-gray-500/10";
+  };
+
   return (
     <div className="container">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">Find Trades in Seconds</h2>
-        <p className="text-muted-foreground">Scan 500+ stocks and find the best setups automatically</p>
+        <p className="text-muted-foreground">
+          Scan 500+ stocks and find the best setups automatically
+        </p>
       </div>
 
       <div className="max-w-4xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Today's Top 3 Setups (S&P 500)</CardTitle>
+            <CardTitle>
+              {trades && trades.length > 0
+                ? "Today's Top 5 Setups (S&P 500) 🔴 LIVE"
+                : "Today's Top 3 Setups (S&P 500)"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -36,26 +92,31 @@ export function ScannerPreview() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleTrades.map((trade) => (
+                  {displayTrades.map((trade) => (
                     <tr key={trade.symbol} className="border-b last:border-b-0">
                       <td className="py-3 font-semibold">{trade.symbol}</td>
-                      <td className="text-right">${trade.entry}</td>
-                      <td className="text-right text-red-500">${trade.stop}</td>
-                      <td className="text-right text-green-500">${trade.target}</td>
+                      <td className="text-right">
+                        ${(trade.entry_price || 0).toFixed(2)}
+                      </td>
+                      <td className="text-right text-red-500">
+                        ${(trade.stop_loss || 0).toFixed(2)}
+                      </td>
+                      <td className="text-right text-green-500">
+                        ${(trade.target_price || 0).toFixed(2)}
+                      </td>
                       <td className="text-center">
-                        <Badge variant="outline" className="bg-green-500/10">
-                          {trade.bias}
+                        <Badge
+                          variant="outline"
+                          className={getBiasColor(trade.bias)}
+                        >
+                          {trade.bias || "Neutral"}
                         </Badge>
                       </td>
                       <td className="text-center">
                         <Badge
-                          className={
-                            trade.quality === 'HIGH'
-                              ? 'bg-green-500'
-                              : 'bg-yellow-500'
-                          }
+                          className={getQualityColor(trade.signal_quality)}
                         >
-                          {trade.quality}
+                          {trade.signal_quality || "MEDIUM"}
                         </Badge>
                       </td>
                     </tr>
@@ -66,7 +127,18 @@ export function ScannerPreview() {
 
             <div className="mt-6 p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-muted-foreground">
-                Free users see 5 results. Pro users see 25. Max users see all 50 results across multiple universes.
+                {trades && trades.length > 0 ? (
+                  <>
+                    <span className="font-semibold">🔴 Live data from GCP</span>{" "}
+                    • Free users see 5 results. Pro users see 25. Max users see
+                    all 50 results across multiple universes.
+                  </>
+                ) : (
+                  <>
+                    Free users see 5 results. Pro users see 25. Max users see
+                    all 50 results across multiple universes.
+                  </>
+                )}
               </p>
             </div>
           </CardContent>

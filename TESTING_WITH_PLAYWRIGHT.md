@@ -208,17 +208,20 @@ npm run test:e2e:production
 ### Basic Test Structure
 
 ```typescript
-import { test, expect } from '../../e2e-utils/fixtures/free-tier-user';
-import { AnalyzePage } from '../../e2e-utils/pages/analyze-page';
+import { test, expect } from "../../e2e-utils/fixtures/free-tier-user";
+import { AnalyzePage } from "../../e2e-utils/pages/analyze-page";
 
-test.describe('Feature Name', () => {
-  test('should do something specific', async ({ authenticatedPage, tierHelper }) => {
+test.describe("Feature Name", () => {
+  test("should do something specific", async ({
+    authenticatedPage,
+    tierHelper,
+  }) => {
     // Arrange
     const page = new AnalyzePage(authenticatedPage);
-    await page.goto('AAPL');
+    await page.goto("AAPL");
 
     // Act
-    await page.searchSymbol('MSFT');
+    await page.searchSymbol("MSFT");
 
     // Assert
     expect(await page.getTradePlanCount()).toBeGreaterThan(0);
@@ -233,11 +236,11 @@ Always use Page Objects for maintainability:
 ```typescript
 // ✅ Good: Encapsulated, reusable
 const analyzePage = new AnalyzePage(page);
-await analyzePage.goto('AAPL');
+await analyzePage.goto("AAPL");
 const count = await analyzePage.getTradePlanCount();
 
 // ❌ Bad: Direct selectors, hard to maintain
-await page.goto('/analyze/AAPL');
+await page.goto("/analyze/AAPL");
 const count = await page.locator('[data-testid="trade-plan-card"]').count();
 ```
 
@@ -247,17 +250,17 @@ Use provided fixtures to avoid repetition:
 
 ```typescript
 // Authenticated user (pre-signed-in)
-import { test } from '../../e2e-utils/fixtures/authenticated-user';
+import { test } from "../../e2e-utils/fixtures/authenticated-user";
 
-test('authenticated test', async ({ authenticatedPage }) => {
+test("authenticated test", async ({ authenticatedPage }) => {
   // Page is already signed in
-  await authenticatedPage.goto('/dashboard');
+  await authenticatedPage.goto("/dashboard");
 });
 
 // Free tier user (authenticated + verified free)
-import { test } from '../../e2e-utils/fixtures/free-tier-user';
+import { test } from "../../e2e-utils/fixtures/free-tier-user";
 
-test('free tier test', async ({ authenticatedPage, tierHelper }) => {
+test("free tier test", async ({ authenticatedPage, tierHelper }) => {
   // Verified as free tier
   const limits = await tierHelper.getTierLimits();
   expect(limits.analysesPerDay).toBe(5);
@@ -268,21 +271,21 @@ test('free tier test', async ({ authenticatedPage, tierHelper }) => {
 
 ```typescript
 // Correct: Wait for network activity to complete
-await page.goto('/analyze/AAPL');
-await page.waitForLoadState('networkidle');
-const count = await page.locator('button').count();
+await page.goto("/analyze/AAPL");
+await page.waitForLoadState("networkidle");
+const count = await page.locator("button").count();
 
 // Better: Use page object method that handles waits
 const analyzePage = new AnalyzePage(page);
-await analyzePage.goto('AAPL');
+await analyzePage.goto("AAPL");
 // Waits automatically
 ```
 
 ### Testing with Data
 
 ```typescript
-test('analyze multiple symbols', async ({ authenticatedPage }) => {
-  const symbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA'];
+test("analyze multiple symbols", async ({ authenticatedPage }) => {
+  const symbols = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"];
   const page = new AnalyzePage(authenticatedPage);
 
   for (const symbol of symbols) {
@@ -296,13 +299,13 @@ test('analyze multiple symbols', async ({ authenticatedPage }) => {
 ### Testing Errors
 
 ```typescript
-test('shows error for invalid symbol', async ({ authenticatedPage }) => {
+test("shows error for invalid symbol", async ({ authenticatedPage }) => {
   const page = new AnalyzePage(authenticatedPage);
-  await page.goto('NOTREAL123');
+  await page.goto("NOTREAL123");
 
   expect(await page.hasError()).toBe(true);
   const error = await page.getErrorMessage();
-  expect(error).toContain('not found');
+  expect(error).toContain("not found");
 });
 ```
 
@@ -338,10 +341,10 @@ test('custom auth', async ({ page }) => {
 ### Verifying Tier During Tests
 
 ```typescript
-test('verify tier limits', async ({ authenticatedPage, tierHelper }) => {
+test("verify tier limits", async ({ authenticatedPage, tierHelper }) => {
   // Get tier
   const tier = await tierHelper.getCurrentTier();
-  expect(tier).toBe('free');
+  expect(tier).toBe("free");
 
   // Get limits
   const limits = await tierHelper.getTierLimits();
@@ -349,7 +352,7 @@ test('verify tier limits', async ({ authenticatedPage, tierHelper }) => {
   expect(limits.signalsVisible).toBe(3);
 
   // Check if feature is locked
-  const isLocked = await tierHelper.isFeatureLocked('Portfolio');
+  const isLocked = await tierHelper.isFeatureLocked("Portfolio");
   expect(isLocked).toBe(true);
 });
 ```
@@ -361,7 +364,7 @@ test('verify tier limits', async ({ authenticatedPage, tierHelper }) => {
 ### Creating a Page Object
 
 ```typescript
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator } from "@playwright/test";
 
 export class MyPage {
   readonly page: Page;
@@ -372,18 +375,18 @@ export class MyPage {
   constructor(page: Page) {
     this.page = page;
     this.myButton = page.locator('button[data-testid="my-button"]');
-    this.myInput = page.locator('input#my-input');
-    this.result = page.locator('.result');
+    this.myInput = page.locator("input#my-input");
+    this.result = page.locator(".result");
   }
 
   async goto() {
-    await this.page.goto('/my-page');
+    await this.page.goto("/my-page");
   }
 
   async doSomething(value: string) {
     await this.myInput.fill(value);
     await this.myButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   async getResult(): Promise<string | null> {
@@ -395,13 +398,13 @@ export class MyPage {
 ### Using Page Objects in Tests
 
 ```typescript
-test('use page object', async ({ authenticatedPage }) => {
+test("use page object", async ({ authenticatedPage }) => {
   const page = new MyPage(authenticatedPage);
   await page.goto();
-  await page.doSomething('test data');
+  await page.doSomething("test data");
 
   const result = await page.getResult();
-  expect(result).toContain('expected');
+  expect(result).toContain("expected");
 });
 ```
 
@@ -420,15 +423,15 @@ test('use page object', async ({ authenticatedPage }) => {
 ### Testing API Endpoints
 
 ```typescript
-import { test, expect } from '@playwright/test';
-import { APIHelper } from '../../e2e-utils/helpers/api-helper';
+import { test, expect } from "@playwright/test";
+import { APIHelper } from "../../e2e-utils/helpers/api-helper";
 
-test('test analyze endpoint', async ({ request }) => {
+test("test analyze endpoint", async ({ request }) => {
   const api = new APIHelper(request);
 
-  const data = await api.testAnalyzeEndpoint('AAPL', 200);
+  const data = await api.testAnalyzeEndpoint("AAPL", 200);
 
-  expect(data.signals.length).toBeLessThanOrEqual(3);  // Free tier limit
+  expect(data.signals.length).toBeLessThanOrEqual(3); // Free tier limit
   api.validateAnalyzeResponse(data);
 });
 ```
@@ -436,26 +439,26 @@ test('test analyze endpoint', async ({ request }) => {
 ### Testing Authentication Requirements
 
 ```typescript
-test('endpoint requires authentication', async ({ request }) => {
+test("endpoint requires authentication", async ({ request }) => {
   const api = new APIHelper(request);
 
   // Should return 401 without auth
-  await api.testUnauthenticatedRequest('/api/mcp/analyze');
+  await api.testUnauthenticatedRequest("/api/mcp/analyze");
 });
 ```
 
 ### Testing Tier-Based Access
 
 ```typescript
-test('free tier cannot access premium universes', async ({ request }) => {
+test("free tier cannot access premium universes", async ({ request }) => {
   const api = new APIHelper(request);
 
   // Free tier: sp500 ✓
-  const sp500Results = await api.testScanEndpoint('sp500', 200);
+  const sp500Results = await api.testScanEndpoint("sp500", 200);
   expect(sp500Results.qualified_trades.length).toBeLessThanOrEqual(5);
 
   // Free tier: nasdaq100 ✗
-  const nasdaqResults = await api.testScanEndpoint('nasdaq100', 403);
+  const nasdaqResults = await api.testScanEndpoint("nasdaq100", 403);
   expect(nasdaqResults).toBeNull();
 });
 ```
@@ -463,15 +466,15 @@ test('free tier cannot access premium universes', async ({ request }) => {
 ### Direct API Testing
 
 ```typescript
-test('test with raw request', async ({ request }) => {
-  const response = await request.post('/api/mcp/analyze', {
-    data: { symbol: 'AAPL', period: '1mo' },
+test("test with raw request", async ({ request }) => {
+  const response = await request.post("/api/mcp/analyze", {
+    data: { symbol: "AAPL", period: "1mo" },
   });
 
   expect(response.status()).toBe(200);
 
   const data = await response.json();
-  expect(data).toHaveProperty('signals');
+  expect(data).toHaveProperty("signals");
   expect(Array.isArray(data.signals)).toBe(true);
 });
 ```
@@ -493,6 +496,7 @@ npx playwright test -c playwright.config.production.ts
 ### Production Test Guidelines
 
 ⚠️ **Safety First**:
+
 - ✓ Read-only operations only
 - ✓ No test data creation
 - ✓ No database modifications
@@ -504,33 +508,33 @@ npx playwright test -c playwright.config.production.ts
 ### Example Production Test
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Production Smoke Tests', () => {
+test.describe("Production Smoke Tests", () => {
   test.use({
-    baseURL: 'https://your-production-url.com',
+    baseURL: "https://your-production-url.com",
   });
 
-  test('landing page loads', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('h1')).toBeVisible();
+  test("landing page loads", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("h1")).toBeVisible();
   });
 
-  test('sign-in page accessible', async ({ page }) => {
-    await page.goto('/sign-in');
+  test("sign-in page accessible", async ({ page }) => {
+    await page.goto("/sign-in");
     await expect(page.locator('input[type="email"]')).toBeVisible();
   });
 
-  test('no console errors', async ({ page }) => {
+  test("no console errors", async ({ page }) => {
     const errors: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
         errors.push(msg.text());
       }
     });
 
-    await page.goto('/');
-    await page.goto('/pricing');
+    await page.goto("/");
+    await page.goto("/pricing");
 
     expect(errors).toHaveLength(0);
   });
@@ -552,6 +556,7 @@ npx playwright test e2e/features/analyze-free.spec.ts --debug
 ```
 
 Opens Playwright Inspector with:
+
 - Step through code
 - Inspect elements
 - Watch page live
@@ -582,28 +587,29 @@ test('slow test', async ({ page }) => {
 ### Logging
 
 ```typescript
-test('debug with logging', async ({ page }) => {
+test("debug with logging", async ({ page }) => {
   // Log to console
-  page.on('console', (msg) => {
-    console.log('Browser:', msg.text());
+  page.on("console", (msg) => {
+    console.log("Browser:", msg.text());
   });
 
   // Log page navigation
-  page.on('request', (req) => {
-    console.log('Request:', req.url());
+  page.on("request", (req) => {
+    console.log("Request:", req.url());
   });
 
-  page.on('response', (res) => {
-    console.log('Response:', res.status(), res.url());
+  page.on("response", (res) => {
+    console.log("Response:", res.status(), res.url());
   });
 
-  await page.goto('/');
+  await page.goto("/");
 });
 ```
 
 ### Video & Trace
 
 Failures automatically capture:
+
 - Screenshot
 - Video (if enabled)
 - Trace
@@ -620,12 +626,14 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 ### Architecture
 
 **Playwright**:
+
 - Runs outside browser (out-of-process)
 - Communicates via WebSocket
 - Can control multiple browser types
 - More like real user
 
 **Cypress**:
+
 - Runs inside browser (in-process)
 - Direct JavaScript access
 - Limited to Chromium family
@@ -634,11 +642,13 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 ### TypeScript Support
 
 **Playwright**:
+
 - Native TypeScript support ✓
 - Excellent IDE support
 - Type-safe by default
 
 **Cypress**:
+
 - TypeScript via plugin
 - Less IDE support
 - More setup required
@@ -646,6 +656,7 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 ### Browser Support
 
 **Playwright**:
+
 - Chromium ✓
 - Firefox ✓
 - WebKit ✓
@@ -653,6 +664,7 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 - Mobile Safari ✓
 
 **Cypress**:
+
 - Chrome/Chromium ✓
 - Firefox (beta)
 - Safari (in development)
@@ -661,11 +673,13 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 ### Parallel Execution
 
 **Playwright**:
+
 - Native parallel support ✓
 - Splits tests across workers
 - Configurable workers count
 
 **Cypress**:
+
 - Limited parallelization
 - Works best with CI services
 - More expensive at scale
@@ -673,11 +687,13 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 ### Network Interception
 
 **Playwright**:
+
 - Complete network control ✓
 - Modify requests/responses
 - HAR file recording
 
 **Cypress**:
+
 - Network stubbing
 - Less flexible
 - Better for mocking
@@ -685,11 +701,13 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 ### Debugging
 
 **Playwright**:
+
 - Inspector mode
 - Trace viewer
 - Screenshots/videos
 
 **Cypress**:
+
 - Time-travel debugging
 - Interactive runner
 - Excellent developer experience
@@ -697,6 +715,7 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 ### When to Use Each
 
 **Use Playwright for**:
+
 - Cross-browser testing (Firefox, Safari)
 - Mobile testing
 - Multiple tabs/windows
@@ -706,6 +725,7 @@ npx playwright show-trace playwright-report/[test-name]/trace.zip
 - API testing alongside UI
 
 **Use Cypress for**:
+
 - Learning E2E testing
 - Simple applications
 - Developer-centric debugging
@@ -750,6 +770,7 @@ use: {
 ```
 
 **Benefits**:
+
 - Real devices (iOS, Android)
 - Real browsers (Safari on macOS)
 - Geolocation testing
@@ -774,6 +795,7 @@ saucectl run
 ```
 
 **Benefits**:
+
 - Extensive device library
 - Parallel execution
 - Integration with CI/CD
@@ -804,6 +826,7 @@ percy exec -- npm run test:e2e
 ```
 
 **Benefits**:
+
 - Visual regression testing
 - Cross-browser screenshots
 - Diff detection
@@ -825,6 +848,7 @@ use: {
 ```
 
 **Benefits**:
+
 - 3000+ real devices
 - Multiple browsers
 - Parallel testing
@@ -839,19 +863,19 @@ Example BrowserStack runner:
 export default defineConfig({
   use: {
     connectOptions: {
-      wsEndpoint: `wss://cdp.browserstack.com/playwright?caps=${
-        encodeURIComponent(JSON.stringify({
-          'browserName': 'firefox',
-          'browserVersion': 'latest',
-          'os': 'Windows',
-          'osVersion': '10',
-          'projectName': 'MCP Finance Tests',
-          'buildName': 'E2E Tests',
-          'sessionName': 'Test Session',
-          'userName': process.env.BROWSERSTACK_USERNAME,
-          'accessKey': process.env.BROWSERSTACK_ACCESS_KEY,
-        }))
-      }`,
+      wsEndpoint: `wss://cdp.browserstack.com/playwright?caps=${encodeURIComponent(
+        JSON.stringify({
+          browserName: "firefox",
+          browserVersion: "latest",
+          os: "Windows",
+          osVersion: "10",
+          projectName: "MCP Finance Tests",
+          buildName: "E2E Tests",
+          sessionName: "Test Session",
+          userName: process.env.BROWSERSTACK_USERNAME,
+          accessKey: process.env.BROWSERSTACK_ACCESS_KEY,
+        }),
+      )}`,
     },
   },
 });
@@ -890,8 +914,8 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - run: npm ci
       - run: npx playwright install --with-deps
@@ -909,6 +933,7 @@ jobs:
 ### Environment Variables in CI
 
 Add to GitHub Secrets:
+
 - `TEST_USER_EMAIL`
 - `TEST_USER_PASSWORD`
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
@@ -932,6 +957,7 @@ Then in workflow:
 **Cause**: Page or action took too long
 
 **Solutions**:
+
 1. Increase timeout: `test.setTimeout(60000)`
 2. Add explicit waits: `await page.waitForSelector()`
 3. Check MCP API responsiveness
@@ -942,6 +968,7 @@ Then in workflow:
 **Cause**: Element disappeared between finding and using it
 
 **Solutions**:
+
 1. Re-find element each time
 2. Add waitFor before interaction
 3. Use page object methods (they re-find)
@@ -951,6 +978,7 @@ Then in workflow:
 **Cause**: Page/context closed unexpectedly
 
 **Solutions**:
+
 1. Check for exceptions in browser logs
 2. Add error event listeners
 3. Verify browser doesn't crash
@@ -961,6 +989,7 @@ Then in workflow:
 **Cause**: Test user credentials invalid or tier not set
 
 **Solutions**:
+
 1. Verify TEST_USER_EMAIL and TEST_USER_PASSWORD in .env.test
 2. Check user exists in Clerk Dashboard
 3. Verify public metadata: `{ "tier": "free" }`
@@ -972,6 +1001,7 @@ Then in workflow:
 **Cause**: Browsers not installed
 
 **Solutions**:
+
 ```bash
 npx playwright install
 # Or specific browser
@@ -983,6 +1013,7 @@ npx playwright install chromium
 **Cause**: Environment differences
 
 **Solutions**:
+
 1. Ensure all env vars set in CI
 2. Check Node version matches
 3. Use same OS as CI (use docker if needed)
@@ -994,6 +1025,7 @@ npx playwright install chromium
 **Cause**: Race conditions, timing issues
 
 **Solutions**:
+
 1. Use explicit waits: `page.waitForSelector()`
 2. Use `waitForLoadState('networkidle')`
 3. Avoid arbitrary `sleep()` calls
@@ -1007,6 +1039,7 @@ npx playwright install chromium
 ### Test Organization
 
 1. **One test = one behavior**
+
    ```typescript
    // ✓ Good
    test('free users see only swing timeframe', async (...) => {
@@ -1020,17 +1053,19 @@ npx playwright install chromium
    ```
 
 2. **Descriptive test names**
+
    ```typescript
    // ✓ Good
-   test('should show upgrade prompt when free user clicks portfolio')
+   test("should show upgrade prompt when free user clicks portfolio");
 
    // ✗ Bad
-   test('test portfolio')
+   test("test portfolio");
    ```
 
 3. **AAA Pattern**: Arrange, Act, Assert
+
    ```typescript
-   test('example', async ({ page }) => {
+   test("example", async ({ page }) => {
      // Arrange
      const sidebar = new Sidebar(page);
 
@@ -1038,7 +1073,7 @@ npx playwright install chromium
      await sidebar.goto();
 
      // Assert
-     expect(await sidebar.getTier()).toBe('free');
+     expect(await sidebar.getTier()).toBe("free");
    });
    ```
 
@@ -1091,6 +1126,7 @@ npx playwright install chromium
 ### Reporting Issues
 
 Include:
+
 - Test name and file
 - Error message and full stack trace
 - Screenshot/video if available

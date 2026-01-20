@@ -1,14 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { RiskDashboard } from '@/components/portfolio/RiskDashboard';
-import { DividendTracker } from '@/components/portfolio/DividendTracker';
-import { CorrelationMatrix } from '@/components/portfolio/CorrelationMatrix';
-import { PortfolioRiskResult } from '@/lib/mcp/types';
-import { Loader2, AlertCircle, Plus, Trash2 } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { RiskDashboard } from "@/components/portfolio/RiskDashboard";
+import { DividendTracker } from "@/components/portfolio/DividendTracker";
+import { CorrelationMatrix } from "@/components/portfolio/CorrelationMatrix";
+import { PortfolioRiskResult } from "@/lib/mcp/types";
+import { Loader2, AlertCircle, Plus, Trash2 } from "lucide-react";
 
 interface Position {
   symbol: string;
@@ -18,18 +24,18 @@ interface Position {
 
 export default function PortfolioPage() {
   const [positions, setPositions] = useState<Position[]>([
-    { symbol: 'AAPL', shares: 100, entry_price: 150 },
-    { symbol: 'MSFT', shares: 50, entry_price: 300 },
-    { symbol: 'GOOGL', shares: 25, entry_price: 140 },
+    { symbol: "AAPL", shares: 100, entry_price: 150 },
+    { symbol: "MSFT", shares: 50, entry_price: 300 },
+    { symbol: "GOOGL", shares: 25, entry_price: 140 },
   ]);
 
   const [riskData, setRiskData] = useState<PortfolioRiskResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [newSymbol, setNewSymbol] = useState('');
-  const [newShares, setNewShares] = useState('');
-  const [newPrice, setNewPrice] = useState('');
+  const [newSymbol, setNewSymbol] = useState("");
+  const [newShares, setNewShares] = useState("");
+  const [newPrice, setNewPrice] = useState("");
 
   const fetchRiskAssessment = async () => {
     if (positions.length === 0) {
@@ -41,20 +47,20 @@ export default function PortfolioPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/mcp/portfolio-risk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/mcp/portfolio-risk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ positions }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to calculate portfolio risk');
+        throw new Error("Failed to calculate portfolio risk");
       }
 
       const data = await response.json();
       setRiskData(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      setError(err instanceof Error ? err.message : "Unknown error occurred");
     } finally {
       setLoading(false);
     }
@@ -66,7 +72,7 @@ export default function PortfolioPage() {
 
   const handleAddPosition = () => {
     if (!newSymbol.trim() || !newShares || !newPrice) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
 
@@ -77,9 +83,9 @@ export default function PortfolioPage() {
     };
 
     setPositions([...positions, newPosition]);
-    setNewSymbol('');
-    setNewShares('');
-    setNewPrice('');
+    setNewSymbol("");
+    setNewShares("");
+    setNewPrice("");
     setError(null);
   };
 
@@ -92,7 +98,8 @@ export default function PortfolioPage() {
       <div>
         <h1 className="text-3xl font-bold mb-2">Portfolio Risk Dashboard</h1>
         <p className="text-muted-foreground">
-          Monitor your aggregate portfolio risk, sector concentration, and position-level metrics.
+          Monitor your aggregate portfolio risk, sector concentration, and
+          position-level metrics.
         </p>
       </div>
 
@@ -135,16 +142,22 @@ export default function PortfolioPage() {
       {/* Current positions */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Open Positions ({positions.length})</CardTitle>
+          <CardTitle className="text-base">
+            Open Positions ({positions.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {positions.map((position) => (
-              <div key={position.symbol} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+              <div
+                key={position.symbol}
+                className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+              >
                 <div>
                   <p className="font-semibold">{position.symbol}</p>
                   <p className="text-xs text-muted-foreground">
-                    {position.shares} shares @ ${position.entry_price.toFixed(2)}
+                    {position.shares} shares @ $
+                    {position.entry_price.toFixed(2)}
                   </p>
                 </div>
                 <Button

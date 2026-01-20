@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { SELECTORS } from '../constants/selectors';
+import { Page, Locator } from "@playwright/test";
+import { SELECTORS } from "../constants/selectors";
 
 /**
  * Page Object Model for Analysis feature page
@@ -27,9 +27,9 @@ export class AnalyzePage {
   /**
    * Navigate to analysis page with optional symbol
    */
-  async goto(symbol: string = 'AAPL'): Promise<void> {
+  async goto(symbol: string = "AAPL"): Promise<void> {
     await this.page.goto(`/analyze/${symbol}`);
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -45,7 +45,7 @@ export class AnalyzePage {
    * Wait for analysis results to load
    */
   async waitForResults(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
 
     // Wait for either trade plans or error message
     await this.page.waitForSelector(
@@ -65,7 +65,9 @@ export class AnalyzePage {
    * Get all visible timeframes
    */
   async getVisibleTimeframes(): Promise<string[]> {
-    const timeframeButtons = await this.timeframeSelector.locator('button').all();
+    const timeframeButtons = await this.timeframeSelector
+      .locator("button")
+      .all();
     const visible = [];
 
     for (const button of timeframeButtons) {

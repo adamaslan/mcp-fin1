@@ -1,9 +1,9 @@
-import { test as base, Page } from '@playwright/test';
-import { AuthHelper } from '../helpers/auth-helper';
-import fs from 'fs';
-import path from 'path';
+import { test as base, Page } from "@playwright/test";
+import { AuthHelper } from "../helpers/auth-helper";
+import fs from "fs";
+import path from "path";
 
-const STORAGE_STATE_PATH = process.env.STORAGE_STATE || '.auth/user.json';
+const STORAGE_STATE_PATH = process.env.STORAGE_STATE || ".auth/user.json";
 
 /**
  * Extended test fixture with authenticated user
@@ -46,7 +46,9 @@ export const test = base.extend<{
       const testPassword = process.env.TEST_USER_PASSWORD;
 
       if (!testEmail || !testPassword) {
-        throw new Error('TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables are required');
+        throw new Error(
+          "TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables are required",
+        );
       }
 
       try {
@@ -54,10 +56,10 @@ export const test = base.extend<{
       } catch (error) {
         throw new Error(
           `Failed to authenticate test user. Ensure:\n` +
-          `1. TEST_USER_EMAIL and TEST_USER_PASSWORD are set in .env.test\n` +
-          `2. Test user exists in Clerk Dashboard\n` +
-          `3. Test user has 'free' tier set in public metadata\n` +
-          `Error: ${error}`,
+            `1. TEST_USER_EMAIL and TEST_USER_PASSWORD are set in .env.test\n` +
+            `2. Test user exists in Clerk Dashboard\n` +
+            `3. Test user has 'free' tier set in public metadata\n` +
+            `Error: ${error}`,
         );
       }
 
@@ -86,4 +88,4 @@ export const test = base.extend<{
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";

@@ -5,7 +5,15 @@
     "displayName": "Clerk Authentication Pages",
     "description": "Creates production-ready sign-up and sign-in pages for Next.js using Clerk with full design system integration",
     "category": "authentication",
-    "tags": ["clerk", "nextjs", "authentication", "auth", "sign-up", "sign-in", "tailwind"],
+    "tags": [
+      "clerk",
+      "nextjs",
+      "authentication",
+      "auth",
+      "sign-up",
+      "sign-in",
+      "tailwind"
+    ],
 
     "triggers": [
       "create clerk sign-up page",
@@ -162,11 +170,7 @@
           "import { Button } from '@/components/ui/button';",
           "import Link from 'next/link';"
         ],
-        "features": [
-          "sticky-header",
-          "conditional-auth-buttons",
-          "user-menu"
-        ]
+        "features": ["sticky-header", "conditional-auth-buttons", "user-menu"]
       }
     },
 
@@ -386,7 +390,10 @@
         },
         {
           "issue": "Styles not applying",
-          "symptoms": ["Clerk form looks unstyled", "Default Clerk styling showing"],
+          "symptoms": [
+            "Clerk form looks unstyled",
+            "Default Clerk styling showing"
+          ],
           "solution": "Check that CSS variables are defined in globals.css",
           "severity": "medium"
         },

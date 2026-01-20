@@ -1,6 +1,6 @@
-import { Page } from '@playwright/test';
-import { TIER_LIMITS, TierLimits, UserTier } from '../constants/tier-limits';
-import { SELECTORS } from '../constants/selectors';
+import { Page } from "@playwright/test";
+import { TIER_LIMITS, TierLimits, UserTier } from "../constants/tier-limits";
+import { SELECTORS } from "../constants/selectors";
 
 /**
  * Helper class for tier-related testing
@@ -15,17 +15,19 @@ export class TierHelper {
    */
   async getCurrentTier(): Promise<UserTier> {
     try {
-      const tierText = await this.page.locator(SELECTORS.SIDEBAR.TIER_BADGE).textContent();
+      const tierText = await this.page
+        .locator(SELECTORS.SIDEBAR.TIER_BADGE)
+        .textContent();
 
       if (!tierText) {
-        throw new Error('Tier badge not found');
+        throw new Error("Tier badge not found");
       }
 
       const match = tierText.match(/Tier: (\w+)/i);
-      const tier = (match ? match[1].toLowerCase() : 'free') as UserTier;
+      const tier = (match ? match[1].toLowerCase() : "free") as UserTier;
 
       // Validate it's a known tier
-      if (!['free', 'pro', 'max'].includes(tier)) {
+      if (!["free", "pro", "max"].includes(tier)) {
         throw new Error(`Unknown tier: ${tier}`);
       }
 
@@ -51,8 +53,8 @@ export class TierHelper {
     const link = this.page.locator(`a:has-text("${featureName}")`);
 
     try {
-      const classes = await link.getAttribute('class');
-      return classes?.includes('opacity-50') || false;
+      const classes = await link.getAttribute("class");
+      return classes?.includes("opacity-50") || false;
     } catch {
       return false;
     }
@@ -64,7 +66,9 @@ export class TierHelper {
    */
   async hasTierGate(): Promise<boolean> {
     try {
-      return await this.page.locator(SELECTORS.TIER_GATE.UPGRADE_PROMPT).isVisible();
+      return await this.page
+        .locator(SELECTORS.TIER_GATE.UPGRADE_PROMPT)
+        .isVisible();
     } catch {
       return false;
     }
@@ -78,7 +82,7 @@ export class TierHelper {
     try {
       // Try to find the universe option
       const option = this.page.locator(`[value="${universe}"]`);
-      const disabled = await option.getAttribute('disabled');
+      const disabled = await option.getAttribute("disabled");
 
       return disabled !== null;
     } catch {
@@ -93,7 +97,7 @@ export class TierHelper {
   async isTimeframeAvailable(timeframe: string): Promise<boolean> {
     try {
       const button = this.page.locator(`button:has-text("${timeframe}")`);
-      const disabled = await button.getAttribute('disabled');
+      const disabled = await button.getAttribute("disabled");
 
       return disabled === null; // If not disabled, it's available
     } catch {
@@ -120,7 +124,9 @@ export class TierHelper {
   /**
    * Verify all expected timeframes are available
    */
-  async verifyTimeframesAvailable(expectedTimeframes: string[]): Promise<boolean> {
+  async verifyTimeframesAvailable(
+    expectedTimeframes: string[],
+  ): Promise<boolean> {
     const available = await this.getAvailableTimeframes();
 
     return expectedTimeframes.every((tf) => available.includes(tf));
@@ -129,7 +135,9 @@ export class TierHelper {
   /**
    * Verify all expected universes are available
    */
-  async verifyUniversesAvailable(expectedUniverses: string[]): Promise<boolean> {
+  async verifyUniversesAvailable(
+    expectedUniverses: string[],
+  ): Promise<boolean> {
     const available = await this.getAvailableUniverses();
 
     return expectedUniverses.every((u) => available.includes(u));

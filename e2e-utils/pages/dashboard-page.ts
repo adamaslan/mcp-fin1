@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { SELECTORS } from '../constants/selectors';
+import { Page, Locator } from "@playwright/test";
+import { SELECTORS } from "../constants/selectors";
 
 /**
  * Page Object Model for Dashboard home page
@@ -19,14 +19,14 @@ export class DashboardPage {
     this.analyzeCard = page.locator(SELECTORS.DASHBOARD.ANALYZE_CARD);
     this.scannerCard = page.locator(SELECTORS.DASHBOARD.SCANNER_CARD);
     this.learnCard = page.locator(SELECTORS.DASHBOARD.LEARN_CARD);
-    this.gettingStartedSection = page.locator('text=Getting Started');
+    this.gettingStartedSection = page.locator("text=Getting Started");
   }
 
   /**
    * Navigate to dashboard home page
    */
   async goto(): Promise<void> {
-    await this.page.goto('/dashboard');
+    await this.page.goto("/dashboard");
     await this.welcomeHeader.waitFor({ timeout: 10000 });
   }
 
@@ -35,7 +35,7 @@ export class DashboardPage {
    */
   async clickAnalyze(): Promise<void> {
     await this.analyzeCard.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -43,7 +43,7 @@ export class DashboardPage {
    */
   async clickScanner(): Promise<void> {
     await this.scannerCard.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -51,7 +51,7 @@ export class DashboardPage {
    */
   async clickLearn(): Promise<void> {
     await this.learnCard.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**

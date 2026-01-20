@@ -1,9 +1,13 @@
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { ThemeToggle } from '@/components/dashboard/ThemeToggle';
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ThemeToggle } from "@/components/dashboard/ThemeToggle";
 
-export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+export default function MarketingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation header */}
@@ -14,10 +18,16 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           </Link>
 
           <nav className="hidden md:flex gap-8 items-center">
-            <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link
+              href="/"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
               Home
             </Link>
-            <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link
+              href="/pricing"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
               Pricing
             </Link>
           </nav>

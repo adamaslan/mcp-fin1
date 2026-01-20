@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { X, Keyboard } from 'lucide-react';
+import { useState, useEffect, useCallback } from "react";
+import { X, Keyboard } from "lucide-react";
 
 interface ShortcutGroup {
   title: string;
@@ -10,33 +10,33 @@ interface ShortcutGroup {
 
 const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
-    title: 'Navigation',
+    title: "Navigation",
     shortcuts: [
-      { keys: ['⌘', 'K'], description: 'Open command palette' },
-      { keys: ['G', 'H'], description: 'Go to Dashboard (Home)' },
-      { keys: ['G', 'S'], description: 'Go to Scanner' },
-      { keys: ['G', 'P'], description: 'Go to Portfolio' },
-      { keys: ['G', 'W'], description: 'Go to Watchlist' },
-      { keys: ['G', 'J'], description: 'Go to Journal' },
-      { keys: ['G', 'A'], description: 'Go to Alerts' },
+      { keys: ["⌘", "K"], description: "Open command palette" },
+      { keys: ["G", "H"], description: "Go to Dashboard (Home)" },
+      { keys: ["G", "S"], description: "Go to Scanner" },
+      { keys: ["G", "P"], description: "Go to Portfolio" },
+      { keys: ["G", "W"], description: "Go to Watchlist" },
+      { keys: ["G", "J"], description: "Go to Journal" },
+      { keys: ["G", "A"], description: "Go to Alerts" },
     ],
   },
   {
-    title: 'Actions',
+    title: "Actions",
     shortcuts: [
-      { keys: ['/'], description: 'Focus search / analyze symbol' },
-      { keys: ['N'], description: 'New analysis' },
-      { keys: ['R'], description: 'Refresh data' },
-      { keys: ['?'], description: 'Show keyboard shortcuts' },
+      { keys: ["/"], description: "Focus search / analyze symbol" },
+      { keys: ["N"], description: "New analysis" },
+      { keys: ["R"], description: "Refresh data" },
+      { keys: ["?"], description: "Show keyboard shortcuts" },
     ],
   },
   {
-    title: 'Lists & Tables',
+    title: "Lists & Tables",
     shortcuts: [
-      { keys: ['J'], description: 'Move down' },
-      { keys: ['K'], description: 'Move up' },
-      { keys: ['Enter'], description: 'Open selected item' },
-      { keys: ['Esc'], description: 'Close dialog / deselect' },
+      { keys: ["J"], description: "Move down" },
+      { keys: ["K"], description: "Move up" },
+      { keys: ["Enter"], description: "Open selected item" },
+      { keys: ["Esc"], description: "Close dialog / deselect" },
     ],
   },
 ];
@@ -44,25 +44,28 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
 export function KeyboardShortcutsDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // Open with ? key (shift + /)
-    if (e.key === '?' && !e.metaKey && !e.ctrlKey) {
-      const target = e.target as HTMLElement;
-      if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
-        e.preventDefault();
-        setIsOpen(true);
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      // Open with ? key (shift + /)
+      if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") {
+          e.preventDefault();
+          setIsOpen(true);
+        }
       }
-    }
 
-    // Close with Escape
-    if (e.key === 'Escape' && isOpen) {
-      setIsOpen(false);
-    }
-  }, [isOpen]);
+      // Close with Escape
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    },
+    [isOpen],
+  );
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
   if (!isOpen) return null;
@@ -113,7 +116,9 @@ export function KeyboardShortcutsDialog() {
                               {key}
                             </kbd>
                             {i < shortcut.keys.length - 1 && (
-                              <span className="text-muted-foreground mx-1">+</span>
+                              <span className="text-muted-foreground mx-1">
+                                +
+                              </span>
                             )}
                           </span>
                         ))}
@@ -128,8 +133,9 @@ export function KeyboardShortcutsDialog() {
 
         {/* Footer */}
         <div className="px-6 py-3 border-t bg-muted/50 text-center text-sm text-muted-foreground">
-          Press <kbd className="px-1.5 py-0.5 bg-background rounded text-xs">?</kbd> anytime to
-          show this dialog
+          Press{" "}
+          <kbd className="px-1.5 py-0.5 bg-background rounded text-xs">?</kbd>{" "}
+          anytime to show this dialog
         </div>
       </div>
     </div>
@@ -143,37 +149,37 @@ export function useKeyboardNavigation() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
         return;
       }
 
       // Handle 'g' prefix for navigation
-      if (e.key === 'g' && !pendingKey) {
-        setPendingKey('g');
+      if (e.key === "g" && !pendingKey) {
+        setPendingKey("g");
         return;
       }
 
       // Handle second key after 'g'
-      if (pendingKey === 'g') {
+      if (pendingKey === "g") {
         setPendingKey(null);
         switch (e.key.toLowerCase()) {
-          case 'h':
-            window.location.href = '/dashboard';
+          case "h":
+            window.location.href = "/dashboard";
             break;
-          case 's':
-            window.location.href = '/scanner';
+          case "s":
+            window.location.href = "/scanner";
             break;
-          case 'p':
-            window.location.href = '/portfolio';
+          case "p":
+            window.location.href = "/portfolio";
             break;
-          case 'w':
-            window.location.href = '/watchlist';
+          case "w":
+            window.location.href = "/watchlist";
             break;
-          case 'j':
-            window.location.href = '/journal';
+          case "j":
+            window.location.href = "/journal";
             break;
-          case 'a':
-            window.location.href = '/alerts';
+          case "a":
+            window.location.href = "/alerts";
             break;
         }
         return;
@@ -185,8 +191,8 @@ export function useKeyboardNavigation() {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [pendingKey]);
 
   // Reset pending key after 1 second

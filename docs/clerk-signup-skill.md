@@ -1,10 +1,13 @@
 # Claude Skill: Clerk Sign-Up Page Implementation
 
 ## Overview
+
 This skill provides a reusable pattern for implementing authentication pages (sign-up, sign-in) in Next.js applications using Clerk with custom styling that matches your design system.
 
 ## Skill Purpose
+
 Create fully-styled, production-ready authentication pages that:
+
 - Use Clerk's secure hosted components
 - Match your existing design system (Tailwind CSS)
 - Support dark mode and theme switching
@@ -12,6 +15,7 @@ Create fully-styled, production-ready authentication pages that:
 - Integrate seamlessly with your Next.js routing
 
 ## Prerequisites
+
 - Next.js 13+ with App Router
 - Clerk installed and configured: `npm install @clerk/nextjs`
 - Tailwind CSS configured with design tokens
@@ -20,6 +24,7 @@ Create fully-styled, production-ready authentication pages that:
 ## Implementation Pattern
 
 ### 1. Project Structure
+
 ```
 src/app/
 ├── (marketing)/          # Marketing/public pages layout group
@@ -32,14 +37,19 @@ src/app/
 ```
 
 ### 2. Root Layout Setup
+
 Ensure ClerkProvider wraps your entire app:
 
 ```tsx
 // src/app/layout.tsx
-import { ClerkProvider } from '@clerk/nextjs';
-import { ThemeProvider } from 'next-themes';
+import { ClerkProvider } from "@clerk/nextjs";
+import { ThemeProvider } from "next-themes";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
@@ -47,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
-            themes={['light', 'dark', 'dark-oled']}
+            themes={["light", "dark", "dark-oled"]}
             enableSystem
             disableTransitionOnChange
           >
@@ -61,15 +71,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ```
 
 ### 3. Marketing Layout with Navigation
+
 Create a layout that includes auth navigation:
 
 ```tsx
 // src/app/(marketing)/layout.tsx
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+export default function MarketingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur">
@@ -115,10 +130,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 
 ```tsx
 // src/app/(marketing)/sign-up/page.tsx
-'use client';
+"use client";
 
-import { SignUp } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+import { SignUp } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 
 export default function SignUpPage() {
   // Prevent hydration mismatch with theme switching
@@ -138,9 +153,7 @@ export default function SignUpPage() {
         {/* Page Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold">Create your account</h1>
-          <p className="text-muted-foreground mt-2">
-            Start your journey today
-          </p>
+          <p className="text-muted-foreground mt-2">Start your journey today</p>
         </div>
 
         {/* Clerk Sign-Up Component */}
@@ -150,27 +163,27 @@ export default function SignUpPage() {
           appearance={{
             elements: {
               // Container
-              rootBox: 'w-full',
-              card: 'bg-card border border-border rounded-lg shadow-sm',
+              rootBox: "w-full",
+              card: "bg-card border border-border rounded-lg shadow-sm",
 
               // Primary Button
               formButtonPrimary:
-                'bg-primary text-primary-foreground hover:bg-primary/90 rounded-md h-10 text-sm font-medium',
+                "bg-primary text-primary-foreground hover:bg-primary/90 rounded-md h-10 text-sm font-medium",
 
               // Input Fields
               formFieldInput:
-                'bg-input border border-input rounded-md h-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:focus:ring-offset-background',
+                "bg-input border border-input rounded-md h-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:focus:ring-offset-background",
 
               // Links
               footerActionLink:
-                'text-primary hover:text-primary/90 hover:underline',
+                "text-primary hover:text-primary/90 hover:underline",
 
               // Divider (for OAuth options)
-              dividerLine: 'bg-border',
-              dividerText: 'text-muted-foreground text-sm',
+              dividerLine: "bg-border",
+              dividerText: "text-muted-foreground text-sm",
 
               // Labels
-              formFieldLabel: 'text-sm font-medium text-foreground',
+              formFieldLabel: "text-sm font-medium text-foreground",
             },
           }}
         />
@@ -184,10 +197,10 @@ export default function SignUpPage() {
 
 ```tsx
 // src/app/(marketing)/sign-in/page.tsx
-'use client';
+"use client";
 
-import { SignIn } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+import { SignIn } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 
 export default function SignInPage() {
   const [mounted, setMounted] = useState(false);
@@ -205,9 +218,7 @@ export default function SignInPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold">Welcome back</h1>
-          <p className="text-muted-foreground mt-2">
-            Sign in to your account
-          </p>
+          <p className="text-muted-foreground mt-2">Sign in to your account</p>
         </div>
 
         <SignIn
@@ -215,17 +226,17 @@ export default function SignInPage() {
           signUpUrl="/sign-up"
           appearance={{
             elements: {
-              rootBox: 'w-full',
-              card: 'bg-card border border-border rounded-lg shadow-sm',
+              rootBox: "w-full",
+              card: "bg-card border border-border rounded-lg shadow-sm",
               formButtonPrimary:
-                'bg-primary text-primary-foreground hover:bg-primary/90 rounded-md h-10 text-sm font-medium',
+                "bg-primary text-primary-foreground hover:bg-primary/90 rounded-md h-10 text-sm font-medium",
               formFieldInput:
-                'bg-input border border-input rounded-md h-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:focus:ring-offset-background',
+                "bg-input border border-input rounded-md h-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:focus:ring-offset-background",
               footerActionLink:
-                'text-primary hover:text-primary/90 hover:underline',
-              dividerLine: 'bg-border',
-              dividerText: 'text-muted-foreground text-sm',
-              formFieldLabel: 'text-sm font-medium text-foreground',
+                "text-primary hover:text-primary/90 hover:underline",
+              dividerLine: "bg-border",
+              dividerText: "text-muted-foreground text-sm",
+              formFieldLabel: "text-sm font-medium text-foreground",
             },
           }}
         />
@@ -241,14 +252,14 @@ Ensure Clerk middleware protects your routes:
 
 ```tsx
 // src/middleware.ts
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/pricing(.*)',
-  '/api/webhooks(.*)',
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/pricing(.*)",
+  "/api/webhooks(.*)",
 ]);
 
 export default clerkMiddleware((auth, request) => {
@@ -259,8 +270,8 @@ export default clerkMiddleware((auth, request) => {
 
 export const config = {
   matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
   ],
 };
 ```
@@ -268,6 +279,7 @@ export const config = {
 ## Design System Integration
 
 ### Required CSS Variables
+
 Ensure your `globals.css` has these design tokens:
 
 ```css
@@ -341,6 +353,7 @@ appearance={{
 ## Advanced Customization
 
 ### 1. Custom OAuth Providers
+
 Configure in Clerk Dashboard and they'll automatically appear in the form.
 
 ### 2. Additional Styling Options
@@ -366,7 +379,7 @@ appearance={{
 <SignUp
   appearance={{
     elements: {
-      spinner: 'border-primary',
+      spinner: "border-primary",
       // ... other styles
     },
   }}
@@ -377,9 +390,11 @@ appearance={{
 ## Common Patterns
 
 ### Pattern 1: Center-Aligned Auth Pages
+
 Best for dedicated auth flows (used in the template above).
 
 ### Pattern 2: Side-by-Side Layout
+
 For marketing-heavy auth pages:
 
 ```tsx
@@ -394,11 +409,12 @@ For marketing-heavy auth pages:
 ```
 
 ### Pattern 3: Modal/Dialog Auth
+
 For inline authentication flows:
 
 ```tsx
-import { SignUp } from '@clerk/nextjs';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { SignUp } from "@clerk/nextjs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export function SignUpModal({ open, onOpenChange }) {
   return (
@@ -406,7 +422,11 @@ export function SignUpModal({ open, onOpenChange }) {
       <DialogContent className="max-w-md">
         <SignUp
           redirectUrl="/dashboard"
-          appearance={{ /* ... */ }}
+          appearance={
+            {
+              /* ... */
+            }
+          }
         />
       </DialogContent>
     </Dialog>
@@ -446,22 +466,29 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 ## Troubleshooting
 
 ### Issue: Hydration Mismatch
+
 **Solution:** Use the `mounted` state pattern shown in the template.
 
 ### Issue: Styles Not Applying
+
 **Solution:**
+
 1. Check that CSS variables are defined in globals.css
 2. Verify Tailwind is processing the auth page files
 3. Use browser DevTools to inspect applied classes
 
 ### Issue: Redirect Not Working
+
 **Solution:**
+
 1. Check `redirectUrl` prop is set correctly
 2. Verify middleware allows access to the redirect URL
 3. Check Clerk Dashboard URL settings
 
 ### Issue: Dark Mode Not Working
+
 **Solution:**
+
 1. Ensure ThemeProvider wraps the app
 2. Verify `suppressHydrationWarning` on `<html>` tag
 3. Check CSS variables are defined for `.dark` class
@@ -472,7 +499,7 @@ To add custom fields or user metadata during sign-up:
 
 ```tsx
 // Use Clerk's user profile component instead
-import { UserProfile } from '@clerk/nextjs';
+import { UserProfile } from "@clerk/nextjs";
 
 // Or handle in a webhook after user creation
 // See Clerk docs: https://clerk.com/docs/users/sync-data
@@ -507,6 +534,7 @@ To implement this skill in a new project:
 ## Example Projects
 
 This pattern is used in:
+
 - MCP Finance (NextJS SaaS with Clerk auth)
 - [Add your own implementations here]
 

@@ -1,37 +1,37 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { stripe, STRIPE_PRICES } from '@/lib/stripe';
-import type { CheckoutSessionRequest } from '@/lib/stripe';
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { stripe, STRIPE_PRICES } from "@/lib/stripe";
+import type { CheckoutSessionRequest } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   try {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await currentUser();
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const body: CheckoutSessionRequest = await request.json();
     const { tier, interval } = body;
 
     // Validate tier
-    if (!['pro', 'max'].includes(tier)) {
+    if (!["pro", "max"].includes(tier)) {
       return NextResponse.json(
         { error: 'Invalid tier. Must be "pro" or "max"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validate interval
-    if (!['monthly', 'yearly'].includes(interval)) {
+    if (!["monthly", "yearly"].includes(interval)) {
       return NextResponse.json(
         { error: 'Invalid interval. Must be "monthly" or "yearly"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,8 +39,8 @@ export async function POST(request: Request) {
     const priceId = STRIPE_PRICES[tier][interval];
     if (!priceId) {
       return NextResponse.json(
-        { error: 'Price not configured. Please contact support.' },
-        { status: 500 }
+        { error: "Price not configured. Please contact support." },
+        { status: 500 },
       );
     }
 
@@ -60,16 +60,17 @@ export async function POST(request: Request) {
     }
 
     // Build success and cancel URLs
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const successUrl =
       body.successUrl || `${baseUrl}/dashboard?subscription=success`;
-    const cancelUrl = body.cancelUrl || `${baseUrl}/pricing?subscription=canceled`;
+    const cancelUrl =
+      body.cancelUrl || `${baseUrl}/pricing?subscription=canceled`;
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      mode: 'subscription',
-      payment_method_types: ['card'],
+      mode: "subscription",
+      payment_method_types: ["card"],
       line_items: [
         {
           price: priceId,
@@ -89,7 +90,7 @@ export async function POST(request: Request) {
         tier,
       },
       allow_promotion_codes: true,
-      billing_address_collection: 'auto',
+      billing_address_collection: "auto",
     });
 
     return NextResponse.json({
@@ -97,10 +98,10 @@ export async function POST(request: Request) {
       url: session.url,
     });
   } catch (error) {
-    console.error('Checkout session error:', error);
+    console.error("Checkout session error:", error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
+      { error: "Failed to create checkout session" },
+      { status: 500 },
     );
   }
 }

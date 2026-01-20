@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Target,
   Plus,
@@ -15,9 +21,9 @@ import {
   BellOff,
   ArrowUp,
   ArrowDown,
-} from 'lucide-react';
+} from "lucide-react";
 
-type AlertDirection = 'above' | 'below';
+type AlertDirection = "above" | "below";
 
 interface PriceAlert {
   id: string;
@@ -33,32 +39,32 @@ interface PriceAlert {
 // Mock data
 const MOCK_ALERTS: PriceAlert[] = [
   {
-    id: '1',
-    symbol: 'AAPL',
+    id: "1",
+    symbol: "AAPL",
     targetPrice: 200,
-    direction: 'above',
+    direction: "above",
     currentPrice: 185.42,
     enabled: true,
-    createdAt: '2024-01-10',
+    createdAt: "2024-01-10",
   },
   {
-    id: '2',
-    symbol: 'NVDA',
+    id: "2",
+    symbol: "NVDA",
     targetPrice: 800,
-    direction: 'below',
+    direction: "below",
     currentPrice: 875.32,
     enabled: true,
-    createdAt: '2024-01-08',
+    createdAt: "2024-01-08",
   },
   {
-    id: '3',
-    symbol: 'TSLA',
+    id: "3",
+    symbol: "TSLA",
     targetPrice: 250,
-    direction: 'above',
+    direction: "above",
     currentPrice: 242.18,
     enabled: false,
-    createdAt: '2024-01-05',
-    triggeredAt: '2024-01-09',
+    createdAt: "2024-01-05",
+    triggeredAt: "2024-01-09",
   },
 ];
 
@@ -66,18 +72,20 @@ interface PriceTargetAlertsProps {
   alerts?: PriceAlert[];
 }
 
-export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsProps) {
+export function PriceTargetAlerts({
+  alerts = MOCK_ALERTS,
+}: PriceTargetAlertsProps) {
   const [alertsList, setAlertsList] = useState(alerts);
   const [isAdding, setIsAdding] = useState(false);
   const [newAlert, setNewAlert] = useState({
-    symbol: '',
-    targetPrice: '',
-    direction: 'above' as AlertDirection,
+    symbol: "",
+    targetPrice: "",
+    direction: "above" as AlertDirection,
   });
 
   const handleToggle = (id: string) => {
     setAlertsList((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, enabled: !a.enabled } : a))
+      prev.map((a) => (a.id === id ? { ...a, enabled: !a.enabled } : a)),
     );
   };
 
@@ -95,11 +103,11 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
       direction: newAlert.direction,
       currentPrice: 100 + Math.random() * 100, // Mock current price
       enabled: true,
-      createdAt: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString().split("T")[0],
     };
 
     setAlertsList((prev) => [...prev, alert]);
-    setNewAlert({ symbol: '', targetPrice: '', direction: 'above' });
+    setNewAlert({ symbol: "", targetPrice: "", direction: "above" });
     setIsAdding(false);
   };
 
@@ -144,31 +152,40 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
                   placeholder="AAPL"
                   value={newAlert.symbol}
                   onChange={(e) =>
-                    setNewAlert((p) => ({ ...p, symbol: e.target.value.toUpperCase() }))
+                    setNewAlert((p) => ({
+                      ...p,
+                      symbol: e.target.value.toUpperCase(),
+                    }))
                   }
                   maxLength={5}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Direction</label>
+                <label className="text-sm font-medium mb-1 block">
+                  Direction
+                </label>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setNewAlert((p) => ({ ...p, direction: 'above' }))}
+                    onClick={() =>
+                      setNewAlert((p) => ({ ...p, direction: "above" }))
+                    }
                     className={`flex items-center gap-1 px-3 py-2 rounded border flex-1 ${
-                      newAlert.direction === 'above'
-                        ? 'border-green-500 bg-green-500/10 text-green-500'
-                        : 'border-muted hover:border-green-500/50'
+                      newAlert.direction === "above"
+                        ? "border-green-500 bg-green-500/10 text-green-500"
+                        : "border-muted hover:border-green-500/50"
                     }`}
                   >
                     <ArrowUp className="h-4 w-4" />
                     <span className="text-sm">Above</span>
                   </button>
                   <button
-                    onClick={() => setNewAlert((p) => ({ ...p, direction: 'below' }))}
+                    onClick={() =>
+                      setNewAlert((p) => ({ ...p, direction: "below" }))
+                    }
                     className={`flex items-center gap-1 px-3 py-2 rounded border flex-1 ${
-                      newAlert.direction === 'below'
-                        ? 'border-red-500 bg-red-500/10 text-red-500'
-                        : 'border-muted hover:border-red-500/50'
+                      newAlert.direction === "below"
+                        ? "border-red-500 bg-red-500/10 text-red-500"
+                        : "border-muted hover:border-red-500/50"
                     }`}
                   >
                     <ArrowDown className="h-4 w-4" />
@@ -177,12 +194,16 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Target Price</label>
+                <label className="text-sm font-medium mb-1 block">
+                  Target Price
+                </label>
                 <Input
                   type="number"
                   placeholder="200.00"
                   value={newAlert.targetPrice}
-                  onChange={(e) => setNewAlert((p) => ({ ...p, targetPrice: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAlert((p) => ({ ...p, targetPrice: e.target.value }))
+                  }
                   step="0.01"
                   min="0"
                 />
@@ -196,7 +217,11 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
                   size="sm"
                   onClick={() => {
                     setIsAdding(false);
-                    setNewAlert({ symbol: '', targetPrice: '', direction: 'above' });
+                    setNewAlert({
+                      symbol: "",
+                      targetPrice: "",
+                      direction: "above",
+                    });
                   }}
                 >
                   Cancel
@@ -211,7 +236,9 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
           <div className="text-center py-8 text-muted-foreground">
             <Target className="h-12 w-12 mx-auto mb-4 opacity-20" />
             <p>No price alerts set.</p>
-            <p className="text-sm">Create an alert to get notified when a stock hits your target.</p>
+            <p className="text-sm">
+              Create an alert to get notified when a stock hits your target.
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -224,8 +251,10 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
                 <div
                   key={alert.id}
                   className={`p-4 rounded-lg border ${
-                    close && alert.enabled ? 'border-yellow-500/50 bg-yellow-500/5' : ''
-                  } ${!alert.enabled ? 'opacity-60' : ''}`}
+                    close && alert.enabled
+                      ? "border-yellow-500/50 bg-yellow-500/5"
+                      : ""
+                  } ${!alert.enabled ? "opacity-60" : ""}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -239,32 +268,41 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
 
                       {/* Direction & Target */}
                       <div className="flex items-center gap-2">
-                        {alert.direction === 'above' ? (
-                          <Badge variant="outline" className="text-green-500 border-green-500/50">
+                        {alert.direction === "above" ? (
+                          <Badge
+                            variant="outline"
+                            className="text-green-500 border-green-500/50"
+                          >
                             <TrendingUp className="h-3 w-3 mr-1" />
                             Above
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-red-500 border-red-500/50">
+                          <Badge
+                            variant="outline"
+                            className="text-red-500 border-red-500/50"
+                          >
                             <TrendingDown className="h-3 w-3 mr-1" />
                             Below
                           </Badge>
                         )}
-                        <span className="font-semibold">${alert.targetPrice.toFixed(2)}</span>
+                        <span className="font-semibold">
+                          ${alert.targetPrice.toFixed(2)}
+                        </span>
                       </div>
 
                       {/* Distance */}
                       <div className="text-sm">
                         <span
                           className={
-                            isPositive
-                              ? 'text-green-500'
-                              : 'text-red-500'
+                            isPositive ? "text-green-500" : "text-red-500"
                           }
                         >
-                          {isPositive ? '+' : ''}{distancePercent}%
+                          {isPositive ? "+" : ""}
+                          {distancePercent}%
                         </span>
-                        <span className="text-muted-foreground ml-1">to target</span>
+                        <span className="text-muted-foreground ml-1">
+                          to target
+                        </span>
                       </div>
 
                       {/* Close Warning */}
@@ -315,8 +353,9 @@ export function PriceTargetAlerts({ alerts = MOCK_ALERTS }: PriceTargetAlertsPro
         {/* Info */}
         <div className="p-4 rounded-lg bg-muted text-sm text-muted-foreground">
           <p>
-            <strong>Note:</strong> Alerts are checked every 5 minutes during market hours.
-            You&apos;ll receive notifications via your configured webhook integrations.
+            <strong>Note:</strong> Alerts are checked every 5 minutes during
+            market hours. You&apos;ll receive notifications via your configured
+            webhook integrations.
           </p>
         </div>
       </CardContent>

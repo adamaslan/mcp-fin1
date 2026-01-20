@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useTier } from '@/hooks/useTier';
-import { canAccessTimeframe, TIER_LIMITS } from '@/lib/auth/tiers';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { useTier } from "@/hooks/useTier";
+import { canAccessTimeframe, TIER_LIMITS } from "@/lib/auth/tiers";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface TimeframeSelectorProps {
-  value: 'swing' | 'day' | 'scalp';
-  onChange: (timeframe: 'swing' | 'day' | 'scalp') => void;
+  value: "swing" | "day" | "scalp";
+  onChange: (timeframe: "swing" | "day" | "scalp") => void;
 }
 
 export function TimeframeSelector({ value, onChange }: TimeframeSelectorProps) {
@@ -15,16 +15,16 @@ export function TimeframeSelector({ value, onChange }: TimeframeSelectorProps) {
   const tierLimits = TIER_LIMITS[tier];
 
   const timeframes = [
-    { value: 'swing' as const, label: 'Swing (2-10 days)', available: true },
+    { value: "swing" as const, label: "Swing (2-10 days)", available: true },
     {
-      value: 'day' as const,
-      label: 'Day (Intraday)',
-      available: canAccessTimeframe(tier, 'day'),
+      value: "day" as const,
+      label: "Day (Intraday)",
+      available: canAccessTimeframe(tier, "day"),
     },
     {
-      value: 'scalp' as const,
-      label: 'Scalp (Minutes)',
-      available: canAccessTimeframe(tier, 'scalp'),
+      value: "scalp" as const,
+      label: "Scalp (Minutes)",
+      available: canAccessTimeframe(tier, "scalp"),
     },
   ];
 
@@ -33,14 +33,14 @@ export function TimeframeSelector({ value, onChange }: TimeframeSelectorProps) {
       {timeframes.map((tf) => (
         <Button
           key={tf.value}
-          variant={value === tf.value ? 'default' : 'outline'}
+          variant={value === tf.value ? "default" : "outline"}
           onClick={() => tf.available && onChange(tf.value)}
           disabled={!tf.available}
           className={cn(
-            'relative',
-            !tf.available && 'opacity-50 cursor-not-allowed'
+            "relative",
+            !tf.available && "opacity-50 cursor-not-allowed",
           )}
-          title={!tf.available ? `Available in Pro+ tier` : ''}
+          title={!tf.available ? `Available in Pro+ tier` : ""}
         >
           {tf.label}
           {!tf.available && (

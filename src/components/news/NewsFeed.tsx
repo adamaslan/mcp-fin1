@@ -1,10 +1,23 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Newspaper, ExternalLink, Clock, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Newspaper,
+  ExternalLink,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+} from "lucide-react";
 
-type Sentiment = 'bullish' | 'bearish' | 'neutral';
+type Sentiment = "bullish" | "bearish" | "neutral";
 
 interface NewsItem {
   id: string;
@@ -21,83 +34,93 @@ interface NewsItem {
 // Mock data - in production, fetch from news API
 const MOCK_NEWS: NewsItem[] = [
   {
-    id: '1',
-    title: 'Apple Reports Record Q4 Revenue Driven by iPhone 16 Sales',
+    id: "1",
+    title: "Apple Reports Record Q4 Revenue Driven by iPhone 16 Sales",
     summary:
-      'Apple Inc. announced quarterly revenue of $123.9 billion, up 8% year over year, with strong iPhone and Services growth...',
-    source: 'Reuters',
-    url: '#',
-    publishedAt: '2 hours ago',
-    symbols: ['AAPL'],
-    sentiment: 'bullish',
+      "Apple Inc. announced quarterly revenue of $123.9 billion, up 8% year over year, with strong iPhone and Services growth...",
+    source: "Reuters",
+    url: "#",
+    publishedAt: "2 hours ago",
+    symbols: ["AAPL"],
+    sentiment: "bullish",
   },
   {
-    id: '2',
-    title: 'Fed Officials Signal Patience on Rate Cuts Amid Inflation Concerns',
+    id: "2",
+    title: "Fed Officials Signal Patience on Rate Cuts Amid Inflation Concerns",
     summary:
-      'Federal Reserve officials indicated they are in no rush to cut interest rates, citing persistent inflation pressures...',
-    source: 'Bloomberg',
-    url: '#',
-    publishedAt: '3 hours ago',
-    symbols: ['SPY', 'QQQ'],
-    sentiment: 'bearish',
+      "Federal Reserve officials indicated they are in no rush to cut interest rates, citing persistent inflation pressures...",
+    source: "Bloomberg",
+    url: "#",
+    publishedAt: "3 hours ago",
+    symbols: ["SPY", "QQQ"],
+    sentiment: "bearish",
   },
   {
-    id: '3',
-    title: 'NVIDIA Unveils Next-Gen AI Chips at CES 2026',
+    id: "3",
+    title: "NVIDIA Unveils Next-Gen AI Chips at CES 2026",
     summary:
-      'NVIDIA announced its latest Blackwell Ultra architecture, promising 3x performance improvement for AI workloads...',
-    source: 'CNBC',
-    url: '#',
-    publishedAt: '5 hours ago',
-    symbols: ['NVDA', 'AMD'],
-    sentiment: 'bullish',
+      "NVIDIA announced its latest Blackwell Ultra architecture, promising 3x performance improvement for AI workloads...",
+    source: "CNBC",
+    url: "#",
+    publishedAt: "5 hours ago",
+    symbols: ["NVDA", "AMD"],
+    sentiment: "bullish",
   },
   {
-    id: '4',
-    title: 'Tesla Deliveries Miss Estimates as Competition Intensifies',
+    id: "4",
+    title: "Tesla Deliveries Miss Estimates as Competition Intensifies",
     summary:
-      'Tesla reported Q4 deliveries of 484,507 vehicles, below analyst expectations of 490,000, as Chinese rivals gain market share...',
-    source: 'Wall Street Journal',
-    url: '#',
-    publishedAt: '6 hours ago',
-    symbols: ['TSLA'],
-    sentiment: 'bearish',
+      "Tesla reported Q4 deliveries of 484,507 vehicles, below analyst expectations of 490,000, as Chinese rivals gain market share...",
+    source: "Wall Street Journal",
+    url: "#",
+    publishedAt: "6 hours ago",
+    symbols: ["TSLA"],
+    sentiment: "bearish",
   },
   {
-    id: '5',
-    title: 'Microsoft Cloud Revenue Beats Estimates on AI Demand',
+    id: "5",
+    title: "Microsoft Cloud Revenue Beats Estimates on AI Demand",
     summary:
-      'Microsoft Azure revenue grew 29% year-over-year, exceeding expectations as enterprise AI adoption accelerates...',
-    source: 'Financial Times',
-    url: '#',
-    publishedAt: '8 hours ago',
-    symbols: ['MSFT'],
-    sentiment: 'bullish',
+      "Microsoft Azure revenue grew 29% year-over-year, exceeding expectations as enterprise AI adoption accelerates...",
+    source: "Financial Times",
+    url: "#",
+    publishedAt: "8 hours ago",
+    symbols: ["MSFT"],
+    sentiment: "bullish",
   },
   {
-    id: '6',
-    title: 'Oil Prices Stabilize as OPEC+ Maintains Production Cuts',
+    id: "6",
+    title: "Oil Prices Stabilize as OPEC+ Maintains Production Cuts",
     summary:
-      'Crude oil prices held steady around $75/barrel after OPEC+ confirmed it will maintain current production levels through Q1...',
-    source: 'Reuters',
-    url: '#',
-    publishedAt: '10 hours ago',
-    symbols: ['XLE', 'USO'],
-    sentiment: 'neutral',
+      "Crude oil prices held steady around $75/barrel after OPEC+ confirmed it will maintain current production levels through Q1...",
+    source: "Reuters",
+    url: "#",
+    publishedAt: "10 hours ago",
+    symbols: ["XLE", "USO"],
+    sentiment: "neutral",
   },
 ];
 
-const SENTIMENT_CONFIG: Record<Sentiment, { icon: React.ReactNode; color: string; label: string }> =
-  {
-    bullish: { icon: <TrendingUp className="h-4 w-4" />, color: 'text-green-500', label: 'Bullish' },
-    bearish: {
-      icon: <TrendingDown className="h-4 w-4" />,
-      color: 'text-red-500',
-      label: 'Bearish',
-    },
-    neutral: { icon: <Minus className="h-4 w-4" />, color: 'text-gray-500', label: 'Neutral' },
-  };
+const SENTIMENT_CONFIG: Record<
+  Sentiment,
+  { icon: React.ReactNode; color: string; label: string }
+> = {
+  bullish: {
+    icon: <TrendingUp className="h-4 w-4" />,
+    color: "text-green-500",
+    label: "Bullish",
+  },
+  bearish: {
+    icon: <TrendingDown className="h-4 w-4" />,
+    color: "text-red-500",
+    label: "Bearish",
+  },
+  neutral: {
+    icon: <Minus className="h-4 w-4" />,
+    color: "text-gray-500",
+    label: "Neutral",
+  },
+};
 
 interface NewsFeedProps {
   symbols?: string[];
@@ -120,7 +143,9 @@ export function NewsFeed({ symbols, limit = 10 }: NewsFeedProps) {
           Market News
         </CardTitle>
         <CardDescription>
-          {symbols ? `News for ${symbols.join(', ')}` : 'Latest market-moving news'}
+          {symbols
+            ? `News for ${symbols.join(", ")}`
+            : "Latest market-moving news"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -144,7 +169,9 @@ export function NewsFeed({ symbols, limit = 10 }: NewsFeedProps) {
                   </a>
 
                   {/* Summary */}
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{news.summary}</p>
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                    {news.summary}
+                  </p>
 
                   {/* Meta */}
                   <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -160,7 +187,10 @@ export function NewsFeed({ symbols, limit = 10 }: NewsFeedProps) {
                     <div className="flex items-center gap-1">
                       {news.symbols.map((symbol) => (
                         <a key={symbol} href={`/analyze/${symbol}`}>
-                          <Badge variant="secondary" className="text-xs hover:bg-primary/20">
+                          <Badge
+                            variant="secondary"
+                            className="text-xs hover:bg-primary/20"
+                          >
                             {symbol}
                           </Badge>
                         </a>
@@ -175,7 +205,9 @@ export function NewsFeed({ symbols, limit = 10 }: NewsFeedProps) {
                         }`}
                       >
                         {SENTIMENT_CONFIG[news.sentiment].icon}
-                        <span className="text-xs">{SENTIMENT_CONFIG[news.sentiment].label}</span>
+                        <span className="text-xs">
+                          {SENTIMENT_CONFIG[news.sentiment].label}
+                        </span>
                       </div>
                     )}
                   </div>

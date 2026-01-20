@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { useTier } from '@/hooks/useTier';
-import { TIER_LIMITS } from '@/lib/auth/tiers';
-import { Plus, Trash2, Edit2, Loader2 } from 'lucide-react';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { useTier } from "@/hooks/useTier";
+import { TIER_LIMITS } from "@/lib/auth/tiers";
+import { Plus, Trash2, Edit2, Loader2 } from "lucide-react";
 
 interface Watchlist {
   id: string;
@@ -20,13 +26,15 @@ export default function WatchlistPage() {
   const tierLimits = TIER_LIMITS[tier];
 
   const [watchlists, setWatchlists] = useState<Watchlist[]>([
-    { id: '1', name: 'Tech Stocks', symbols: ['AAPL', 'MSFT', 'GOOGL'] },
-    { id: '2', name: 'Semiconductors', symbols: ['NVDA', 'AMD', 'QCOM'] },
+    { id: "1", name: "Tech Stocks", symbols: ["AAPL", "MSFT", "GOOGL"] },
+    { id: "2", name: "Semiconductors", symbols: ["NVDA", "AMD", "QCOM"] },
   ]);
 
-  const [newName, setNewName] = useState('');
-  const [newSymbol, setNewSymbol] = useState('');
-  const [selectedWatchlistId, setSelectedWatchlistId] = useState<string | null>(null);
+  const [newName, setNewName] = useState("");
+  const [newSymbol, setNewSymbol] = useState("");
+  const [selectedWatchlistId, setSelectedWatchlistId] = useState<string | null>(
+    null,
+  );
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +52,7 @@ export default function WatchlistPage() {
         symbols: [],
       };
       setWatchlists([...watchlists, watchlist]);
-      setNewName('');
+      setNewName("");
     } finally {
       setLoading(false);
     }
@@ -57,7 +65,9 @@ export default function WatchlistPage() {
     if (!watchlist) return;
 
     if (watchlist.symbols.length >= tierLimits.watchlistSymbolLimit) {
-      alert(`Symbol limit (${tierLimits.watchlistSymbolLimit}) reached for this tier`);
+      alert(
+        `Symbol limit (${tierLimits.watchlistSymbolLimit}) reached for this tier`,
+      );
       return;
     }
 
@@ -69,9 +79,9 @@ export default function WatchlistPage() {
         symbols: [...watchlist.symbols, newSymbol.toUpperCase()],
       };
       setWatchlists(
-        watchlists.map((w) => (w.id === watchlistId ? updated : w))
+        watchlists.map((w) => (w.id === watchlistId ? updated : w)),
       );
-      setNewSymbol('');
+      setNewSymbol("");
       setSelectedWatchlistId(null);
     } finally {
       setLoading(false);
@@ -90,7 +100,7 @@ export default function WatchlistPage() {
         symbols: watchlist.symbols.filter((s) => s !== symbol),
       };
       setWatchlists(
-        watchlists.map((w) => (w.id === watchlistId ? updated : w))
+        watchlists.map((w) => (w.id === watchlistId ? updated : w)),
       );
     } finally {
       setLoading(false);
@@ -98,7 +108,7 @@ export default function WatchlistPage() {
   };
 
   const handleDeleteWatchlist = async (watchlistId: string) => {
-    if (!confirm('Delete this watchlist?')) return;
+    if (!confirm("Delete this watchlist?")) return;
 
     setLoading(true);
     try {
@@ -115,8 +125,9 @@ export default function WatchlistPage() {
       <div>
         <h1 className="text-3xl font-bold mb-2">Watchlists</h1>
         <p className="text-muted-foreground">
-          Manage your watchlists. {tier === 'free' ? '1' : tier === 'pro' ? '5' : 'Unlimited'} watchlists,{' '}
-          {tierLimits.watchlistSymbolLimit} symbols each.
+          Manage your watchlists.{" "}
+          {tier === "free" ? "1" : tier === "pro" ? "5" : "Unlimited"}{" "}
+          watchlists, {tierLimits.watchlistSymbolLimit} symbols each.
         </p>
       </div>
 
@@ -134,7 +145,10 @@ export default function WatchlistPage() {
                 onChange={(e) => setNewName(e.target.value)}
                 disabled={loading}
               />
-              <Button onClick={handleCreateWatchlist} disabled={loading || !newName.trim()}>
+              <Button
+                onClick={handleCreateWatchlist}
+                disabled={loading || !newName.trim()}
+              >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 <Plus className="h-4 w-4" />
               </Button>
@@ -162,7 +176,8 @@ export default function WatchlistPage() {
                 </div>
               </div>
               <CardDescription>
-                {watchlist.symbols.length} / {tierLimits.watchlistSymbolLimit} symbols
+                {watchlist.symbols.length} / {tierLimits.watchlistSymbolLimit}{" "}
+                symbols
               </CardDescription>
             </CardHeader>
 
@@ -189,7 +204,9 @@ export default function WatchlistPage() {
                 <div className="flex gap-2">
                   <Input
                     placeholder="Add symbol..."
-                    value={selectedWatchlistId === watchlist.id ? newSymbol : ''}
+                    value={
+                      selectedWatchlistId === watchlist.id ? newSymbol : ""
+                    }
                     onChange={(e) => setNewSymbol(e.target.value.toUpperCase())}
                     onFocus={() => setSelectedWatchlistId(watchlist.id)}
                     disabled={loading || selectedWatchlistId !== watchlist.id}
@@ -199,7 +216,9 @@ export default function WatchlistPage() {
                       onClick={() => handleAddSymbol(watchlist.id)}
                       disabled={loading || !newSymbol.trim()}
                     >
-                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {loading && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
                       Add
                     </Button>
                   )}
@@ -219,7 +238,10 @@ export default function WatchlistPage() {
       {!canCreateMore && (
         <Card className="bg-amber-500/10 border-amber-200 dark:border-amber-800">
           <CardContent className="pt-6 text-sm text-amber-700 dark:text-amber-400">
-            <p>You've reached the watchlist limit for your tier. Upgrade to create more.</p>
+            <p>
+              You've reached the watchlist limit for your tier. Upgrade to
+              create more.
+            </p>
           </CardContent>
         </Card>
       )}

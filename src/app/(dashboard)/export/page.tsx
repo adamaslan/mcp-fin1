@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Download, FileJson, FileText } from 'lucide-react';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Download, FileJson, FileText } from "lucide-react";
 
-type ExportFormat = 'csv' | 'json';
+type ExportFormat = "csv" | "json";
 
 export default function ExportPage() {
   const [exporting, setExporting] = useState<ExportFormat | null>(null);
@@ -15,22 +21,22 @@ export default function ExportPage() {
     setExporting(format);
     try {
       const response = await fetch(`/api/export?format=${format}`, {
-        method: 'GET',
+        method: "GET",
       });
 
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `trade-data-${new Date().toISOString().split('T')[0]}.${format === 'csv' ? 'csv' : 'json'}`;
+        a.download = `trade-data-${new Date().toISOString().split("T")[0]}.${format === "csv" ? "csv" : "json"}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       }
     } catch (error) {
-      console.error('Failed to export data:', error);
+      console.error("Failed to export data:", error);
     } finally {
       setExporting(null);
     }
@@ -41,7 +47,8 @@ export default function ExportPage() {
       <div>
         <h1 className="text-3xl font-bold mb-2">Export Data</h1>
         <p className="text-muted-foreground">
-          Download your trade journal, portfolio positions, and analysis history in various formats.
+          Download your trade journal, portfolio positions, and analysis history
+          in various formats.
         </p>
       </div>
 
@@ -53,7 +60,8 @@ export default function ExportPage() {
               CSV Export
             </CardTitle>
             <CardDescription>
-              Spreadsheet format compatible with Excel, Google Sheets, and other tools
+              Spreadsheet format compatible with Excel, Google Sheets, and other
+              tools
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -64,7 +72,7 @@ export default function ExportPage() {
                 <li>✓ Performance statistics</li>
               </ul>
               <Button
-                onClick={() => handleExport('csv')}
+                onClick={() => handleExport("csv")}
                 disabled={exporting !== null}
                 className="w-full"
               >
@@ -93,7 +101,7 @@ export default function ExportPage() {
                 <li>✓ Analysis signals</li>
               </ul>
               <Button
-                onClick={() => handleExport('json')}
+                onClick={() => handleExport("json")}
                 disabled={exporting !== null}
                 className="w-full"
               >
@@ -111,11 +119,26 @@ export default function ExportPage() {
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm text-blue-700 dark:text-blue-400">
-            <li><strong>Trade Journal:</strong> All logged trades with entry/exit prices and P&L</li>
-            <li><strong>Positions:</strong> Current portfolio holdings and historical closes</li>
-            <li><strong>Statistics:</strong> Win rate, total P&L, and performance metrics</li>
-            <li><strong>Analysis:</strong> Trade plans and signals from past searches</li>
-            <li><strong>Metadata:</strong> Timestamps, notes, and trade classifications</li>
+            <li>
+              <strong>Trade Journal:</strong> All logged trades with entry/exit
+              prices and P&L
+            </li>
+            <li>
+              <strong>Positions:</strong> Current portfolio holdings and
+              historical closes
+            </li>
+            <li>
+              <strong>Statistics:</strong> Win rate, total P&L, and performance
+              metrics
+            </li>
+            <li>
+              <strong>Analysis:</strong> Trade plans and signals from past
+              searches
+            </li>
+            <li>
+              <strong>Metadata:</strong> Timestamps, notes, and trade
+              classifications
+            </li>
           </ul>
         </CardContent>
       </Card>
@@ -124,7 +147,8 @@ export default function ExportPage() {
         <CardHeader>
           <CardTitle className="text-base">Export Frequency</CardTitle>
           <CardDescription>
-            You can export your data as often as needed. Max tier has unlimited exports.
+            You can export your data as often as needed. Max tier has unlimited
+            exports.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,7 +158,8 @@ export default function ExportPage() {
               <span className="text-sm">Unlimited exports per day</span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Exports are generated on-demand and include all data up to the current moment.
+              Exports are generated on-demand and include all data up to the
+              current moment.
             </p>
           </div>
         </CardContent>

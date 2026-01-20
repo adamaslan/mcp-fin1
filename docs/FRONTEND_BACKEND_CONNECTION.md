@@ -116,12 +116,14 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 ### Local Development Setup
 
 1. **Start the MCP backend locally:**
+
    ```bash
    cd ../mcp-finance1
    python -m uvicorn cloud-run.main:app --reload --port 8000
    ```
 
 2. **Start the Next.js frontend:**
+
    ```bash
    cd nextjs-mcp-finance
    npm run dev
@@ -138,6 +140,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 ## MCPClient Deep Dive
 
 ### Location
+
 `src/lib/mcp/client.ts`
 
 ### Class Structure
@@ -148,7 +151,7 @@ export class MCPClient {
 
   constructor() {
     // Uses environment variable or falls back to localhost
-    this.baseUrl = process.env.MCP_CLOUD_RUN_URL || 'http://localhost:8000';
+    this.baseUrl = process.env.MCP_CLOUD_RUN_URL || "http://localhost:8000";
   }
 
   // Available methods...
@@ -162,15 +165,15 @@ export function getMCPClient(): MCPClient {
 
 ### Available Methods
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `analyzeSecurity(symbol, period, useAi)` | `/api/analyze` | Get 150+ technical signals |
-| `getTradePlan(symbol, period)` | `/api/trade-plan` | Get trade entry/stop/target |
-| `scanTrades(universe, maxResults)` | `/api/scan` | Find qualified trades |
-| `portfolioRisk(positions)` | `/api/portfolio-risk` | Assess portfolio risk |
-| `morningBrief(watchlist, region)` | `/api/morning-brief` | Daily market briefing |
-| `compareSecurity(symbols, metric)` | `/api/compare` | Compare multiple stocks |
-| `screenSecurities(universe, criteria)` | `/api/screen` | Screen by criteria |
+| Method                                   | Endpoint              | Description                 |
+| ---------------------------------------- | --------------------- | --------------------------- |
+| `analyzeSecurity(symbol, period, useAi)` | `/api/analyze`        | Get 150+ technical signals  |
+| `getTradePlan(symbol, period)`           | `/api/trade-plan`     | Get trade entry/stop/target |
+| `scanTrades(universe, maxResults)`       | `/api/scan`           | Find qualified trades       |
+| `portfolioRisk(positions)`               | `/api/portfolio-risk` | Assess portfolio risk       |
+| `morningBrief(watchlist, region)`        | `/api/morning-brief`  | Daily market briefing       |
+| `compareSecurity(symbols, metric)`       | `/api/compare`        | Compare multiple stocks     |
+| `screenSecurities(universe, criteria)`   | `/api/screen`         | Screen by criteria          |
 
 ### Method Signatures
 
@@ -222,10 +225,10 @@ try {
   const result = await mcp.analyzeSecurity(symbol);
   return NextResponse.json(result);
 } catch (error) {
-  console.error('MCP error:', error);
+  console.error("MCP error:", error);
   return NextResponse.json(
-    { error: 'Failed to analyze security' },
-    { status: 500 }
+    { error: "Failed to analyze security" },
+    { status: 500 },
   );
 }
 ```
@@ -235,6 +238,7 @@ try {
 ## API Route Pattern
 
 ### Location
+
 `src/app/api/mcp/*/route.ts`
 
 ### Standard Pattern
@@ -242,33 +246,40 @@ try {
 Every MCP API route follows this pattern:
 
 ```typescript
-import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { getMCPClient } from '@/lib/mcp/client';
-import { TIER_LIMITS, UserTier } from '@/lib/auth/tiers';
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { getMCPClient } from "@/lib/mcp/client";
+import { TIER_LIMITS, UserTier } from "@/lib/auth/tiers";
 
 export async function POST(request: Request) {
   try {
     // 1. AUTHENTICATE
     const { userId, sessionClaims } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // 2. GET USER TIER
-    const tier = (((sessionClaims?.publicMetadata as any)?.tier as string) || 'free') as UserTier;
+    const tier = (((sessionClaims?.publicMetadata as any)?.tier as string) ||
+      "free") as UserTier;
 
     // 3. PARSE REQUEST
     const body = await request.json();
 
     // 4. VALIDATE INPUT
     if (!body.symbol) {
-      return NextResponse.json({ error: 'Symbol is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Symbol is required" },
+        { status: 400 },
+      );
     }
 
     // 5. CHECK TIER ACCESS (optional)
-    if (tier === 'free' && body.universe !== 'sp500') {
-      return NextResponse.json({ error: 'Universe not available on free tier' }, { status: 403 });
+    if (tier === "free" && body.universe !== "sp500") {
+      return NextResponse.json(
+        { error: "Universe not available on free tier" },
+        { status: 403 },
+      );
     }
 
     // 6. CALL MCP SERVER
@@ -283,12 +294,11 @@ export async function POST(request: Request) {
       ...filteredResult,
       tierLimit: TIER_LIMITS[tier],
     });
-
   } catch (error) {
-    console.error('API error:', error);
+    console.error("API error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -296,12 +306,12 @@ export async function POST(request: Request) {
 
 ### Existing Routes
 
-| Route | File | MCP Method |
-|-------|------|------------|
-| `POST /api/mcp/analyze` | `analyze/route.ts` | `analyzeSecurity()` |
-| `POST /api/mcp/trade-plan` | `trade-plan/route.ts` | `getTradePlan()` |
-| `POST /api/mcp/scan` | `scan/route.ts` | `scanTrades()` |
-| `POST /api/mcp/portfolio-risk` | `portfolio-risk/route.ts` | `portfolioRisk()` |
+| Route                          | File                      | MCP Method          |
+| ------------------------------ | ------------------------- | ------------------- |
+| `POST /api/mcp/analyze`        | `analyze/route.ts`        | `analyzeSecurity()` |
+| `POST /api/mcp/trade-plan`     | `trade-plan/route.ts`     | `getTradePlan()`    |
+| `POST /api/mcp/scan`           | `scan/route.ts`           | `scanTrades()`      |
+| `POST /api/mcp/portfolio-risk` | `portfolio-risk/route.ts` | `portfolioRisk()`   |
 
 ---
 
@@ -344,25 +354,29 @@ export interface MyResultType {
 Create `src/app/api/mcp/my-endpoint/route.ts`:
 
 ```typescript
-import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { getMCPClient } from '@/lib/mcp/client';
-import { TIER_LIMITS, UserTier } from '@/lib/auth/tiers';
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { getMCPClient } from "@/lib/mcp/client";
+import { TIER_LIMITS, UserTier } from "@/lib/auth/tiers";
 
 export async function POST(request: Request) {
   try {
     const { userId, sessionClaims } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const tier = (((sessionClaims?.publicMetadata as any)?.tier as string) || 'free') as UserTier;
+    const tier = (((sessionClaims?.publicMetadata as any)?.tier as string) ||
+      "free") as UserTier;
     const { param1, param2 } = await request.json();
 
     // Validate
     if (!param1) {
-      return NextResponse.json({ error: 'param1 is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "param1 is required" },
+        { status: 400 },
+      );
     }
 
     // Call MCP
@@ -374,10 +388,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('My endpoint error:', error);
+    console.error("My endpoint error:", error);
     return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 }
+      { error: "Failed to process request" },
+      { status: 500 },
     );
   }
 }
@@ -386,10 +400,10 @@ export async function POST(request: Request) {
 ### Step 4: Use in Component
 
 ```typescript
-const response = await fetch('/api/mcp/my-endpoint', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ param1: 'value', param2: 123 }),
+const response = await fetch("/api/mcp/my-endpoint", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ param1: "value", param2: 123 }),
 });
 
 const data = await response.json();
@@ -402,6 +416,7 @@ const data = await response.json();
 ### 1. Analyze Security
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/api/mcp/analyze \
   -H "Content-Type: application/json" \
@@ -409,6 +424,7 @@ curl -X POST http://localhost:3000/api/mcp/analyze \
 ```
 
 **Response:**
+
 ```json
 {
   "symbol": "AAPL",
@@ -448,6 +464,7 @@ curl -X POST http://localhost:3000/api/mcp/analyze \
 ### 2. Get Trade Plan
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/api/mcp/trade-plan \
   -H "Content-Type: application/json" \
@@ -455,6 +472,7 @@ curl -X POST http://localhost:3000/api/mcp/trade-plan \
 ```
 
 **Response:**
+
 ```json
 {
   "trade_plans": [
@@ -462,9 +480,9 @@ curl -X POST http://localhost:3000/api/mcp/trade-plan \
       "symbol": "MSFT",
       "timeframe": "swing",
       "bias": "bullish",
-      "entry_price": 420.00,
-      "stop_price": 410.00,
-      "target_price": 445.00,
+      "entry_price": 420.0,
+      "stop_price": 410.0,
+      "target_price": 445.0,
       "risk_reward_ratio": 2.5,
       "vehicle": "stock",
       "is_suppressed": false,
@@ -480,6 +498,7 @@ curl -X POST http://localhost:3000/api/mcp/trade-plan \
 ### 3. Scan Trades
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/api/mcp/scan \
   -H "Content-Type: application/json" \
@@ -487,6 +506,7 @@ curl -X POST http://localhost:3000/api/mcp/scan \
 ```
 
 **Response:**
+
 ```json
 {
   "universe": "sp500",
@@ -494,9 +514,9 @@ curl -X POST http://localhost:3000/api/mcp/scan \
   "qualified_trades": [
     {
       "symbol": "NVDA",
-      "entry_price": 875.00,
-      "stop_price": 850.00,
-      "target_price": 920.00,
+      "entry_price": 875.0,
+      "stop_price": 850.0,
+      "target_price": 920.0,
       "risk_reward_ratio": 1.8,
       "bias": "bullish",
       "timeframe": "swing",
@@ -513,6 +533,7 @@ curl -X POST http://localhost:3000/api/mcp/scan \
 ### 4. Portfolio Risk
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/api/mcp/portfolio-risk \
   -H "Content-Type: application/json" \
@@ -525,6 +546,7 @@ curl -X POST http://localhost:3000/api/mcp/portfolio-risk \
 ```
 
 **Response:**
+
 ```json
 {
   "total_value": 50000,
@@ -568,25 +590,25 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     analysesPerDay: 5,
     scansPerDay: 1,
     scanResultsLimit: 5,
-    timeframes: ['swing'],
-    universes: ['sp500'],
-    features: ['basic_trade_plan', 'signal_help'],
+    timeframes: ["swing"],
+    universes: ["sp500"],
+    features: ["basic_trade_plan", "signal_help"],
   },
   pro: {
     analysesPerDay: 50,
     scansPerDay: 10,
     scanResultsLimit: 25,
-    timeframes: ['swing', 'day', 'scalp'],
-    universes: ['sp500', 'nasdaq100', 'etf_large_cap'],
-    features: ['full_trade_plan', 'portfolio_risk', 'trade_journal'],
+    timeframes: ["swing", "day", "scalp"],
+    universes: ["sp500", "nasdaq100", "etf_large_cap"],
+    features: ["full_trade_plan", "portfolio_risk", "trade_journal"],
   },
   max: {
     analysesPerDay: Infinity,
     scansPerDay: Infinity,
     scanResultsLimit: 50,
-    timeframes: ['swing', 'day', 'scalp'],
-    universes: ['sp500', 'nasdaq100', 'etf_large_cap', 'crypto'],
-    features: ['all_features', 'alerts', 'export', 'api_access'],
+    timeframes: ["swing", "day", "scalp"],
+    universes: ["sp500", "nasdaq100", "etf_large_cap", "crypto"],
+    features: ["all_features", "alerts", "export", "api_access"],
   },
 };
 ```
@@ -596,22 +618,22 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
 ```typescript
 // Filter signals based on tier
 let filteredSignals = result.signals || [];
-if (tier === 'free') {
-  filteredSignals = filteredSignals.slice(0, 3);  // Top 3 only
-} else if (tier === 'pro') {
+if (tier === "free") {
+  filteredSignals = filteredSignals.slice(0, 3); // Top 3 only
+} else if (tier === "pro") {
   filteredSignals = filteredSignals.slice(0, 10); // Top 10
 }
 // Max tier sees all signals
 
 // Filter timeframes
-if (tier === 'free') {
+if (tier === "free") {
   result.trade_plans = result.trade_plans.filter(
-    (plan) => plan.timeframe === 'swing'
+    (plan) => plan.timeframe === "swing",
   );
 }
 
 // Block features
-if (tier !== 'max' && feature === 'hedge_suggestions') {
+if (tier !== "max" && feature === "hedge_suggestions") {
   delete result.hedge_suggestions;
 }
 ```
@@ -619,21 +641,31 @@ if (tier !== 'max' && feature === 'hedge_suggestions') {
 ### Helper Functions
 
 ```typescript
-import { canAccessFeature, canAccessTimeframe, canAccessUniverse } from '@/lib/auth/tiers';
+import {
+  canAccessFeature,
+  canAccessTimeframe,
+  canAccessUniverse,
+} from "@/lib/auth/tiers";
 
 // Check feature access
-if (!canAccessFeature(tier, 'portfolio_risk')) {
-  return NextResponse.json({ error: 'Pro tier required' }, { status: 403 });
+if (!canAccessFeature(tier, "portfolio_risk")) {
+  return NextResponse.json({ error: "Pro tier required" }, { status: 403 });
 }
 
 // Check timeframe access
-if (!canAccessTimeframe(tier, 'scalp')) {
-  return NextResponse.json({ error: 'Scalp trades require Pro tier' }, { status: 403 });
+if (!canAccessTimeframe(tier, "scalp")) {
+  return NextResponse.json(
+    { error: "Scalp trades require Pro tier" },
+    { status: 403 },
+  );
 }
 
 // Check universe access
-if (!canAccessUniverse(tier, 'crypto')) {
-  return NextResponse.json({ error: 'Crypto requires Max tier' }, { status: 403 });
+if (!canAccessUniverse(tier, "crypto")) {
+  return NextResponse.json(
+    { error: "Crypto requires Max tier" },
+    { status: 403 },
+  );
 }
 ```
 
@@ -677,20 +709,22 @@ async analyzeSecurity(symbol: string, period = '1mo', useAi = false) {
 ### Common Debug Scenarios
 
 1. **Check if MCP server is running:**
+
    ```bash
    curl http://localhost:8000/health
    ```
 
 2. **Check environment variable:**
+
    ```typescript
-   console.log('MCP URL:', process.env.MCP_CLOUD_RUN_URL);
+   console.log("MCP URL:", process.env.MCP_CLOUD_RUN_URL);
    ```
 
 3. **Check Clerk auth:**
    ```typescript
    const { userId, sessionClaims } = await auth();
-   console.log('User ID:', userId);
-   console.log('Tier:', sessionClaims?.publicMetadata?.tier);
+   console.log("User ID:", userId);
+   console.log("Tier:", sessionClaims?.publicMetadata?.tier);
    ```
 
 ---
@@ -712,6 +746,7 @@ async analyzeSecurity(symbol: string, period = '1mo', useAi = false) {
 ### Cloud Run Setup
 
 1. **Deploy MCP server to Cloud Run:**
+
    ```bash
    cd mcp-finance1
    gcloud run deploy technical-analysis-api \
@@ -721,6 +756,7 @@ async analyzeSecurity(symbol: string, period = '1mo', useAi = false) {
    ```
 
 2. **Get the service URL:**
+
    ```bash
    gcloud run services describe technical-analysis-api \
      --region us-central1 \
@@ -744,6 +780,7 @@ async analyzeSecurity(symbol: string, period = '1mo', useAi = false) {
 **Error:** `Access-Control-Allow-Origin` errors
 
 **Solution:** Cloud Run should handle CORS. For local dev, ensure the FastAPI server has CORS middleware:
+
 ```python
 app.add_middleware(
     CORSMiddleware,
@@ -768,6 +805,7 @@ app.add_middleware(
 ### 500 Internal Server Error
 
 **Steps:**
+
 1. Check Next.js console for error details
 2. Check MCP server logs: `gcloud run logs read --service=technical-analysis-api`
 3. Verify request payload format matches expected schema
@@ -777,6 +815,7 @@ app.add_middleware(
 Cloud Run containers may take 2-5 seconds to start after inactivity.
 
 **Solution:**
+
 - Set minimum instances to 1 in Cloud Run
 - Add loading states in frontend
 - Consider using Cloud Run's "always on" CPU option
@@ -785,12 +824,12 @@ Cloud Run containers may take 2-5 seconds to start after inactivity.
 
 ## Summary
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| MCPClient | `src/lib/mcp/client.ts` | HTTP calls to Cloud Run |
-| Types | `src/lib/mcp/types.ts` | TypeScript interfaces |
-| Tiers | `src/lib/auth/tiers.ts` | Tier limits and helpers |
-| API Routes | `src/app/api/mcp/*/route.ts` | Auth + filtering layer |
-| Environment | `.env.local` | Configuration |
+| Component   | Location                     | Purpose                 |
+| ----------- | ---------------------------- | ----------------------- |
+| MCPClient   | `src/lib/mcp/client.ts`      | HTTP calls to Cloud Run |
+| Types       | `src/lib/mcp/types.ts`       | TypeScript interfaces   |
+| Tiers       | `src/lib/auth/tiers.ts`      | Tier limits and helpers |
+| API Routes  | `src/app/api/mcp/*/route.ts` | Auth + filtering layer  |
+| Environment | `.env.local`                 | Configuration           |
 
 For questions or issues, check the [GitHub Issues](https://github.com/your-repo/issues).
