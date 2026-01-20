@@ -11,6 +11,7 @@ import { defineConfig, devices } from "@playwright/test";
  * - Safe to run against live production site
  * - More retries (3) for stability
  */
+
 export default defineConfig({
   testDir: "./e2e",
   testMatch: "**/{smoke-tests,critical-paths}.spec.ts",

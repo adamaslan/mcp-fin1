@@ -29,6 +29,7 @@ Based on your existing code:
 ## The Problem
 
 Your **Next.js frontend** needs to store:
+
 - ✅ User accounts (from Clerk)
 - ✅ Watchlists (user-created lists)
 - ✅ Positions (portfolio tracking)
@@ -45,20 +46,25 @@ This data is **relational** (users have watchlists, watchlists have symbols, etc
 Use **BOTH** databases for what they're best at:
 
 ### Firestore (Read-Only from Next.js)
+
 **Use for**: Stock market data (already populated by Python backend)
+
 - ✅ Stock analysis results
 - ✅ Daily summaries
 - ✅ Universe lists
 - ✅ Cached analysis data
 
 **Why**:
+
 - Already set up and working
 - Python backend writes to it
 - Perfect for read-heavy stock data
 - No need to rewrite Python backend
 
 ### PostgreSQL (Read/Write from Next.js)
+
 **Use for**: User/application data (new)
+
 - ✅ Users (Clerk sync)
 - ✅ Watchlists
 - ✅ Positions
@@ -67,6 +73,7 @@ Use **BOTH** databases for what they're best at:
 - ✅ Alerts
 
 **Why**:
+
 - Better for relational data
 - Drizzle ORM provides type safety
 - Easier migrations
@@ -120,6 +127,7 @@ Use **BOTH** databases for what they're best at:
 ## Implementation Plan
 
 ### Phase 1: Set Up PostgreSQL (5 minutes)
+
 ```bash
 # Use the Cloud SQL setup script
 ./setup-gcp-cloud-sql.sh
@@ -129,9 +137,11 @@ Use **BOTH** databases for what they're best at:
 ```
 
 ### Phase 2: Keep Firestore Connection (Already Working)
+
 Your Python backend already writes to Firestore. **No changes needed.**
 
 ### Phase 3: Add Firestore Client to Next.js (Optional - Future)
+
 If you want to read stock data directly from Firestore in Next.js:
 
 ```bash
@@ -140,12 +150,12 @@ npm install firebase firebase-admin
 
 ```typescript
 // src/lib/firebase/client.ts
-import { initializeApp, getApps } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { initializeApp, getApps } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
 if (!getApps().length) {
   initializeApp({
-    projectId: 'ttb-lang1'
+    projectId: "ttb-lang1",
   });
 }
 
@@ -153,7 +163,7 @@ export const firestore = getFirestore();
 
 // Read stock analysis from Firestore
 export async function getStockAnalysis(symbol: string) {
-  const doc = await firestore.collection('analysis').doc(symbol).get();
+  const doc = await firestore.collection("analysis").doc(symbol).get();
   return doc.data();
 }
 ```
@@ -163,6 +173,7 @@ export async function getStockAnalysis(symbol: string) {
 ## Why Hybrid Is Best
 
 ### ✅ Advantages
+
 1. **No Python backend changes** - Firestore already working
 2. **Best tool for each job**:
    - Firestore: Fast read-heavy stock data cache
@@ -174,17 +185,20 @@ export async function getStockAnalysis(symbol: string) {
 ### ❌ Alternatives (Why Not)
 
 **Option 1: Firestore Only**
+
 - ❌ Have to rewrite entire database layer
 - ❌ Firestore not ideal for relational data (foreign keys, joins)
 - ❌ More complex queries for user data
 - ❌ No Drizzle ORM benefits
 
 **Option 2: PostgreSQL Only**
+
 - ❌ Have to rewrite Python backend to use PostgreSQL
 - ❌ Have to migrate existing Firestore stock data
 - ❌ More work, same result
 
 **Option 3: Hybrid (RECOMMENDED)**
+
 - ✅ Keep what works (Firestore for stocks)
 - ✅ Add PostgreSQL for new user features
 - ✅ Best of both worlds
@@ -195,6 +209,7 @@ export async function getStockAnalysis(symbol: string) {
 ## Current Data Flow
 
 ### Stock Analysis (Firestore)
+
 ```
 User → Next.js → MCP Cloud Run API → Firestore (cache)
                        ↓
@@ -204,6 +219,7 @@ User → Next.js → MCP Cloud Run API → Firestore (cache)
 ```
 
 ### User Features (PostgreSQL)
+
 ```
 User → Next.js → PostgreSQL
    ↓
@@ -218,17 +234,20 @@ Trade journal
 ## Cost Comparison
 
 ### Current Firestore (Already Paying)
+
 - **Reads**: $0.06 per 100k documents
 - **Writes**: $0.18 per 100k documents
 - **Storage**: $0.18/GB/month
 - **Estimated for stock data**: $5-10/month
 
 ### Add PostgreSQL Cloud SQL
+
 - **db-f1-micro**: $7-10/month
 - **10GB storage**: $1.70/month
 - **Total**: ~$10-12/month
 
 ### Combined Total
+
 - **~$20-25/month** for both databases
 - Each database optimized for its purpose
 
@@ -236,36 +255,40 @@ Trade journal
 
 ## Quick Decision Matrix
 
-| Need | Firestore Only | PostgreSQL Only | Hybrid (Both) |
-|------|----------------|-----------------|---------------|
-| Rewrite Python backend | ❌ No | ✅ Yes | ❌ No |
-| Rewrite Next.js DB layer | ✅ Yes (complex) | ❌ No | ❌ No (simple add) |
-| Type safety with ORM | ❌ No | ✅ Yes | ✅ Yes (for user data) |
-| Relational queries | ⚠️ Complex | ✅ Easy | ✅ Easy |
-| Setup time | 2-3 hours | 2-3 hours | 10 minutes |
-| Monthly cost | ~$10 | ~$15 | ~$25 |
-| **Recommendation** | ❌ | ❌ | ✅✅✅ |
+| Need                     | Firestore Only   | PostgreSQL Only | Hybrid (Both)          |
+| ------------------------ | ---------------- | --------------- | ---------------------- |
+| Rewrite Python backend   | ❌ No            | ✅ Yes          | ❌ No                  |
+| Rewrite Next.js DB layer | ✅ Yes (complex) | ❌ No           | ❌ No (simple add)     |
+| Type safety with ORM     | ❌ No            | ✅ Yes          | ✅ Yes (for user data) |
+| Relational queries       | ⚠️ Complex       | ✅ Easy         | ✅ Easy                |
+| Setup time               | 2-3 hours        | 2-3 hours       | 10 minutes             |
+| Monthly cost             | ~$10             | ~$15            | ~$25                   |
+| **Recommendation**       | ❌               | ❌              | ✅✅✅                 |
 
 ---
 
 ## Recommended Path Forward
 
 ### Step 1: Set Up PostgreSQL
+
 ```bash
 ./setup-gcp-cloud-sql.sh
 ```
 
 ### Step 2: Run Migrations
+
 ```bash
 npm run db:generate
 npm run db:migrate
 ```
 
 ### Step 3: Start Using Both
+
 - **PostgreSQL**: All new user features (watchlists, positions, etc.)
 - **Firestore**: Keep for stock analysis cache (no changes)
 
 ### Step 4: Test
+
 ```bash
 npm run dev
 ```
@@ -291,6 +314,7 @@ A: I can help you rewrite the database layer, but it'll take 2-3 hours instead o
 ## Next Steps
 
 **To proceed with hybrid architecture (recommended):**
+
 ```bash
 ./setup-gcp-cloud-sql.sh
 npm run db:generate

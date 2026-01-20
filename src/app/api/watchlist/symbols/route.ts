@@ -120,7 +120,9 @@ export async function DELETE(request: Request) {
     const normalizedSymbol = symbol.toUpperCase();
 
     // Remove symbol
-    const updatedSymbols = currentSymbols.filter((s: string) => s !== normalizedSymbol);
+    const updatedSymbols = currentSymbols.filter(
+      (s: string) => s !== normalizedSymbol,
+    );
 
     if (updatedSymbols.length === currentSymbols.length) {
       return NextResponse.json(

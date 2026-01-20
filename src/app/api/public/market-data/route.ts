@@ -23,10 +23,10 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       data: {
         market: {
-          status: morningBrief.market_status,
-          futuresES: morningBrief.es_change,
-          futuresNQ: morningBrief.nq_change,
-          vix: morningBrief.vix,
+          status: morningBrief.market_status.market_status,
+          futuresES: morningBrief.market_status.futures_es.change_percent,
+          futuresNQ: morningBrief.market_status.futures_nq.change_percent,
+          vix: morningBrief.market_status.vix,
           economicEvents: morningBrief.economic_events || [],
         },
         topTrades: topTrades.qualified_trades?.slice(0, 5) || [],

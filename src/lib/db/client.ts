@@ -21,13 +21,13 @@ if (process.env.DATABASE_URL) {
   } catch (error) {
     console.error("Failed to connect to PostgreSQL:", error);
     throw new Error(
-      "Database connection failed. Check DATABASE_URL and ensure PostgreSQL is running."
+      "Database connection failed. Check DATABASE_URL and ensure PostgreSQL is running.",
     );
   }
 } else {
   throw new Error(
     "DATABASE_URL is required. Please set it in your .env.local file.\n" +
-      "Example: DATABASE_URL=postgresql://user:password@localhost:5432/mcp_finance"
+      "Example: DATABASE_URL=postgresql://user:password@localhost:5432/mcp_finance",
   );
 }
 

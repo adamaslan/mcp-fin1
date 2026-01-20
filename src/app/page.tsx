@@ -8,7 +8,7 @@ async function fetchMarketData() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/public/market-data`, {
-      revalidate: 120, // ISR: revalidate every 2 minutes
+      next: { revalidate: 120 }, // ISR: revalidate every 2 minutes
     });
 
     if (!response.ok) {

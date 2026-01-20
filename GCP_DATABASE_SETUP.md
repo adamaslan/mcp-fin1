@@ -92,6 +92,7 @@ gcloud sql instances describe mcp-finance-db --format="value(ipAddresses[0].ipAd
 ```
 
 Or via Console:
+
 1. Cloud SQL → `mcp-finance-db` → **"Overview"**
 2. Note:
    - **Connection name**: `project-id:region:instance-name`
@@ -115,6 +116,7 @@ gcloud sql instances patch mcp-finance-db \
 ```
 
 **Then add to .env.local:**
+
 ```bash
 DATABASE_URL=postgresql://mcpfinance:YOUR_PASSWORD@PUBLIC_IP:5432/mcp_finance
 ```
@@ -122,6 +124,7 @@ DATABASE_URL=postgresql://mcpfinance:YOUR_PASSWORD@PUBLIC_IP:5432/mcp_finance
 ### Method B: Cloud SQL Proxy (Recommended for Development)
 
 **Install Cloud SQL Proxy:**
+
 ```bash
 # macOS
 brew install cloud-sql-proxy
@@ -133,6 +136,7 @@ sudo mv cloud-sql-proxy /usr/local/bin/
 ```
 
 **Start the proxy:**
+
 ```bash
 # Run in a separate terminal (keep it running)
 cloud-sql-proxy PROJECT_ID:REGION:INSTANCE_NAME \
@@ -143,6 +147,7 @@ cloud-sql-proxy PROJECT_ID:REGION:INSTANCE_NAME \
 ```
 
 **Add to .env.local:**
+
 ```bash
 DATABASE_URL=postgresql://mcpfinance:YOUR_PASSWORD@localhost:5432/mcp_finance
 ```
@@ -150,6 +155,7 @@ DATABASE_URL=postgresql://mcpfinance:YOUR_PASSWORD@localhost:5432/mcp_finance
 ### Method C: Unix Socket (Production - Vercel/Cloud Run)
 
 **For Cloud Run/Vercel deployment:**
+
 ```bash
 DATABASE_URL=postgresql://mcpfinance:YOUR_PASSWORD@/mcp_finance?host=/cloudsql/PROJECT_ID:REGION:INSTANCE_NAME
 ```
@@ -182,6 +188,7 @@ npm run dev
 ```
 
 **Test with a simple query:**
+
 ```bash
 # Connect via Cloud SQL Proxy or direct connection
 psql "postgresql://mcpfinance:YOUR_PASSWORD@localhost:5432/mcp_finance"
@@ -273,7 +280,9 @@ echo "  4. Run: npm run dev"
 ## Troubleshooting
 
 ### Error: "Connection refused"
+
 **Solution**: Use Cloud SQL Proxy or whitelist your IP:
+
 ```bash
 # Whitelist your IP
 curl ifconfig.me  # Get your IP
@@ -282,7 +291,9 @@ gcloud sql instances patch mcp-finance-db \
 ```
 
 ### Error: "password authentication failed"
+
 **Solution**: Reset the user password:
+
 ```bash
 gcloud sql users set-password mcpfinance \
   --instance=mcp-finance-db \
@@ -290,13 +301,17 @@ gcloud sql users set-password mcpfinance \
 ```
 
 ### Error: "database does not exist"
+
 **Solution**: Create the database:
+
 ```bash
 gcloud sql databases create mcp_finance --instance=mcp-finance-db
 ```
 
 ### Error: "too many connections"
+
 **Solution**: Increase max connections or reduce connection pool:
+
 ```bash
 # In your database client (src/lib/db/client.ts)
 # Reduce max connections:
@@ -306,7 +321,9 @@ const client = postgres(process.env.DATABASE_URL, {
 ```
 
 ### Connection is slow
+
 **Solution**: Make sure you're in the same region:
+
 - Check instance region: `gcloud sql instances describe mcp-finance-db --format="value(region)"`
 - Choose a region close to you
 
@@ -315,17 +332,20 @@ const client = postgres(process.env.DATABASE_URL, {
 ## Cost Optimization
 
 ### Development
+
 - **Instance**: `db-f1-micro` (shared core) ~$7-10/month
 - **Storage**: 10 GB SSD ~$1.70/month
 - **Total**: ~$10-12/month
 
 ### Production
+
 - **Instance**: `db-n1-standard-1` (1 vCPU) ~$45-50/month
 - **Storage**: 10 GB SSD ~$1.70/month
 - **Backups**: ~$0.08/GB/month
 - **Total**: ~$50-60/month
 
 ### Tips to Reduce Costs
+
 1. Use `db-f1-micro` for development
 2. Enable automatic storage increase (prevent over-provisioning)
 3. Set up automatic backups retention (7 days is usually enough)
@@ -354,6 +374,7 @@ const client = postgres(process.env.DATABASE_URL, {
 ## Next Steps
 
 After database is set up:
+
 1. ✅ Add DATABASE_URL to .env.local
 2. ✅ Run migrations: `npm run db:generate && npm run db:migrate`
 3. ✅ Start dev server: `npm run dev`

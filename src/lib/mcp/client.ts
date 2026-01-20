@@ -74,16 +74,23 @@ export class MCPClient {
   ): Promise<PortfolioRiskResult> {
     // Portfolio risk endpoint not available, return mock data
     return {
-      total_risk: 0,
-      max_drawdown: 0,
-      var_95: 0,
-      expected_return: 0,
-      sharpe_ratio: 0,
+      total_value: 0,
+      total_max_loss: 0,
+      risk_percent_of_portfolio: 0,
+      overall_risk_level: "LOW",
       positions: positions.map((p) => ({
         symbol: p.symbol,
-        risk_contribution: 0,
-        var: 0,
+        shares: p.shares,
+        entry_price: p.entry_price,
+        current_price: p.entry_price,
+        current_value: p.shares * p.entry_price,
+        max_loss_dollar: 0,
+        max_loss_percent: 0,
+        stop_level: p.entry_price,
+        risk_quality: "low" as const,
       })),
+      sector_concentration: {},
+      hedge_suggestions: [],
     };
   }
 
@@ -93,16 +100,29 @@ export class MCPClient {
   ): Promise<MorningBriefResult> {
     // Morning brief endpoint not available, return mock data
     return {
-      market_sentiment: "neutral",
-      top_gainers: [],
-      top_losers: [],
-      key_economic_events: [],
-      watchlist_updates: (watchlist || []).map((symbol) => ({
+      timestamp: new Date().toISOString(),
+      market_status: {
+        market_status: "CLOSED",
+        market_hours_remaining: "Market Closed",
+        current_time: new Date().toISOString(),
+        futures_es: { change_percent: 0 },
+        futures_nq: { change_percent: 0 },
+        vix: 0,
+      },
+      economic_events: [],
+      watchlist_signals: (watchlist || []).map((symbol) => ({
         symbol,
-        change: 0,
-        signal_status: "neutral",
+        price: 0,
+        change_percent: 0,
+        action: "HOLD" as const,
+        risk_assessment: "HOLD" as const,
+        top_signals: [],
+        key_support: 0,
+        key_resistance: 0,
       })),
-      summary: "Market data unavailable",
+      sector_leaders: [],
+      sector_losers: [],
+      key_themes: ["Market data unavailable"],
     };
   }
 
