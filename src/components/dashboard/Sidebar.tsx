@@ -19,6 +19,7 @@ import {
   Calendar,
   Code,
   Newspaper,
+  Target,
 } from "lucide-react";
 
 interface NavItem {
@@ -53,6 +54,11 @@ export function Sidebar() {
       label: "Watchlist",
       href: "/dashboard/watchlist",
       icon: <Bookmark className="h-5 w-5" />,
+    },
+    {
+      label: "Fibonacci",
+      href: "/dashboard/fibonacci",
+      icon: <Target className="h-5 w-5" />,
     },
     {
       label: "Portfolio",

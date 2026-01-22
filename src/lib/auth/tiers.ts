@@ -9,6 +9,9 @@ export interface TierLimits {
   timeframes: ("swing" | "day" | "scalp")[];
   universes: string[];
   features: string[];
+  fibonacciLevels: string[] | "all_retracements_extensions" | "all";
+  fibonacciCategories: string[] | "all";
+  fibonacciSignalsLimit: number;
 }
 
 export const TIER_LIMITS: Record<UserTier, TierLimits> = {
@@ -25,7 +28,11 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
       "signal_help",
       "indicator_help",
       "morning_brief_limited",
+      "basic_fibonacci",
     ],
+    fibonacciLevels: ["RETRACE_236", "RETRACE_382", "RETRACE_618"],
+    fibonacciCategories: ["FIB_PRICE_LEVEL", "FIB_BOUNCE"],
+    fibonacciSignalsLimit: 3,
   },
   pro: {
     analysesPerDay: 50,
@@ -47,7 +54,24 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
       "morning_brief_full",
       "signal_help",
       "indicator_help",
+      "advanced_fibonacci",
+      "fibonacci_channels",
+      "fibonacci_clusters",
     ],
+    fibonacciLevels: "all_retracements_extensions",
+    fibonacciCategories: [
+      "FIB_PRICE_LEVEL",
+      "FIB_BOUNCE",
+      "FIB_BREAKOUT",
+      "FIB_CHANNEL",
+      "FIB_CLUSTER",
+      "FIB_MTF_CLUSTER",
+      "FIB_VOLUME",
+      "FIB_MA_CONFLUENCE",
+      "FIB_RSI_DIVERGENCE",
+      "FIB_GOLDEN_POCKET",
+    ],
+    fibonacciSignalsLimit: 15,
   },
   max: {
     analysesPerDay: Infinity,
@@ -77,7 +101,17 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
       "signal_help",
       "indicator_help",
       "morning_brief_full",
+      "advanced_fibonacci",
+      "fibonacci_channels",
+      "fibonacci_clusters",
+      "harmonic_patterns",
+      "elliott_wave_fib",
+      "fibonacci_arcs_fans",
+      "fibonacci_alerts",
     ],
+    fibonacciLevels: "all",
+    fibonacciCategories: "all",
+    fibonacciSignalsLimit: Infinity,
   },
 };
 

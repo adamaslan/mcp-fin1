@@ -69,6 +69,11 @@ export const PRICING_CONFIG = {
       "Trade journal",
       "5 watchlists (50 symbols each)",
       "S&P 500, NASDAQ, ETF universes",
+      "All 40+ Fibonacci levels (23.6% to 423.6%)",
+      "Fibonacci channels & clusters",
+      "Golden Pocket detection",
+      "Multi-timeframe confluence",
+      "15 Fibonacci signals per analysis",
     ],
   },
   max: {
@@ -87,6 +92,11 @@ export const PRICING_CONFIG = {
       "Crypto universe",
       "Unlimited watchlists",
       "Priority support",
+      "Harmonic patterns (Gartley, Bat, Crab, Shark)",
+      "Elliott Wave Fibonacci relationships",
+      "Fibonacci arcs & fan lines",
+      "Unlimited Fibonacci signals",
+      "Custom Fibonacci alerts",
     ],
   },
 } as const;

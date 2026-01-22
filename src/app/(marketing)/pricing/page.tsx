@@ -75,6 +75,18 @@ export default function PricingPage() {
 
             <div>
               <h3 className="font-semibold mb-2">
+                What Fibonacci analysis features are included?
+              </h3>
+              <p className="text-muted-foreground">
+                Free tier includes basic Fibonacci levels (23.6%, 38.2%, 61.8%)
+                with 3 signals. Pro adds all 40+ levels, channels, clusters, and
+                15 signals. Max includes harmonic patterns, Elliott Wave,
+                geometric tools, and unlimited signals with custom alerts.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-2">
                 Can I use this for algorithmic trading?
               </h3>
               <p className="text-muted-foreground">

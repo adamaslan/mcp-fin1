@@ -27,6 +27,8 @@ const FREE_TIER = {
     { text: "Swing timeframe only", included: true },
     { text: "Basic trade plans", included: true },
     { text: "Signal & indicator education", included: true },
+    { text: "Basic Fibonacci levels (23.6%, 38.2%, 61.8%)", included: true },
+    { text: "Price at level signals", included: true },
     { text: "Day & Scalp timeframes", included: false },
     { text: "Portfolio risk tracking", included: false },
     { text: "Trade journal", included: false },
@@ -41,6 +43,11 @@ const PRO_FEATURES = [
   { text: "Portfolio risk dashboard", included: true },
   { text: "Sector concentration analysis", included: true },
   { text: "Trade journal", included: true },
+  { text: "All 40+ Fibonacci levels (23.6% to 423.6%)", included: true },
+  { text: "Fibonacci channels & clusters", included: true },
+  { text: "Golden Pocket detection", included: true },
+  { text: "Multi-timeframe confluence", included: true },
+  { text: "15 Fibonacci signals per analysis", included: true },
   { text: "Alerts & notifications", included: false },
 ];
 
@@ -51,6 +58,12 @@ const MAX_FEATURES = [
   { text: "Hedge suggestions", included: true },
   { text: "Raw signal data (150+)", included: true },
   { text: "Raw indicator data (18+)", included: true },
+  { text: "All Pro Fibonacci features", included: true },
+  { text: "Harmonic patterns (Gartley, Bat, Crab, Shark)", included: true },
+  { text: "Elliott Wave Fibonacci relationships", included: true },
+  { text: "Fibonacci arcs & fan lines", included: true },
+  { text: "Unlimited Fibonacci signals", included: true },
+  { text: "Custom Fibonacci alerts", included: true },
   { text: "Alerts & notifications", included: true },
   { text: "CSV/JSON export & API access", included: true },
 ];

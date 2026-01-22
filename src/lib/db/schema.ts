@@ -97,3 +97,10 @@ export const alerts = pgTable("alerts", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Re-export Fibonacci signals from separate file
+export {
+  fibonacciSignalHistory,
+  type FibonacciSignalHistory,
+  type FibonacciSignalHistoryInsert,
+} from "./fibonacci_signals";

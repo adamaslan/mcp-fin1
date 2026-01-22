@@ -166,3 +166,68 @@ export interface MorningBriefResult {
   sector_losers: SectorMovement[];
   key_themes: string[];
 }
+
+export interface FibonacciLevel {
+  key: string;
+  ratio: number;
+  name: string;
+  type: string;
+  price: number;
+  strength: string;
+  distanceFromCurrent: number;
+}
+
+export interface FibonacciSignal {
+  signal: string;
+  description: string;
+  strength: string;
+  category: string;
+  timeframe: string;
+  value: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface FibonacciCluster {
+  centerPrice: number;
+  levels: string[];
+  levelCount: number;
+  strength: string;
+  type: string;
+}
+
+export interface ConfluenceZone {
+  price: number;
+  levelName: string;
+  confluenceScore: number;
+  strength: "WEAK" | "MODERATE" | "SIGNIFICANT" | "STRONG" | "VERY_STRONG";
+  signalCount: number;
+  averageSignalStrength: number;
+  multiTimeframeAligned: number;
+  signalCategories: string[];
+}
+
+export interface FibonacciAnalysisResult {
+  symbol: string;
+  timestamp: string;
+  price: number;
+  swingHigh: number;
+  swingLow: number;
+  swingRange: number;
+  levels: FibonacciLevel[];
+  signals: FibonacciSignal[];
+  clusters: FibonacciCluster[];
+  confluenceZones: ConfluenceZone[];
+  summary: {
+    totalSignals: number;
+    byCategory: Record<string, number>;
+    strongestLevel: string;
+    confluenceZoneCount: number;
+    highConfidenceZones: number;
+  };
+  tierLimit?: {
+    levelsAvailable: number;
+    categoriesAvailable: number | "all";
+    signalsShown: number;
+    signalsTotal: number;
+  };
+}

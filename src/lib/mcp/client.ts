@@ -4,6 +4,7 @@ import {
   ScanResult,
   PortfolioRiskResult,
   MorningBriefResult,
+  FibonacciAnalysisResult,
 } from "./types";
 
 export class MCPClient {
@@ -149,6 +150,24 @@ export class MCPClient {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ universe, criteria, limit }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`MCP API error: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  async analyzeFibonacci(
+    symbol: string,
+    period = "1d",
+    window = 50,
+  ): Promise<FibonacciAnalysisResult> {
+    const response = await fetch(`${this.baseUrl}/api/fibonacci`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ symbol, period, window }),
     });
 
     if (!response.ok) {

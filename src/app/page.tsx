@@ -1,5 +1,6 @@
 import { Hero } from "@/components/landing/Hero";
 import { LiveMarketPulse } from "@/components/landing/LiveMarketPulse";
+import { FibonacciPreview } from "@/components/landing/FibonacciPreview";
 import { SampleTradePlan } from "@/components/landing/SampleTradePlan";
 import { ScannerPreview } from "@/components/landing/ScannerPreview";
 import { PricingCards } from "@/components/landing/PricingCards";
@@ -35,6 +36,9 @@ export default async function Home() {
       <section className="py-16 border-t">
         <LiveMarketPulse data={marketData?.market} />
       </section>
+
+      {/* Fibonacci analysis preview */}
+      <FibonacciPreview />
 
       {/* Sample trade plan section */}
       <section className="py-16 bg-muted/50 border-t">
