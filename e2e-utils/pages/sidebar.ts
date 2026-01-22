@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { SELECTORS } from '../constants/selectors';
+import { Page, Locator } from "@playwright/test";
+import { SELECTORS } from "../constants/selectors";
 
 /**
  * Page Object Model for Sidebar navigation
@@ -30,10 +30,10 @@ export class Sidebar {
     this.portfolioLink = page.locator(SELECTORS.SIDEBAR.PORTFOLIO_LINK);
     this.journalLink = page.locator(SELECTORS.SIDEBAR.JOURNAL_LINK);
     this.alertsLink = page.locator(SELECTORS.SIDEBAR.ALERTS_LINK);
-    this.calendarLink = page.page.locator('a:has-text("Calendar")');
-    this.newsLink = page.page.locator('a:has-text("News")');
-    this.settingsLink = page.page.locator('a:has-text("Settings")');
-    this.learnLink = page.page.locator('a:has-text("Learn")');
+    this.calendarLink = page.locator('a:has-text("Calendar")');
+    this.newsLink = page.locator('a:has-text("News")');
+    this.settingsLink = page.locator('a:has-text("Settings")');
+    this.learnLink = page.locator('a:has-text("Learn")');
   }
 
   /**
@@ -42,7 +42,7 @@ export class Sidebar {
   async getTier(): Promise<string> {
     const text = await this.tierBadge.textContent();
     const match = text?.match(/Tier: (\w+)/i);
-    return match ? match[1].toLowerCase() : 'unknown';
+    return match ? match[1].toLowerCase() : "unknown";
   }
 
   /**
@@ -52,8 +52,8 @@ export class Sidebar {
     const link = this.page.locator(`a:has-text("${linkName}")`);
 
     try {
-      const classes = await link.getAttribute('class');
-      return classes?.includes('opacity-50') || false;
+      const classes = await link.getAttribute("class");
+      return classes?.includes("opacity-50") || false;
     } catch {
       return false;
     }
@@ -64,7 +64,7 @@ export class Sidebar {
    */
   async clickLink(linkName: string): Promise<void> {
     await this.page.locator(`a:has-text("${linkName}")`).click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -85,7 +85,7 @@ export class Sidebar {
    * Get all visible navigation links
    */
   async getVisibleLinks(): Promise<string[]> {
-    const links = await this.page.locator('aside a').all();
+    const links = await this.page.locator("aside a").all();
     const visibleLinks = [];
 
     for (const link of links) {
@@ -114,7 +114,7 @@ export class Sidebar {
    */
   async clickDashboard(): Promise<void> {
     await this.dashboardLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -122,7 +122,7 @@ export class Sidebar {
    */
   async clickAnalyze(): Promise<void> {
     await this.analyzeLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -130,7 +130,7 @@ export class Sidebar {
    */
   async clickScanner(): Promise<void> {
     await this.scannerLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -138,7 +138,7 @@ export class Sidebar {
    */
   async clickWatchlist(): Promise<void> {
     await this.watchlistLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -146,7 +146,7 @@ export class Sidebar {
    */
   async clickPortfolio(): Promise<void> {
     await this.portfolioLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -154,7 +154,7 @@ export class Sidebar {
    */
   async clickJournal(): Promise<void> {
     await this.journalLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -162,6 +162,6 @@ export class Sidebar {
    */
   async clickAlerts(): Promise<void> {
     await this.alertsLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 }

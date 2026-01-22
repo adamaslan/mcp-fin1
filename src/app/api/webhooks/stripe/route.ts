@@ -1,17 +1,17 @@
-import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { stripe, getTierFromPriceId } from '@/lib/stripe';
-import { clerkClient } from '@clerk/nextjs/server';
-import type Stripe from 'stripe';
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+import { stripe, getTierFromPriceId } from "@/lib/stripe";
+import { clerkClient } from "@clerk/nextjs/server";
+import type Stripe from "stripe";
 
 // Disable body parsing - Stripe needs raw body for signature verification
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
 async function updateUserTier(
   clerkUserId: string,
-  tier: 'free' | 'pro' | 'max',
+  tier: "free" | "pro" | "max",
   stripeCustomerId?: string,
-  stripeSubscriptionId?: string
+  stripeSubscriptionId?: string,
 ) {
   try {
     const client = await clerkClient();
@@ -32,10 +32,10 @@ async function updateUserTier(
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const clerkUserId = session.metadata?.clerkUserId;
-  const tier = session.metadata?.tier as 'pro' | 'max';
+  const tier = session.metadata?.tier as "pro" | "max";
 
   if (!clerkUserId || !tier) {
-    console.error('Missing metadata in checkout session:', session.id);
+    console.error("Missing metadata in checkout session:", session.id);
     return;
   }
 
@@ -43,7 +43,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     clerkUserId,
     tier,
     session.customer as string,
-    session.subscription as string
+    session.subscription as string,
   );
 }
 
@@ -51,7 +51,10 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   const clerkUserId = subscription.metadata?.clerkUserId;
 
   if (!clerkUserId) {
-    console.error('Missing clerkUserId in subscription metadata:', subscription.id);
+    console.error(
+      "Missing clerkUserId in subscription metadata:",
+      subscription.id,
+    );
     return;
   }
 
@@ -63,7 +66,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       clerkUserId,
       tier,
       subscription.customer as string,
-      subscription.id
+      subscription.id,
     );
   }
 }
@@ -73,7 +76,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 
   if (!clerkUserId) {
     // Try to find user by customer ID
-    console.warn('Missing clerkUserId in subscription metadata, attempting lookup');
+    console.warn(
+      "Missing clerkUserId in subscription metadata, attempting lookup",
+    );
     return;
   }
 
@@ -82,18 +87,18 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const status = subscription.status;
 
   // If subscription is active and we have a valid tier, update
-  if (status === 'active' && tier) {
+  if (status === "active" && tier) {
     await updateUserTier(
       clerkUserId,
       tier,
       subscription.customer as string,
-      subscription.id
+      subscription.id,
     );
   }
 
   // If subscription is canceled or past_due, consider downgrading
-  if (status === 'canceled' || status === 'unpaid') {
-    await updateUserTier(clerkUserId, 'free');
+  if (status === "canceled" || status === "unpaid") {
+    await updateUserTier(clerkUserId, "free");
   }
 }
 
@@ -101,12 +106,15 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const clerkUserId = subscription.metadata?.clerkUserId;
 
   if (!clerkUserId) {
-    console.error('Missing clerkUserId in deleted subscription:', subscription.id);
+    console.error(
+      "Missing clerkUserId in deleted subscription:",
+      subscription.id,
+    );
     return;
   }
 
   // Downgrade user to free tier
-  await updateUserTier(clerkUserId, 'free');
+  await updateUserTier(clerkUserId, "free");
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
@@ -122,28 +130,30 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
 
   if (clerkUserId) {
     // Could send notification, update UI state, etc.
-    console.warn(`Payment failed for user ${clerkUserId}, subscription ${subscriptionId}`);
+    console.warn(
+      `Payment failed for user ${clerkUserId}, subscription ${subscriptionId}`,
+    );
   }
 }
 
 export async function POST(request: Request) {
   const body = await request.text();
   const headersList = await headers();
-  const signature = headersList.get('stripe-signature');
+  const signature = headersList.get("stripe-signature");
 
   if (!signature) {
     return NextResponse.json(
-      { error: 'Missing stripe-signature header' },
-      { status: 400 }
+      { error: "Missing stripe-signature header" },
+      { status: 400 },
     );
   }
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    console.error('STRIPE_WEBHOOK_SECRET not configured');
+    console.error("STRIPE_WEBHOOK_SECRET not configured");
     return NextResponse.json(
-      { error: 'Webhook secret not configured' },
-      { status: 500 }
+      { error: "Webhook secret not configured" },
+      { status: 500 },
     );
   }
 
@@ -152,11 +162,11 @@ export async function POST(request: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Webhook signature verification failed:', message);
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Webhook signature verification failed:", message);
     return NextResponse.json(
       { error: `Webhook signature verification failed: ${message}` },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -164,29 +174,40 @@ export async function POST(request: Request) {
 
   try {
     switch (event.type) {
-      case 'checkout.session.completed':
-        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
+      case "checkout.session.completed":
+        await handleCheckoutCompleted(
+          event.data.object as Stripe.Checkout.Session,
+        );
         break;
 
-      case 'customer.subscription.created':
-        await handleSubscriptionCreated(event.data.object as Stripe.Subscription);
+      case "customer.subscription.created":
+        await handleSubscriptionCreated(
+          event.data.object as Stripe.Subscription,
+        );
         break;
 
-      case 'customer.subscription.updated':
-        await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+      case "customer.subscription.updated":
+        await handleSubscriptionUpdated(
+          event.data.object as Stripe.Subscription,
+        );
         break;
 
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+      case "customer.subscription.deleted":
+        await handleSubscriptionDeleted(
+          event.data.object as Stripe.Subscription,
+        );
         break;
 
-      case 'invoice.payment_failed':
+      case "invoice.payment_failed":
         await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
         break;
 
-      case 'invoice.payment_succeeded':
+      case "invoice.payment_succeeded":
         // Could track successful payments, send receipts, etc.
-        console.log('Invoice payment succeeded:', (event.data.object as Stripe.Invoice).id);
+        console.log(
+          "Invoice payment succeeded:",
+          (event.data.object as Stripe.Invoice).id,
+        );
         break;
 
       default:
@@ -195,10 +216,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Error processing webhook:', error);
+    console.error("Error processing webhook:", error);
     return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
+      { error: "Webhook handler failed" },
+      { status: 500 },
     );
   }
 }

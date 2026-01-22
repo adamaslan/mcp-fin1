@@ -1,4 +1,4 @@
-import { db } from './client';
+import { db } from "./client";
 import {
   users,
   watchlists,
@@ -6,14 +6,14 @@ import {
   tradeJournal,
   usageTracking,
   alerts,
-} from './schema';
-import { eq, and, gte } from 'drizzle-orm';
+} from "./schema";
+import { eq, and, gte } from "drizzle-orm";
 
 // Users
 export async function getOrCreateUser(
   userId: string,
   email: string,
-  tier: string = 'free'
+  tier: string = "free",
 ) {
   const existing = await db.query.users.findFirst({
     where: eq(users.id, userId),
@@ -32,7 +32,11 @@ export async function getOrCreateUser(
   return { id: userId, email, tier };
 }
 
-export async function updateUserTier(userId: string, newTier: string, updatedBy: string) {
+export async function updateUserTier(
+  userId: string,
+  newTier: string,
+  updatedBy: string,
+) {
   return db
     .update(users)
     .set({
@@ -45,7 +49,7 @@ export async function updateUserTier(userId: string, newTier: string, updatedBy:
 
 // Usage Tracking
 export async function getTodayUsage(userId: string) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   const existing = await db.query.usageTracking.findFirst({
     where: and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)),
@@ -69,32 +73,26 @@ export async function getTodayUsage(userId: string) {
 }
 
 export async function incrementAnalysisCount(userId: string) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const usage = await getTodayUsage(userId);
 
   await db
     .update(usageTracking)
     .set({ analysisCount: (usage.analysisCount || 0) + 1 })
     .where(
-      and(
-        eq(usageTracking.userId, userId),
-        eq(usageTracking.date, today)
-      )
+      and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)),
     );
 }
 
 export async function incrementScanCount(userId: string) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const usage = await getTodayUsage(userId);
 
   await db
     .update(usageTracking)
     .set({ scanCount: (usage.scanCount || 0) + 1 })
     .where(
-      and(
-        eq(usageTracking.userId, userId),
-        eq(usageTracking.date, today)
-      )
+      and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)),
     );
 }
 
@@ -108,7 +106,7 @@ export async function getWatchlists(userId: string) {
 export async function createWatchlist(
   userId: string,
   name: string,
-  symbols: string[] = []
+  symbols: string[] = [],
 ) {
   return db.insert(watchlists).values({
     id: `watchlist_${Date.now()}`,
@@ -121,7 +119,7 @@ export async function createWatchlist(
 export async function updateWatchlist(
   watchlistId: string,
   name?: string,
-  symbols?: string[]
+  symbols?: string[],
 ) {
   const updates: any = {};
   if (name) updates.name = name;
@@ -142,10 +140,7 @@ export async function deleteWatchlist(watchlistId: string) {
 // Positions
 export async function getPositions(userId: string) {
   return db.query.positions.findMany({
-    where: and(
-      eq(positions.userId, userId),
-      eq(positions.status, 'open')
-    ),
+    where: and(eq(positions.userId, userId), eq(positions.status, "open")),
   });
 }
 
@@ -155,7 +150,7 @@ export async function createPosition(
   shares: number,
   entryPrice: number,
   entryDate: Date,
-  notes?: string
+  notes?: string,
 ) {
   return db.insert(positions).values({
     id: `position_${Date.now()}`,
@@ -172,7 +167,7 @@ export async function updatePosition(
   positionId: string,
   shares?: number,
   entryPrice?: number,
-  notes?: string
+  notes?: string,
 ) {
   const updates: any = {};
   if (shares !== undefined) updates.shares = shares;
@@ -187,7 +182,7 @@ export async function updatePosition(
 export async function closePosition(positionId: string) {
   return db
     .update(positions)
-    .set({ status: 'closed' })
+    .set({ status: "closed" })
     .where(eq(positions.id, positionId));
 }
 
@@ -205,7 +200,7 @@ export async function createTradeEntry(
   shares: number,
   entryDate: Date,
   notes?: string,
-  tradePlanSnapshot?: any
+  tradePlanSnapshot?: any,
 ) {
   return db.insert(tradeJournal).values({
     id: `trade_${Date.now()}`,
@@ -222,7 +217,7 @@ export async function createTradeEntry(
 export async function closeTradeEntry(
   tradeId: string,
   exitPrice: number,
-  exitDate: Date
+  exitDate: Date,
 ) {
   const entry = await db.query.tradeJournal.findFirst({
     where: eq(tradeJournal.id, tradeId),
@@ -255,7 +250,7 @@ export async function createAlert(
   userId: string,
   symbol: string,
   alertType: string,
-  condition: any
+  condition: any,
 ) {
   return db.insert(alerts).values({
     id: `alert_${Date.now()}`,
@@ -269,7 +264,7 @@ export async function createAlert(
 export async function updateAlert(
   alertId: string,
   isActive: boolean,
-  lastTriggered?: Date
+  lastTriggered?: Date,
 ) {
   const updates: any = { isActive };
   if (lastTriggered) updates.lastTriggered = lastTriggered;

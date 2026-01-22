@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   BarChart3,
   Plus,
@@ -14,7 +20,7 @@ import {
   TrendingUp,
   Activity,
   Zap,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface VolumeAlert {
   id: string;
@@ -33,58 +39,60 @@ interface VolumeAlert {
 // Mock data
 const MOCK_ALERTS: VolumeAlert[] = [
   {
-    id: '1',
-    symbol: 'AAPL',
+    id: "1",
+    symbol: "AAPL",
     multiplier: 2.0,
-    avgVolume: '54.2M',
+    avgVolume: "54.2M",
     enabled: true,
-    createdAt: '2024-01-10',
+    createdAt: "2024-01-10",
     lastTriggered: {
-      date: '2024-01-09',
+      date: "2024-01-09",
       actualMultiplier: 2.4,
-      volume: '130.1M',
+      volume: "130.1M",
     },
   },
   {
-    id: '2',
-    symbol: 'NVDA',
+    id: "2",
+    symbol: "NVDA",
     multiplier: 1.5,
-    avgVolume: '48.3M',
+    avgVolume: "48.3M",
     enabled: true,
-    createdAt: '2024-01-08',
+    createdAt: "2024-01-08",
   },
   {
-    id: '3',
-    symbol: 'TSLA',
+    id: "3",
+    symbol: "TSLA",
     multiplier: 3.0,
-    avgVolume: '95.6M',
+    avgVolume: "95.6M",
     enabled: false,
-    createdAt: '2024-01-05',
+    createdAt: "2024-01-05",
   },
 ];
 
 const MULTIPLIER_PRESETS = [
-  { value: 1.5, label: '1.5x', description: 'Moderate increase' },
-  { value: 2.0, label: '2x', description: 'Significant spike' },
-  { value: 3.0, label: '3x', description: 'Major event' },
-  { value: 5.0, label: '5x', description: 'Unusual activity' },
+  { value: 1.5, label: "1.5x", description: "Moderate increase" },
+  { value: 2.0, label: "2x", description: "Significant spike" },
+  { value: 3.0, label: "3x", description: "Major event" },
+  { value: 5.0, label: "5x", description: "Unusual activity" },
 ];
 
 interface VolumeSpikeAlertsProps {
   alerts?: VolumeAlert[];
 }
 
-export function VolumeSpikeAlerts({ alerts = MOCK_ALERTS }: VolumeSpikeAlertsProps) {
+export function VolumeSpikeAlerts({
+  alerts = MOCK_ALERTS,
+}: VolumeSpikeAlertsProps) {
   const [alertsList, setAlertsList] = useState(alerts);
   const [isAdding, setIsAdding] = useState(false);
   const [newAlert, setNewAlert] = useState({
-    symbol: '',
+    symbol: "",
     multiplier: 2.0,
   });
 
   const handleToggle = (id: string) => {
     setAlertsList((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, enabled: !a.enabled } : a))
+      prev.map((a) => (a.id === id ? { ...a, enabled: !a.enabled } : a)),
     );
   };
 
@@ -101,11 +109,11 @@ export function VolumeSpikeAlerts({ alerts = MOCK_ALERTS }: VolumeSpikeAlertsPro
       multiplier: newAlert.multiplier,
       avgVolume: `${(Math.random() * 100).toFixed(1)}M`,
       enabled: true,
-      createdAt: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString().split("T")[0],
     };
 
     setAlertsList((prev) => [...prev, alert]);
-    setNewAlert({ symbol: '', multiplier: 2.0 });
+    setNewAlert({ symbol: "", multiplier: 2.0 });
     setIsAdding(false);
   };
 
@@ -140,22 +148,29 @@ export function VolumeSpikeAlerts({ alerts = MOCK_ALERTS }: VolumeSpikeAlertsPro
                   placeholder="AAPL"
                   value={newAlert.symbol}
                   onChange={(e) =>
-                    setNewAlert((p) => ({ ...p, symbol: e.target.value.toUpperCase() }))
+                    setNewAlert((p) => ({
+                      ...p,
+                      symbol: e.target.value.toUpperCase(),
+                    }))
                   }
                   maxLength={5}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Volume Multiplier</label>
+                <label className="text-sm font-medium mb-1 block">
+                  Volume Multiplier
+                </label>
                 <div className="flex gap-2 flex-wrap">
                   {MULTIPLIER_PRESETS.map((preset) => (
                     <button
                       key={preset.value}
-                      onClick={() => setNewAlert((p) => ({ ...p, multiplier: preset.value }))}
+                      onClick={() =>
+                        setNewAlert((p) => ({ ...p, multiplier: preset.value }))
+                      }
                       className={`px-3 py-2 rounded border text-sm ${
                         newAlert.multiplier === preset.value
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-muted hover:border-primary/50'
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-muted hover:border-primary/50"
                       }`}
                       title={preset.description}
                     >
@@ -173,7 +188,7 @@ export function VolumeSpikeAlerts({ alerts = MOCK_ALERTS }: VolumeSpikeAlertsPro
                   size="sm"
                   onClick={() => {
                     setIsAdding(false);
-                    setNewAlert({ symbol: '', multiplier: 2.0 });
+                    setNewAlert({ symbol: "", multiplier: 2.0 });
                   }}
                 >
                   Cancel
@@ -181,7 +196,8 @@ export function VolumeSpikeAlerts({ alerts = MOCK_ALERTS }: VolumeSpikeAlertsPro
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Alert triggers when current volume exceeds the 20-day average volume by the selected multiplier.
+              Alert triggers when current volume exceeds the 20-day average
+              volume by the selected multiplier.
             </p>
           </div>
         )}
@@ -191,14 +207,16 @@ export function VolumeSpikeAlerts({ alerts = MOCK_ALERTS }: VolumeSpikeAlertsPro
           <div className="text-center py-8 text-muted-foreground">
             <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-20" />
             <p>No volume alerts set.</p>
-            <p className="text-sm">Create an alert to detect unusual trading activity.</p>
+            <p className="text-sm">
+              Create an alert to detect unusual trading activity.
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
             {alertsList.map((alert) => (
               <div
                 key={alert.id}
-                className={`p-4 rounded-lg border ${!alert.enabled ? 'opacity-60' : ''}`}
+                className={`p-4 rounded-lg border ${!alert.enabled ? "opacity-60" : ""}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -222,7 +240,9 @@ export function VolumeSpikeAlerts({ alerts = MOCK_ALERTS }: VolumeSpikeAlertsPro
                     {/* Last Triggered */}
                     {alert.lastTriggered && (
                       <div className="text-sm">
-                        <span className="text-muted-foreground">Last spike:</span>
+                        <span className="text-muted-foreground">
+                          Last spike:
+                        </span>
                         <span className="ml-2 text-yellow-500">
                           {alert.lastTriggered.actualMultiplier.toFixed(1)}x
                         </span>

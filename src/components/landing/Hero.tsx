@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Zap } from "lucide-react";
 
 export function Hero() {
   return (
@@ -25,7 +25,9 @@ export function Hero() {
 
           {/* Subheading */}
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Get real-time trade plans, portfolio risk assessment, and market analysis powered by 150+ technical signals. Start free, upgrade when you&apos;re ready.
+            Get real-time trade plans, portfolio risk assessment, and market
+            analysis powered by 150+ technical signals. Start free, upgrade when
+            you&apos;re ready.
           </p>
 
           {/* CTA Buttons */}

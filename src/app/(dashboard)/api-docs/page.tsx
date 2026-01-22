@@ -1,21 +1,46 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useTier } from '@/hooks/useTier';
-import { TierGate } from '@/components/gating/TierGate';
-import { Code, Copy, Check, Key, Lock, Terminal, FileJson, Zap } from 'lucide-react';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useTier } from "@/hooks/useTier";
+import { TierGate } from "@/components/gating/TierGate";
+import {
+  Code,
+  Copy,
+  Check,
+  Key,
+  Lock,
+  Terminal,
+  FileJson,
+  Zap,
+} from "lucide-react";
 
 const API_ENDPOINTS = [
   {
-    method: 'POST',
-    path: '/api/v1/analyze',
-    description: 'Get trade plan for a symbol',
+    method: "POST",
+    path: "/api/v1/analyze",
+    description: "Get trade plan for a symbol",
     params: [
-      { name: 'symbol', type: 'string', required: true, description: 'Stock ticker (e.g., AAPL)' },
-      { name: 'period', type: 'string', required: false, description: 'Data period (1mo, 3mo, 6mo, 1y)' },
+      {
+        name: "symbol",
+        type: "string",
+        required: true,
+        description: "Stock ticker (e.g., AAPL)",
+      },
+      {
+        name: "period",
+        type: "string",
+        required: false,
+        description: "Data period (1mo, 3mo, 6mo, 1y)",
+      },
     ],
     example: `curl -X POST https://api.mcpfinance.com/v1/analyze \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -23,12 +48,22 @@ const API_ENDPOINTS = [
   -d '{"symbol": "AAPL", "period": "3mo"}'`,
   },
   {
-    method: 'POST',
-    path: '/api/v1/scan',
-    description: 'Scan for trade opportunities',
+    method: "POST",
+    path: "/api/v1/scan",
+    description: "Scan for trade opportunities",
     params: [
-      { name: 'universe', type: 'string', required: false, description: 'Universe to scan (sp500, nasdaq100, etf)' },
-      { name: 'maxResults', type: 'number', required: false, description: 'Max results to return (default: 10)' },
+      {
+        name: "universe",
+        type: "string",
+        required: false,
+        description: "Universe to scan (sp500, nasdaq100, etf)",
+      },
+      {
+        name: "maxResults",
+        type: "number",
+        required: false,
+        description: "Max results to return (default: 10)",
+      },
     ],
     example: `curl -X POST https://api.mcpfinance.com/v1/scan \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -36,11 +71,16 @@ const API_ENDPOINTS = [
   -d '{"universe": "sp500", "maxResults": 25}'`,
   },
   {
-    method: 'POST',
-    path: '/api/v1/portfolio-risk',
-    description: 'Analyze portfolio risk',
+    method: "POST",
+    path: "/api/v1/portfolio-risk",
+    description: "Analyze portfolio risk",
     params: [
-      { name: 'positions', type: 'array', required: true, description: 'Array of position objects' },
+      {
+        name: "positions",
+        type: "array",
+        required: true,
+        description: "Array of position objects",
+      },
     ],
     example: `curl -X POST https://api.mcpfinance.com/v1/portfolio-risk \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -48,16 +88,22 @@ const API_ENDPOINTS = [
   -d '{"positions": [{"symbol": "AAPL", "shares": 100, "entryPrice": 150}]}'`,
   },
   {
-    method: 'GET',
-    path: '/api/v1/morning-brief',
-    description: 'Get daily market brief',
+    method: "GET",
+    path: "/api/v1/morning-brief",
+    description: "Get daily market brief",
     params: [],
     example: `curl https://api.mcpfinance.com/v1/morning-brief \\
   -H "Authorization: Bearer YOUR_API_KEY"`,
   },
 ];
 
-function CodeBlock({ code, language = 'bash' }: { code: string; language?: string }) {
+function CodeBlock({
+  code,
+  language = "bash",
+}: {
+  code: string;
+  language?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -76,7 +122,11 @@ function CodeBlock({ code, language = 'bash' }: { code: string; language?: strin
         className="absolute top-2 right-2 p-2 bg-zinc-800 rounded hover:bg-zinc-700 transition-colors opacity-0 group-hover:opacity-100"
         aria-label="Copy code"
       >
-        {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+        {copied ? (
+          <Check className="h-4 w-4 text-green-500" />
+        ) : (
+          <Copy className="h-4 w-4" />
+        )}
       </button>
     </div>
   );
@@ -84,7 +134,7 @@ function CodeBlock({ code, language = 'bash' }: { code: string; language?: strin
 
 export default function ApiDocsPage() {
   const { tier } = useTier();
-  const hasApiAccess = tier === 'max';
+  const hasApiAccess = tier === "max";
 
   return (
     <div className="space-y-6">
@@ -103,7 +153,9 @@ export default function ApiDocsPage() {
               <Key className="h-5 w-5" />
               Your API Key
             </CardTitle>
-            <CardDescription>Use this key to authenticate API requests</CardDescription>
+            <CardDescription>
+              Use this key to authenticate API requests
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
@@ -117,7 +169,8 @@ export default function ApiDocsPage() {
               <Button variant="outline">Regenerate</Button>
             </div>
             <p className="text-sm text-muted-foreground">
-              Keep your API key secret. Do not share it or commit it to version control.
+              Keep your API key secret. Do not share it or commit it to version
+              control.
             </p>
           </CardContent>
         </Card>
@@ -134,15 +187,21 @@ export default function ApiDocsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 rounded-lg bg-muted">
                 <div className="text-2xl font-bold">1,000</div>
-                <div className="text-sm text-muted-foreground">Requests per day</div>
+                <div className="text-sm text-muted-foreground">
+                  Requests per day
+                </div>
               </div>
               <div className="p-4 rounded-lg bg-muted">
                 <div className="text-2xl font-bold">100</div>
-                <div className="text-sm text-muted-foreground">Requests per minute</div>
+                <div className="text-sm text-muted-foreground">
+                  Requests per minute
+                </div>
               </div>
               <div className="p-4 rounded-lg bg-muted">
                 <div className="text-2xl font-bold">10</div>
-                <div className="text-sm text-muted-foreground">Concurrent requests</div>
+                <div className="text-sm text-muted-foreground">
+                  Concurrent requests
+                </div>
               </div>
             </div>
           </CardContent>
@@ -173,7 +232,9 @@ export default function ApiDocsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Badge
-                    variant={endpoint.method === 'GET' ? 'secondary' : 'default'}
+                    variant={
+                      endpoint.method === "GET" ? "secondary" : "default"
+                    }
                     className="font-mono"
                   >
                     {endpoint.method}
@@ -193,27 +254,41 @@ export default function ApiDocsPage() {
                           <tr>
                             <th className="text-left p-2 font-medium">Name</th>
                             <th className="text-left p-2 font-medium">Type</th>
-                            <th className="text-left p-2 font-medium">Required</th>
-                            <th className="text-left p-2 font-medium">Description</th>
+                            <th className="text-left p-2 font-medium">
+                              Required
+                            </th>
+                            <th className="text-left p-2 font-medium">
+                              Description
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {endpoint.params.map((param) => (
                             <tr key={param.name} className="border-t">
                               <td className="p-2 font-mono">{param.name}</td>
-                              <td className="p-2 text-muted-foreground">{param.type}</td>
+                              <td className="p-2 text-muted-foreground">
+                                {param.type}
+                              </td>
                               <td className="p-2">
                                 {param.required ? (
-                                  <Badge variant="destructive" className="text-xs">
+                                  <Badge
+                                    variant="destructive"
+                                    className="text-xs"
+                                  >
                                     Required
                                   </Badge>
                                 ) : (
-                                  <Badge variant="secondary" className="text-xs">
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
                                     Optional
                                   </Badge>
                                 )}
                               </td>
-                              <td className="p-2 text-muted-foreground">{param.description}</td>
+                              <td className="p-2 text-muted-foreground">
+                                {param.description}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -239,27 +314,35 @@ export default function ApiDocsPage() {
               <Terminal className="h-5 w-5" />
               SDKs & Libraries
             </CardTitle>
-            <CardDescription>Official client libraries (coming soon)</CardDescription>
+            <CardDescription>
+              Official client libraries (coming soon)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 rounded-lg border">
                 <div className="font-medium mb-1">Python</div>
-                <code className="text-sm text-muted-foreground">pip install mcp-finance</code>
+                <code className="text-sm text-muted-foreground">
+                  pip install mcp-finance
+                </code>
                 <Badge variant="secondary" className="ml-2 text-xs">
                   Coming Soon
                 </Badge>
               </div>
               <div className="p-4 rounded-lg border">
                 <div className="font-medium mb-1">JavaScript/Node</div>
-                <code className="text-sm text-muted-foreground">npm install mcp-finance</code>
+                <code className="text-sm text-muted-foreground">
+                  npm install mcp-finance
+                </code>
                 <Badge variant="secondary" className="ml-2 text-xs">
                   Coming Soon
                 </Badge>
               </div>
               <div className="p-4 rounded-lg border">
                 <div className="font-medium mb-1">REST API</div>
-                <code className="text-sm text-muted-foreground">Available Now</code>
+                <code className="text-sm text-muted-foreground">
+                  Available Now
+                </code>
                 <Badge className="ml-2 text-xs">Active</Badge>
               </div>
             </div>
@@ -279,8 +362,9 @@ function ApiAccessUpsell() {
         </div>
         <h3 className="text-xl font-bold mb-2">API Access is a Max Feature</h3>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Get programmatic access to all MCP Finance tools. Build custom integrations, automate your
-          analysis, and integrate with your trading systems.
+          Get programmatic access to all MCP Finance tools. Build custom
+          integrations, automate your analysis, and integrate with your trading
+          systems.
         </p>
         <Button asChild>
           <a href="/pricing">Upgrade to Max</a>

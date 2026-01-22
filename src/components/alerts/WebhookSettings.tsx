@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Webhook,
   Plus,
@@ -15,9 +21,9 @@ import {
   MessageSquare,
   Hash,
   Globe,
-} from 'lucide-react';
+} from "lucide-react";
 
-type WebhookType = 'slack' | 'discord' | 'custom';
+type WebhookType = "slack" | "discord" | "custom";
 
 interface WebhookConfig {
   id: string;
@@ -32,61 +38,78 @@ interface WebhookConfig {
 // Mock data
 const MOCK_WEBHOOKS: WebhookConfig[] = [
   {
-    id: '1',
-    name: 'Trading Alerts Channel',
-    type: 'slack',
-    url: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXX',
+    id: "1",
+    name: "Trading Alerts Channel",
+    type: "slack",
+    url: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXX",
     enabled: true,
-    events: ['price_target', 'trade_signal'],
-    lastTriggered: '2 hours ago',
+    events: ["price_target", "trade_signal"],
+    lastTriggered: "2 hours ago",
   },
   {
-    id: '2',
-    name: 'Discord Server',
-    type: 'discord',
-    url: 'https://discord.com/api/webhooks/0000000000/XXXXXXXXXXXX',
+    id: "2",
+    name: "Discord Server",
+    type: "discord",
+    url: "https://discord.com/api/webhooks/0000000000/XXXXXXXXXXXX",
     enabled: true,
-    events: ['price_target', 'volume_spike'],
-    lastTriggered: '1 day ago',
+    events: ["price_target", "volume_spike"],
+    lastTriggered: "1 day ago",
   },
 ];
 
-const WEBHOOK_TYPES: Record<WebhookType, { icon: React.ReactNode; label: string; color: string }> = {
-  slack: { icon: <Hash className="h-4 w-4" />, label: 'Slack', color: 'bg-[#4A154B]' },
-  discord: { icon: <MessageSquare className="h-4 w-4" />, label: 'Discord', color: 'bg-[#5865F2]' },
-  custom: { icon: <Globe className="h-4 w-4" />, label: 'Custom', color: 'bg-gray-500' },
+const WEBHOOK_TYPES: Record<
+  WebhookType,
+  { icon: React.ReactNode; label: string; color: string }
+> = {
+  slack: {
+    icon: <Hash className="h-4 w-4" />,
+    label: "Slack",
+    color: "bg-[#4A154B]",
+  },
+  discord: {
+    icon: <MessageSquare className="h-4 w-4" />,
+    label: "Discord",
+    color: "bg-[#5865F2]",
+  },
+  custom: {
+    icon: <Globe className="h-4 w-4" />,
+    label: "Custom",
+    color: "bg-gray-500",
+  },
 };
 
 const AVAILABLE_EVENTS = [
-  { id: 'price_target', label: 'Price Target Hit' },
-  { id: 'trade_signal', label: 'New Trade Signal' },
-  { id: 'volume_spike', label: 'Volume Spike' },
-  { id: 'earnings_reminder', label: 'Earnings Reminder' },
-  { id: 'portfolio_alert', label: 'Portfolio Risk Alert' },
+  { id: "price_target", label: "Price Target Hit" },
+  { id: "trade_signal", label: "New Trade Signal" },
+  { id: "volume_spike", label: "Volume Spike" },
+  { id: "earnings_reminder", label: "Earnings Reminder" },
+  { id: "portfolio_alert", label: "Portfolio Risk Alert" },
 ];
 
 interface WebhookSettingsProps {
   webhooks?: WebhookConfig[];
 }
 
-export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsProps) {
+export function WebhookSettings({
+  webhooks = MOCK_WEBHOOKS,
+}: WebhookSettingsProps) {
   const [configs, setConfigs] = useState(webhooks);
   const [isAdding, setIsAdding] = useState(false);
   const [newWebhook, setNewWebhook] = useState({
-    name: '',
-    type: 'slack' as WebhookType,
-    url: '',
+    name: "",
+    type: "slack" as WebhookType,
+    url: "",
   });
   const [testingId, setTestingId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
     setConfigs((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, enabled: !c.enabled } : c))
+      prev.map((c) => (c.id === id ? { ...c, enabled: !c.enabled } : c)),
     );
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this webhook?')) {
+    if (confirm("Are you sure you want to delete this webhook?")) {
       setConfigs((prev) => prev.filter((c) => c.id !== id));
     }
   };
@@ -100,11 +123,11 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
       type: newWebhook.type,
       url: newWebhook.url,
       enabled: true,
-      events: ['price_target'],
+      events: ["price_target"],
     };
 
     setConfigs((prev) => [...prev, webhook]);
-    setNewWebhook({ name: '', type: 'slack', url: '' });
+    setNewWebhook({ name: "", type: "slack", url: "" });
     setIsAdding(false);
   };
 
@@ -113,7 +136,7 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
     // Simulate test
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setTestingId(null);
-    alert('Test message sent successfully!');
+    alert("Test message sent successfully!");
   };
 
   const handleToggleEvent = (webhookId: string, eventId: string) => {
@@ -124,7 +147,7 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
           ? c.events.filter((e) => e !== eventId)
           : [...c.events, eventId];
         return { ...c, events };
-      })
+      }),
     );
   };
 
@@ -158,7 +181,9 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
                 <Input
                   placeholder="My Alerts Channel"
                   value={newWebhook.name}
-                  onChange={(e) => setNewWebhook((p) => ({ ...p, name: e.target.value }))}
+                  onChange={(e) =>
+                    setNewWebhook((p) => ({ ...p, name: e.target.value }))
+                  }
                 />
               </div>
               <div>
@@ -170,22 +195,28 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
                       onClick={() => setNewWebhook((p) => ({ ...p, type }))}
                       className={`flex items-center gap-1 px-3 py-2 rounded border ${
                         newWebhook.type === type
-                          ? 'border-primary bg-primary/10'
-                          : 'border-muted hover:border-primary/50'
+                          ? "border-primary bg-primary/10"
+                          : "border-muted hover:border-primary/50"
                       }`}
                     >
                       {WEBHOOK_TYPES[type].icon}
-                      <span className="text-sm">{WEBHOOK_TYPES[type].label}</span>
+                      <span className="text-sm">
+                        {WEBHOOK_TYPES[type].label}
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Webhook URL</label>
+                <label className="text-sm font-medium mb-1 block">
+                  Webhook URL
+                </label>
                 <Input
                   placeholder="https://hooks.slack.com/..."
                   value={newWebhook.url}
-                  onChange={(e) => setNewWebhook((p) => ({ ...p, url: e.target.value }))}
+                  onChange={(e) =>
+                    setNewWebhook((p) => ({ ...p, url: e.target.value }))
+                  }
                 />
               </div>
             </div>
@@ -198,7 +229,7 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
                 size="sm"
                 onClick={() => {
                   setIsAdding(false);
-                  setNewWebhook({ name: '', type: 'slack', url: '' });
+                  setNewWebhook({ name: "", type: "slack", url: "" });
                 }}
               >
                 Cancel
@@ -212,7 +243,9 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
           <div className="text-center py-8 text-muted-foreground">
             <Webhook className="h-12 w-12 mx-auto mb-4 opacity-20" />
             <p>No webhooks configured.</p>
-            <p className="text-sm">Add a webhook to receive alerts in Slack or Discord.</p>
+            <p className="text-sm">
+              Add a webhook to receive alerts in Slack or Discord.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -229,13 +262,13 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
                     <div>
                       <div className="font-medium">{webhook.name}</div>
                       <div className="text-xs text-muted-foreground truncate max-w-[200px]">
-                        {webhook.url.replace(/\/[^\/]+$/, '/...')}
+                        {webhook.url.replace(/\/[^\/]+$/, "/...")}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={webhook.enabled ? 'default' : 'secondary'}>
-                      {webhook.enabled ? 'Active' : 'Disabled'}
+                    <Badge variant={webhook.enabled ? "default" : "secondary"}>
+                      {webhook.enabled ? "Active" : "Disabled"}
                     </Badge>
                     <Button
                       variant="outline"
@@ -244,7 +277,7 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
                       disabled={testingId === webhook.id}
                     >
                       {testingId === webhook.id ? (
-                        'Sending...'
+                        "Sending..."
                       ) : (
                         <>
                           <Send className="h-3 w-3 mr-1" />
@@ -284,8 +317,8 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
                         onClick={() => handleToggleEvent(webhook.id, event.id)}
                         className={`px-3 py-1 rounded-full text-xs transition-colors ${
                           webhook.events.includes(event.id)
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted hover:bg-muted/80'
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted hover:bg-muted/80"
                         }`}
                       >
                         {event.label}
@@ -310,16 +343,22 @@ export function WebhookSettings({ webhooks = MOCK_WEBHOOKS }: WebhookSettingsPro
           <h4 className="font-medium mb-2">How to set up webhooks</h4>
           <ul className="space-y-1 text-muted-foreground">
             <li>
-              <strong>Slack:</strong> Create an incoming webhook at{' '}
-              <a href="https://api.slack.com/messaging/webhooks" target="_blank" className="text-primary hover:underline">
+              <strong>Slack:</strong> Create an incoming webhook at{" "}
+              <a
+                href="https://api.slack.com/messaging/webhooks"
+                target="_blank"
+                className="text-primary hover:underline"
+              >
                 api.slack.com/messaging/webhooks
               </a>
             </li>
             <li>
-              <strong>Discord:</strong> Edit channel → Integrations → Webhooks → New Webhook
+              <strong>Discord:</strong> Edit channel → Integrations → Webhooks →
+              New Webhook
             </li>
             <li>
-              <strong>Custom:</strong> Provide any URL that accepts POST requests with JSON payload
+              <strong>Custom:</strong> Provide any URL that accepts POST
+              requests with JSON payload
             </li>
           </ul>
         </div>

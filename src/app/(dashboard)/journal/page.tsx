@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Plus, TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Plus, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 
 interface TradeEntry {
   id: string;
@@ -18,32 +24,32 @@ interface TradeEntry {
   entryDate: string;
   exitDate?: string;
   notes?: string;
-  status: 'open' | 'closed';
+  status: "open" | "closed";
 }
 
 export default function JournalPage() {
   const [trades, setTrades] = useState<TradeEntry[]>([
     {
-      id: '1',
-      symbol: 'AAPL',
+      id: "1",
+      symbol: "AAPL",
       entryPrice: 150,
       exitPrice: 155,
       shares: 100,
       pnl: 500,
       pnlPercent: 3.33,
-      entryDate: '2024-01-15',
-      exitDate: '2024-01-20',
-      notes: 'Golden cross signal',
-      status: 'closed',
+      entryDate: "2024-01-15",
+      exitDate: "2024-01-20",
+      notes: "Golden cross signal",
+      status: "closed",
     },
     {
-      id: '2',
-      symbol: 'MSFT',
+      id: "2",
+      symbol: "MSFT",
       entryPrice: 300,
       shares: 50,
-      entryDate: '2024-01-22',
-      notes: 'Swing trade - holding',
-      status: 'open',
+      entryDate: "2024-01-22",
+      notes: "Swing trade - holding",
+      status: "open",
     },
   ]);
 
@@ -51,10 +57,10 @@ export default function JournalPage() {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    symbol: '',
-    entryPrice: '',
-    shares: '',
-    notes: '',
+    symbol: "",
+    entryPrice: "",
+    shares: "",
+    notes: "",
   });
 
   const handleAddTrade = async () => {
@@ -69,20 +75,20 @@ export default function JournalPage() {
       symbol: formData.symbol.toUpperCase(),
       entryPrice: parseFloat(formData.entryPrice),
       shares: parseFloat(formData.shares),
-      entryDate: new Date().toISOString().split('T')[0],
+      entryDate: new Date().toISOString().split("T")[0],
       notes: formData.notes,
-      status: 'open',
+      status: "open",
     };
 
     setTrades([...trades, newTrade]);
-    setFormData({ symbol: '', entryPrice: '', shares: '', notes: '' });
+    setFormData({ symbol: "", entryPrice: "", shares: "", notes: "" });
     setShowForm(false);
     setLoading(false);
   };
 
   const handleCloseTrade = (id: string) => {
     // Would normally prompt for exit price/date
-    const exitPrice = prompt('Enter exit price:');
+    const exitPrice = prompt("Enter exit price:");
     if (!exitPrice) return;
 
     setTrades(
@@ -96,18 +102,23 @@ export default function JournalPage() {
             exitPrice: exit,
             pnl,
             pnlPercent,
-            status: 'closed',
-            exitDate: new Date().toISOString().split('T')[0],
+            status: "closed",
+            exitDate: new Date().toISOString().split("T")[0],
           };
         }
         return t;
-      })
+      }),
     );
   };
 
-  const closedTrades = trades.filter((t) => t.status === 'closed');
-  const openTrades = trades.filter((t) => t.status === 'open');
-  const winRate = closedTrades.length > 0 ? (closedTrades.filter((t) => (t.pnl || 0) > 0).length / closedTrades.length) * 100 : 0;
+  const closedTrades = trades.filter((t) => t.status === "closed");
+  const openTrades = trades.filter((t) => t.status === "open");
+  const winRate =
+    closedTrades.length > 0
+      ? (closedTrades.filter((t) => (t.pnl || 0) > 0).length /
+          closedTrades.length) *
+        100
+      : 0;
   const totalPnL = closedTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
 
   return (
@@ -137,24 +148,32 @@ export default function JournalPage() {
                 <Input
                   placeholder="Symbol"
                   value={formData.symbol}
-                  onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, symbol: e.target.value })
+                  }
                 />
                 <Input
                   type="number"
                   placeholder="Entry Price"
                   value={formData.entryPrice}
-                  onChange={(e) => setFormData({ ...formData, entryPrice: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, entryPrice: e.target.value })
+                  }
                 />
                 <Input
                   type="number"
                   placeholder="Shares"
                   value={formData.shares}
-                  onChange={(e) => setFormData({ ...formData, shares: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, shares: e.target.value })
+                  }
                 />
                 <Input
                   placeholder="Notes (optional)"
                   value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
                 />
               </div>
               <div className="flex gap-2">
@@ -179,7 +198,9 @@ export default function JournalPage() {
               <CardTitle className="text-sm">Total P&L</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+              <p
+                className={`text-3xl font-bold ${totalPnL >= 0 ? "text-green-500" : "text-red-500"}`}
+              >
                 ${totalPnL.toFixed(2)}
               </p>
             </CardContent>
@@ -192,7 +213,8 @@ export default function JournalPage() {
             <CardContent>
               <p className="text-3xl font-bold">{winRate.toFixed(1)}%</p>
               <p className="text-xs text-muted-foreground">
-                {closedTrades.filter((t) => (t.pnl || 0) > 0).length}/{closedTrades.length} wins
+                {closedTrades.filter((t) => (t.pnl || 0) > 0).length}/
+                {closedTrades.length} wins
               </p>
             </CardContent>
           </Card>
@@ -217,15 +239,26 @@ export default function JournalPage() {
           <CardContent>
             <div className="space-y-3">
               {openTrades.map((trade) => (
-                <div key={trade.id} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                <div
+                  key={trade.id}
+                  className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
+                >
                   <div>
                     <p className="font-semibold text-lg">{trade.symbol}</p>
                     <p className="text-sm text-muted-foreground">
                       {trade.shares} shares @ ${trade.entryPrice.toFixed(2)}
                     </p>
-                    {trade.notes && <p className="text-xs text-muted-foreground mt-1">{trade.notes}</p>}
+                    {trade.notes && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {trade.notes}
+                      </p>
+                    )}
                   </div>
-                  <Button onClick={() => handleCloseTrade(trade.id)} variant="outline" size="sm">
+                  <Button
+                    onClick={() => handleCloseTrade(trade.id)}
+                    variant="outline"
+                    size="sm"
+                  >
                     Close
                   </Button>
                 </div>
@@ -258,18 +291,32 @@ export default function JournalPage() {
                 </thead>
                 <tbody>
                   {closedTrades.map((trade) => (
-                    <tr key={trade.id} className="border-b last:border-b-0 hover:bg-muted/50">
+                    <tr
+                      key={trade.id}
+                      className="border-b last:border-b-0 hover:bg-muted/50"
+                    >
                       <td className="py-3 font-semibold">{trade.symbol}</td>
-                      <td className="text-right">${trade.entryPrice.toFixed(2)}</td>
-                      <td className="text-right">${trade.exitPrice?.toFixed(2)}</td>
+                      <td className="text-right">
+                        ${trade.entryPrice.toFixed(2)}
+                      </td>
+                      <td className="text-right">
+                        ${trade.exitPrice?.toFixed(2)}
+                      </td>
                       <td className="text-right">{trade.shares}</td>
-                      <td className={`text-right font-semibold ${(trade.pnl || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      <td
+                        className={`text-right font-semibold ${(trade.pnl || 0) >= 0 ? "text-green-500" : "text-red-500"}`}
+                      >
                         ${trade.pnl?.toFixed(2)}
                       </td>
-                      <td className={`text-right ${(trade.pnlPercent || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {(trade.pnlPercent || 0) >= 0 ? '+' : ''}{trade.pnlPercent?.toFixed(2)}%
+                      <td
+                        className={`text-right ${(trade.pnlPercent || 0) >= 0 ? "text-green-500" : "text-red-500"}`}
+                      >
+                        {(trade.pnlPercent || 0) >= 0 ? "+" : ""}
+                        {trade.pnlPercent?.toFixed(2)}%
                       </td>
-                      <td className="text-left text-xs text-muted-foreground">{trade.exitDate}</td>
+                      <td className="text-left text-xs text-muted-foreground">
+                        {trade.exitDate}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -282,7 +329,10 @@ export default function JournalPage() {
       {trades.length === 0 && (
         <Card>
           <CardContent className="pt-6 text-center text-muted-foreground">
-            <p>No trades logged yet. Start logging your trades to track performance.</p>
+            <p>
+              No trades logged yet. Start logging your trades to track
+              performance.
+            </p>
           </CardContent>
         </Card>
       )}

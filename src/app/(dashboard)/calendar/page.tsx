@@ -1,5 +1,5 @@
-import { EconomicCalendar } from '@/components/calendar/EconomicCalendar';
-import { EarningsCalendar } from '@/components/calendar/EarningsCalendar';
+import { EconomicCalendar } from "@/components/calendar/EconomicCalendar";
+import { EarningsCalendar } from "@/components/calendar/EarningsCalendar";
 
 export default function CalendarPage() {
   return (

@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DollarSign,
   Calendar,
@@ -13,7 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
   Wallet,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface DividendRecord {
   id: string;
@@ -23,10 +29,10 @@ interface DividendRecord {
   payDate: string;
   amount: number;
   yield: number;
-  frequency: 'monthly' | 'quarterly' | 'annual';
+  frequency: "monthly" | "quarterly" | "annual";
   shares: number;
   totalPayout: number;
-  status: 'upcoming' | 'paid' | 'ex-date-passed';
+  status: "upcoming" | "paid" | "ex-date-passed";
 }
 
 interface DividendSummary {
@@ -39,69 +45,69 @@ interface DividendSummary {
 // Mock data
 const MOCK_DIVIDENDS: DividendRecord[] = [
   {
-    id: '1',
-    symbol: 'AAPL',
-    company: 'Apple Inc.',
-    exDate: '2024-02-09',
-    payDate: '2024-02-15',
+    id: "1",
+    symbol: "AAPL",
+    company: "Apple Inc.",
+    exDate: "2024-02-09",
+    payDate: "2024-02-15",
     amount: 0.24,
     yield: 0.52,
-    frequency: 'quarterly',
+    frequency: "quarterly",
     shares: 100,
     totalPayout: 24.0,
-    status: 'upcoming',
+    status: "upcoming",
   },
   {
-    id: '2',
-    symbol: 'MSFT',
-    company: 'Microsoft Corporation',
-    exDate: '2024-02-14',
-    payDate: '2024-03-14',
+    id: "2",
+    symbol: "MSFT",
+    company: "Microsoft Corporation",
+    exDate: "2024-02-14",
+    payDate: "2024-03-14",
     amount: 0.75,
     yield: 0.72,
-    frequency: 'quarterly',
+    frequency: "quarterly",
     shares: 50,
     totalPayout: 37.5,
-    status: 'upcoming',
+    status: "upcoming",
   },
   {
-    id: '3',
-    symbol: 'JNJ',
-    company: 'Johnson & Johnson',
-    exDate: '2024-02-20',
-    payDate: '2024-03-05',
+    id: "3",
+    symbol: "JNJ",
+    company: "Johnson & Johnson",
+    exDate: "2024-02-20",
+    payDate: "2024-03-05",
     amount: 1.24,
     yield: 2.92,
-    frequency: 'quarterly',
+    frequency: "quarterly",
     shares: 30,
     totalPayout: 37.2,
-    status: 'upcoming',
+    status: "upcoming",
   },
   {
-    id: '4',
-    symbol: 'O',
-    company: 'Realty Income Corp',
-    exDate: '2024-01-30',
-    payDate: '2024-02-15',
+    id: "4",
+    symbol: "O",
+    company: "Realty Income Corp",
+    exDate: "2024-01-30",
+    payDate: "2024-02-15",
     amount: 0.256,
     yield: 5.48,
-    frequency: 'monthly',
+    frequency: "monthly",
     shares: 75,
     totalPayout: 19.2,
-    status: 'ex-date-passed',
+    status: "ex-date-passed",
   },
   {
-    id: '5',
-    symbol: 'KO',
-    company: 'Coca-Cola Company',
-    exDate: '2024-01-11',
-    payDate: '2024-01-15',
+    id: "5",
+    symbol: "KO",
+    company: "Coca-Cola Company",
+    exDate: "2024-01-11",
+    payDate: "2024-01-15",
     amount: 0.485,
     yield: 3.12,
-    frequency: 'quarterly',
+    frequency: "quarterly",
     shares: 40,
     totalPayout: 19.4,
-    status: 'paid',
+    status: "paid",
   },
 ];
 
@@ -113,15 +119,24 @@ const MOCK_SUMMARY: DividendSummary = {
 };
 
 const FREQUENCY_LABELS = {
-  monthly: 'Monthly',
-  quarterly: 'Quarterly',
-  annual: 'Annual',
+  monthly: "Monthly",
+  quarterly: "Quarterly",
+  annual: "Annual",
 };
 
 const STATUS_STYLES = {
-  upcoming: { label: 'Upcoming', className: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-  'ex-date-passed': { label: 'Ex-Date Passed', className: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' },
-  paid: { label: 'Paid', className: 'bg-green-500/10 text-green-500 border-green-500/20' },
+  upcoming: {
+    label: "Upcoming",
+    className: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  },
+  "ex-date-passed": {
+    label: "Ex-Date Passed",
+    className: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  },
+  paid: {
+    label: "Paid",
+    className: "bg-green-500/10 text-green-500 border-green-500/20",
+  },
 };
 
 interface DividendTrackerProps {
@@ -134,12 +149,13 @@ export function DividendTracker({
   summary = MOCK_SUMMARY,
 }: DividendTrackerProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'paid'>('all');
+  const [filter, setFilter] = useState<"all" | "upcoming" | "paid">("all");
 
   const filteredDividends = dividends.filter((d) => {
-    if (filter === 'all') return true;
-    if (filter === 'upcoming') return d.status === 'upcoming' || d.status === 'ex-date-passed';
-    return d.status === 'paid';
+    if (filter === "all") return true;
+    if (filter === "upcoming")
+      return d.status === "upcoming" || d.status === "ex-date-passed";
+    return d.status === "paid";
   });
 
   const toggleExpand = (id: string) => {
@@ -165,7 +181,9 @@ export function DividendTracker({
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="p-4 rounded-lg bg-muted/50">
-            <div className="text-sm text-muted-foreground mb-1">Annual Income</div>
+            <div className="text-sm text-muted-foreground mb-1">
+              Annual Income
+            </div>
             <div className="text-2xl font-bold text-green-500">
               ${summary.totalAnnual.toLocaleString()}
             </div>
@@ -173,17 +191,23 @@ export function DividendTracker({
           </div>
           <div className="p-4 rounded-lg bg-muted/50">
             <div className="text-sm text-muted-foreground mb-1">YTD Income</div>
-            <div className="text-2xl font-bold">${summary.totalYTD.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              ${summary.totalYTD.toLocaleString()}
+            </div>
             <div className="text-xs text-muted-foreground">received</div>
           </div>
           <div className="p-4 rounded-lg bg-muted/50">
             <div className="text-sm text-muted-foreground mb-1">Next Month</div>
-            <div className="text-2xl font-bold">${summary.nextMonthProjected.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              ${summary.nextMonthProjected.toLocaleString()}
+            </div>
             <div className="text-xs text-muted-foreground">expected</div>
           </div>
           <div className="p-4 rounded-lg bg-muted/50">
             <div className="text-sm text-muted-foreground mb-1">Avg Yield</div>
-            <div className="text-2xl font-bold">{summary.avgYield.toFixed(2)}%</div>
+            <div className="text-2xl font-bold">
+              {summary.avgYield.toFixed(2)}%
+            </div>
             <div className="text-xs text-muted-foreground">weighted</div>
           </div>
         </div>
@@ -191,23 +215,23 @@ export function DividendTracker({
         {/* Filter Buttons */}
         <div className="flex gap-2">
           <Button
-            variant={filter === 'all' ? 'default' : 'outline'}
+            variant={filter === "all" ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilter('all')}
+            onClick={() => setFilter("all")}
           >
             All
           </Button>
           <Button
-            variant={filter === 'upcoming' ? 'default' : 'outline'}
+            variant={filter === "upcoming" ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilter('upcoming')}
+            onClick={() => setFilter("upcoming")}
           >
             Upcoming
           </Button>
           <Button
-            variant={filter === 'paid' ? 'default' : 'outline'}
+            variant={filter === "paid" ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilter('paid')}
+            onClick={() => setFilter("paid")}
           >
             Paid
           </Button>
@@ -220,7 +244,10 @@ export function DividendTracker({
             const statusStyle = STATUS_STYLES[dividend.status];
 
             return (
-              <div key={dividend.id} className="border rounded-lg overflow-hidden">
+              <div
+                key={dividend.id}
+                className="border rounded-lg overflow-hidden"
+              >
                 {/* Main Row */}
                 <button
                   onClick={() => toggleExpand(dividend.id)}
@@ -229,7 +256,9 @@ export function DividendTracker({
                   <div className="flex items-center gap-4">
                     <div className="text-left">
                       <div className="font-bold">{dividend.symbol}</div>
-                      <div className="text-xs text-muted-foreground">{dividend.company}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {dividend.company}
+                      </div>
                     </div>
                     <Badge variant="outline" className={statusStyle.className}>
                       {statusStyle.label}
@@ -258,28 +287,36 @@ export function DividendTracker({
                   <div className="px-4 pb-4 pt-0 border-t bg-muted/30">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                       <div>
-                        <div className="text-xs text-muted-foreground mb-1">Ex-Dividend Date</div>
+                        <div className="text-xs text-muted-foreground mb-1">
+                          Ex-Dividend Date
+                        </div>
                         <div className="font-medium flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           {new Date(dividend.exDate).toLocaleDateString()}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground mb-1">Payment Date</div>
+                        <div className="text-xs text-muted-foreground mb-1">
+                          Payment Date
+                        </div>
                         <div className="font-medium flex items-center gap-1">
                           <DollarSign className="h-3 w-3" />
                           {new Date(dividend.payDate).toLocaleDateString()}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground mb-1">Dividend Yield</div>
+                        <div className="text-xs text-muted-foreground mb-1">
+                          Dividend Yield
+                        </div>
                         <div className="font-medium flex items-center gap-1">
                           <TrendingUp className="h-3 w-3" />
                           {dividend.yield.toFixed(2)}%
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground mb-1">Frequency</div>
+                        <div className="text-xs text-muted-foreground mb-1">
+                          Frequency
+                        </div>
                         <div className="font-medium">
                           {FREQUENCY_LABELS[dividend.frequency]}
                         </div>
@@ -289,21 +326,28 @@ export function DividendTracker({
                     {/* Annual Projection */}
                     <div className="mt-4 p-3 rounded bg-muted/50">
                       <div className="text-sm">
-                        <span className="text-muted-foreground">Annual projection: </span>
+                        <span className="text-muted-foreground">
+                          Annual projection:{" "}
+                        </span>
                         <span className="font-semibold text-green-500">
                           $
                           {(
                             dividend.totalPayout *
-                            (dividend.frequency === 'monthly'
+                            (dividend.frequency === "monthly"
                               ? 12
-                              : dividend.frequency === 'quarterly'
-                              ? 4
-                              : 1)
+                              : dividend.frequency === "quarterly"
+                                ? 4
+                                : 1)
                           ).toFixed(2)}
                         </span>
                         <span className="text-muted-foreground">
-                          {' '}
-                          ({dividend.frequency === 'monthly' ? '12' : dividend.frequency === 'quarterly' ? '4' : '1'}{' '}
+                          {" "}
+                          (
+                          {dividend.frequency === "monthly"
+                            ? "12"
+                            : dividend.frequency === "quarterly"
+                              ? "4"
+                              : "1"}{" "}
                           payments)
                         </span>
                       </div>

@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { Moon, Sun, Monitor } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
+import { Moon, Sun, Monitor } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 const themes = [
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
-  { value: 'dark-oled', label: 'OLED Dark', icon: Monitor },
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "dark-oled", label: "OLED Dark", icon: Monitor },
 ] as const;
 
 export function ThemeToggle() {
@@ -38,7 +38,7 @@ export function ThemeToggle() {
             <DropdownMenuItem
               key={t.value}
               onClick={() => setTheme(t.value)}
-              className={theme === t.value ? 'bg-accent' : ''}
+              className={theme === t.value ? "bg-accent" : ""}
             >
               <Icon className="h-4 w-4 mr-2" />
               {t.label}

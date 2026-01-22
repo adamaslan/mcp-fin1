@@ -1,42 +1,52 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const signals = [
   {
-    name: 'Golden Cross',
-    category: 'MA_CROSS',
-    description: 'When a fast moving average crosses above a slow moving average, indicating potential uptrend.',
-    strength: 'BULLISH',
+    name: "Golden Cross",
+    category: "MA_CROSS",
+    description:
+      "When a fast moving average crosses above a slow moving average, indicating potential uptrend.",
+    strength: "BULLISH",
   },
   {
-    name: 'Death Cross',
-    category: 'MA_CROSS',
-    description: 'When a fast moving average crosses below a slow moving average, indicating potential downtrend.',
-    strength: 'BEARISH',
+    name: "Death Cross",
+    category: "MA_CROSS",
+    description:
+      "When a fast moving average crosses below a slow moving average, indicating potential downtrend.",
+    strength: "BEARISH",
   },
   {
-    name: 'RSI Oversold',
-    category: 'RSI',
-    description: 'RSI below 30 indicates oversold conditions, potential bounce.',
-    strength: 'BULLISH',
+    name: "RSI Oversold",
+    category: "RSI",
+    description:
+      "RSI below 30 indicates oversold conditions, potential bounce.",
+    strength: "BULLISH",
   },
   {
-    name: 'RSI Overbought',
-    category: 'RSI',
-    description: 'RSI above 70 indicates overbought conditions, potential pullback.',
-    strength: 'BEARISH',
+    name: "RSI Overbought",
+    category: "RSI",
+    description:
+      "RSI above 70 indicates overbought conditions, potential pullback.",
+    strength: "BEARISH",
   },
   {
-    name: 'MACD Bullish Crossover',
-    category: 'MACD',
-    description: 'MACD line crosses above signal line with histogram positive.',
-    strength: 'BULLISH',
+    name: "MACD Bullish Crossover",
+    category: "MACD",
+    description: "MACD line crosses above signal line with histogram positive.",
+    strength: "BULLISH",
   },
   {
-    name: 'MACD Bearish Crossover',
-    category: 'MACD',
-    description: 'MACD line crosses below signal line with histogram negative.',
-    strength: 'BEARISH',
+    name: "MACD Bearish Crossover",
+    category: "MACD",
+    description: "MACD line crosses below signal line with histogram negative.",
+    strength: "BEARISH",
   },
 ];
 
@@ -46,7 +56,8 @@ export default function SignalsPage() {
       <div>
         <h1 className="text-3xl font-bold mb-2">Signal Education</h1>
         <p className="text-muted-foreground">
-          Learn about the 150+ technical signals that power MCP Finance analysis.
+          Learn about the 150+ technical signals that power MCP Finance
+          analysis.
         </p>
       </div>
 
@@ -61,9 +72,9 @@ export default function SignalsPage() {
                 </div>
                 <Badge
                   className={
-                    signal.strength === 'BULLISH'
-                      ? 'bg-green-500'
-                      : 'bg-red-500'
+                    signal.strength === "BULLISH"
+                      ? "bg-green-500"
+                      : "bg-red-500"
                   }
                 >
                   {signal.strength}
@@ -71,7 +82,9 @@ export default function SignalsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">{signal.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {signal.description}
+              </p>
             </CardContent>
           </Card>
         ))}
@@ -80,7 +93,8 @@ export default function SignalsPage() {
       <Card className="bg-blue-500/10 border-blue-200 dark:border-blue-800">
         <CardContent className="pt-6 text-sm text-blue-700 dark:text-blue-400">
           <p>
-            <strong>Max tier users:</strong> See all 150+ signals and raw signal strength values in the analysis results.
+            <strong>Max tier users:</strong> See all 150+ signals and raw signal
+            strength values in the analysis results.
           </p>
         </CardContent>
       </Card>

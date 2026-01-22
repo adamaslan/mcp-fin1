@@ -35,6 +35,7 @@ Server runs at `http://localhost:3000`
 ### Free Tier Testing
 
 **Setup:**
+
 1. Create new account in development
 2. Verify Clerk metadata shows `tier: 'free'`
 
@@ -80,6 +81,7 @@ Server runs at `http://localhost:3000`
 ### Pro Tier Testing
 
 **Setup:**
+
 1. Admin updates user tier to "pro" via Clerk dashboard or API
 2. Clear browser cache / re-login
 3. Verify Clerk metadata shows `tier: 'pro'`
@@ -130,6 +132,7 @@ Server runs at `http://localhost:3000`
 ### Max Tier Testing
 
 **Setup:**
+
 1. Admin updates user tier to "max"
 2. Clear browser cache / re-login
 3. Verify Clerk metadata shows `tier: 'max'`
@@ -209,47 +212,57 @@ Server runs at `http://localhost:3000`
 ### Using curl or Postman:
 
 **Analyze Route** (`POST /api/mcp/analyze`)
+
 ```bash
 curl -X POST http://localhost:3000/api/mcp/analyze \
   -H "Content-Type: application/json" \
   -d '{"symbol":"AAPL","period":"1mo","useAi":true}'
 ```
+
 - [ ] Free tier: top 3 signals only
 - [ ] Pro tier: top 10 signals
 - [ ] Max tier: all signals
 
 **Trade Plan Route** (`POST /api/mcp/trade-plan`)
+
 ```bash
 curl -X POST http://localhost:3000/api/mcp/trade-plan \
   -H "Content-Type: application/json" \
   -d '{"symbol":"AAPL","period":"1mo"}'
 ```
+
 - [ ] Filters by selected timeframe
 - [ ] Free tier: swing only
 - [ ] Pro/Max tier: all timeframes
 
 **Portfolio Risk Route** (`POST /api/mcp/portfolio-risk`)
+
 ```bash
 curl -X POST http://localhost:3000/api/mcp/portfolio-risk \
   -H "Content-Type: application/json" \
   -d '{"positions":[{"symbol":"AAPL","shares":100,"entry_price":150}]}'
 ```
+
 - [ ] Free tier: returns 403 Forbidden
 - [ ] Pro tier: returns risk data, NO hedge suggestions
 - [ ] Max tier: returns risk data WITH hedge suggestions
 
 **Alerts Route** (`GET /api/alerts`)
+
 ```bash
 curl -X GET http://localhost:3000/api/alerts
 ```
+
 - [ ] Free tier: returns 403
 - [ ] Pro tier: returns 403
 - [ ] Max tier: returns user's alerts array
 
 **Export Route** (`GET /api/export?format=csv`)
+
 ```bash
 curl -X GET "http://localhost:3000/api/export?format=json"
 ```
+
 - [ ] Free/Pro tier: returns 403
 - [ ] Max tier: returns JSON file with trade data
 
@@ -273,6 +286,7 @@ curl -X GET "http://localhost:3000/api/export?format=json"
 - [ ] Track usage: `usage_tracking` updated on each API call
 
 **Queries to verify:**
+
 ```sql
 SELECT * FROM users WHERE clerk_id = 'user_XXXXX';
 SELECT * FROM watchlists WHERE user_id = 'user_XXXXX';

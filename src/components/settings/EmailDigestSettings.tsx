@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import {
   Mail,
   Clock,
@@ -15,12 +21,12 @@ import {
   Newspaper,
   BarChart3,
   Check,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface DigestSettings {
   enabled: boolean;
   email: string;
-  frequency: 'daily' | 'weekly';
+  frequency: "daily" | "weekly";
   time: string;
   weekday?: number;
   sections: {
@@ -35,9 +41,9 @@ interface DigestSettings {
 
 const DEFAULT_SETTINGS: DigestSettings = {
   enabled: true,
-  email: '',
-  frequency: 'daily',
-  time: '07:00',
+  email: "",
+  frequency: "daily",
+  time: "07:00",
   weekday: 1,
   sections: {
     marketOverview: true,
@@ -51,44 +57,52 @@ const DEFAULT_SETTINGS: DigestSettings = {
 
 const SECTIONS = [
   {
-    key: 'marketOverview',
-    label: 'Market Overview',
-    description: 'S&P 500, NASDAQ, VIX performance',
+    key: "marketOverview",
+    label: "Market Overview",
+    description: "S&P 500, NASDAQ, VIX performance",
     icon: BarChart3,
   },
   {
-    key: 'watchlistSummary',
-    label: 'Watchlist Summary',
-    description: 'Price changes for your tracked symbols',
+    key: "watchlistSummary",
+    label: "Watchlist Summary",
+    description: "Price changes for your tracked symbols",
     icon: TrendingUp,
   },
   {
-    key: 'alertsTriggered',
-    label: 'Alerts Triggered',
-    description: 'Summary of alerts that triggered',
+    key: "alertsTriggered",
+    label: "Alerts Triggered",
+    description: "Summary of alerts that triggered",
     icon: AlertCircle,
   },
   {
-    key: 'topMovers',
-    label: 'Top Movers',
-    description: 'Biggest gainers and losers',
+    key: "topMovers",
+    label: "Top Movers",
+    description: "Biggest gainers and losers",
     icon: TrendingUp,
   },
   {
-    key: 'earningsReminders',
-    label: 'Earnings Reminders',
-    description: 'Upcoming earnings for your watchlist',
+    key: "earningsReminders",
+    label: "Earnings Reminders",
+    description: "Upcoming earnings for your watchlist",
     icon: Calendar,
   },
   {
-    key: 'newsHighlights',
-    label: 'News Highlights',
-    description: 'Top market news stories',
+    key: "newsHighlights",
+    label: "News Highlights",
+    description: "Top market news stories",
     icon: Newspaper,
   },
 ] as const;
 
-const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 export function EmailDigestSettings() {
   const [settings, setSettings] = useState<DigestSettings>(DEFAULT_SETTINGS);
@@ -104,7 +118,7 @@ export function EmailDigestSettings() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const handleToggleSection = (key: keyof DigestSettings['sections']) => {
+  const handleToggleSection = (key: keyof DigestSettings["sections"]) => {
     setSettings((prev) => ({
       ...prev,
       sections: {
@@ -129,19 +143,27 @@ export function EmailDigestSettings() {
           </div>
           <Switch
             checked={settings.enabled}
-            onCheckedChange={(enabled) => setSettings((prev) => ({ ...prev, enabled }))}
+            onCheckedChange={(enabled) =>
+              setSettings((prev) => ({ ...prev, enabled }))
+            }
           />
         </div>
       </CardHeader>
-      <CardContent className={`space-y-6 ${!settings.enabled ? 'opacity-50 pointer-events-none' : ''}`}>
+      <CardContent
+        className={`space-y-6 ${!settings.enabled ? "opacity-50 pointer-events-none" : ""}`}
+      >
         {/* Email Address */}
         <div>
-          <label className="text-sm font-medium mb-2 block">Email Address</label>
+          <label className="text-sm font-medium mb-2 block">
+            Email Address
+          </label>
           <Input
             type="email"
             placeholder="your@email.com"
             value={settings.email}
-            onChange={(e) => setSettings((prev) => ({ ...prev, email: e.target.value }))}
+            onChange={(e) =>
+              setSettings((prev) => ({ ...prev, email: e.target.value }))
+            }
           />
         </div>
 
@@ -150,22 +172,26 @@ export function EmailDigestSettings() {
           <label className="text-sm font-medium mb-2 block">Frequency</label>
           <div className="flex gap-3">
             <button
-              onClick={() => setSettings((prev) => ({ ...prev, frequency: 'daily' }))}
+              onClick={() =>
+                setSettings((prev) => ({ ...prev, frequency: "daily" }))
+              }
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
-                settings.frequency === 'daily'
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-muted hover:border-primary/50'
+                settings.frequency === "daily"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-muted hover:border-primary/50"
               }`}
             >
               <Clock className="h-4 w-4" />
               Daily
             </button>
             <button
-              onClick={() => setSettings((prev) => ({ ...prev, frequency: 'weekly' }))}
+              onClick={() =>
+                setSettings((prev) => ({ ...prev, frequency: "weekly" }))
+              }
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
-                settings.frequency === 'weekly'
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-muted hover:border-primary/50'
+                settings.frequency === "weekly"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-muted hover:border-primary/50"
               }`}
             >
               <Calendar className="h-4 w-4" />
@@ -177,25 +203,34 @@ export function EmailDigestSettings() {
         {/* Time */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-medium mb-2 block">Delivery Time</label>
+            <label className="text-sm font-medium mb-2 block">
+              Delivery Time
+            </label>
             <Input
               type="time"
               value={settings.time}
-              onChange={(e) => setSettings((prev) => ({ ...prev, time: e.target.value }))}
+              onChange={(e) =>
+                setSettings((prev) => ({ ...prev, time: e.target.value }))
+              }
             />
             <p className="text-xs text-muted-foreground mt-1">
               Time is in your local timezone
             </p>
           </div>
 
-          {settings.frequency === 'weekly' && (
+          {settings.frequency === "weekly" && (
             <div>
-              <label className="text-sm font-medium mb-2 block">Delivery Day</label>
+              <label className="text-sm font-medium mb-2 block">
+                Delivery Day
+              </label>
               <select
                 className="w-full border rounded-lg px-3 py-2 text-sm bg-background"
                 value={settings.weekday}
                 onChange={(e) =>
-                  setSettings((prev) => ({ ...prev, weekday: parseInt(e.target.value) }))
+                  setSettings((prev) => ({
+                    ...prev,
+                    weekday: parseInt(e.target.value),
+                  }))
                 }
               >
                 {WEEKDAYS.map((day, index) => (
@@ -210,32 +245,45 @@ export function EmailDigestSettings() {
 
         {/* Sections */}
         <div>
-          <label className="text-sm font-medium mb-3 block">Include in Digest</label>
+          <label className="text-sm font-medium mb-3 block">
+            Include in Digest
+          </label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {SECTIONS.map((section) => {
               const Icon = section.icon;
-              const isEnabled = settings.sections[section.key as keyof DigestSettings['sections']];
+              const isEnabled =
+                settings.sections[
+                  section.key as keyof DigestSettings["sections"]
+                ];
 
               return (
                 <button
                   key={section.key}
-                  onClick={() => handleToggleSection(section.key as keyof DigestSettings['sections'])}
+                  onClick={() =>
+                    handleToggleSection(
+                      section.key as keyof DigestSettings["sections"],
+                    )
+                  }
                   className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-colors ${
                     isEnabled
-                      ? 'border-primary/50 bg-primary/5'
-                      : 'border-muted hover:border-muted-foreground/30'
+                      ? "border-primary/50 bg-primary/5"
+                      : "border-muted hover:border-muted-foreground/30"
                   }`}
                 >
                   <div
                     className={`mt-0.5 p-1.5 rounded ${
-                      isEnabled ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+                      isEnabled
+                        ? "bg-primary/20 text-primary"
+                        : "bg-muted text-muted-foreground"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{section.label}</div>
-                    <div className="text-xs text-muted-foreground">{section.description}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {section.description}
+                    </div>
                   </div>
                   {isEnabled && (
                     <Check className="h-4 w-4 text-primary mt-0.5" />
@@ -254,17 +302,17 @@ export function EmailDigestSettings() {
           </h4>
           <div className="text-sm text-muted-foreground space-y-1">
             <p>
-              <strong>Schedule:</strong>{' '}
-              {settings.frequency === 'daily'
+              <strong>Schedule:</strong>{" "}
+              {settings.frequency === "daily"
                 ? `Every day at ${settings.time}`
                 : `Every ${WEEKDAYS[settings.weekday ?? 1]} at ${settings.time}`}
             </p>
             <p>
-              <strong>Sections:</strong>{' '}
+              <strong>Sections:</strong>{" "}
               {Object.entries(settings.sections)
                 .filter(([, enabled]) => enabled)
                 .map(([key]) => SECTIONS.find((s) => s.key === key)?.label)
-                .join(', ') || 'None selected'}
+                .join(", ") || "None selected"}
             </p>
           </div>
         </div>
@@ -272,10 +320,13 @@ export function EmailDigestSettings() {
         {/* Save Button */}
         <div className="flex items-center gap-3">
           <Button onClick={handleSave} disabled={saving || !settings.email}>
-            {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Settings'}
+            {saving ? "Saving..." : saved ? "Saved!" : "Save Settings"}
           </Button>
           {saved && (
-            <Badge variant="outline" className="text-green-500 border-green-500">
+            <Badge
+              variant="outline"
+              className="text-green-500 border-green-500"
+            >
               <Check className="h-3 w-3 mr-1" />
               Settings saved
             </Badge>

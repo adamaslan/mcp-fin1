@@ -3,7 +3,7 @@
  * These match the tier configuration in /src/lib/auth/tiers.ts
  */
 
-export type UserTier = 'free' | 'pro' | 'max';
+export type UserTier = "free" | "pro" | "max";
 
 export interface TierLimits {
   analysesPerDay: number;
@@ -23,8 +23,8 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     scanResultsLimit: 5,
     watchlistCount: 1,
     watchlistSymbolLimit: 10,
-    timeframes: ['swing'],
-    universes: ['sp500'],
+    timeframes: ["swing"],
+    universes: ["sp500"],
     signalsVisible: 3,
   },
 
@@ -34,8 +34,8 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     scanResultsLimit: 25,
     watchlistCount: 5,
     watchlistSymbolLimit: 50,
-    timeframes: ['swing', 'day', 'scalp'],
-    universes: ['sp500', 'nasdaq100', 'etf_large_cap'],
+    timeframes: ["swing", "day", "scalp"],
+    universes: ["sp500", "nasdaq100", "etf_large_cap"],
     signalsVisible: 10,
   },
 
@@ -45,8 +45,8 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     scanResultsLimit: 50,
     watchlistCount: Infinity,
     watchlistSymbolLimit: Infinity,
-    timeframes: ['swing', 'day', 'scalp'],
-    universes: ['sp500', 'nasdaq100', 'etf_large_cap', 'crypto'],
+    timeframes: ["swing", "day", "scalp"],
+    universes: ["sp500", "nasdaq100", "etf_large_cap", "crypto"],
     signalsVisible: Infinity,
   },
 };

@@ -1,19 +1,24 @@
 # Claude Skill: Create Clerk Authentication Pages
 
 ## Skill Invocation
+
 "Create Clerk sign-up page" or "Add Clerk authentication pages"
 
 ## Skill Description
+
 This skill creates production-ready authentication pages (sign-up and sign-in) for Next.js applications using Clerk, with full design system integration, dark mode support, and proper Next.js App Router patterns.
 
 ## When to Use This Skill
+
 - Starting a new Next.js project that needs authentication
 - Adding auth to an existing Next.js application
 - Replacing custom auth with Clerk
 - Creating styled Clerk auth pages that match your design system
 
 ## Prerequisites Check
+
 Before executing, verify:
+
 1. Next.js 13+ with App Router (`/app` directory exists)
 2. Clerk installed (`@clerk/nextjs` in package.json) - if not, install it
 3. Tailwind CSS configured
@@ -22,6 +27,7 @@ Before executing, verify:
 ## Implementation Steps
 
 ### Step 1: Environment Setup
+
 Ask the user if they have Clerk API keys configured. If not, guide them:
 
 ```bash
@@ -35,10 +41,11 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 ```
 
 ### Step 2: Verify Root Layout
+
 Check `src/app/layout.tsx` has ClerkProvider:
 
 ```tsx
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider } from "@clerk/nextjs";
 
 export default function RootLayout({ children }) {
   return (
@@ -54,7 +61,9 @@ export default function RootLayout({ children }) {
 If missing, add it.
 
 ### Step 3: Check/Create Marketing Layout
+
 Look for `src/app/(marketing)/layout.tsx`. If it doesn't exist, create it with:
+
 - Header with navigation
 - SignedIn/SignedOut components for conditional rendering
 - Links to /sign-in and /sign-up
@@ -63,23 +72,35 @@ Look for `src/app/(marketing)/layout.tsx`. If it doesn't exist, create it with:
 Use this template:
 
 ```tsx
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+export default function MarketingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="text-xl font-bold">[APP_NAME]</Link>
+          <Link href="/" className="text-xl font-bold">
+            [APP_NAME]
+          </Link>
           <div className="flex items-center gap-4">
             <SignedOut>
-              <Button asChild variant="outline"><Link href="/sign-in">Sign In</Link></Button>
-              <Button asChild><Link href="/sign-up">Get Started</Link></Button>
+              <Button asChild variant="outline">
+                <Link href="/sign-in">Sign In</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/sign-up">Get Started</Link>
+              </Button>
             </SignedOut>
             <SignedIn>
-              <Button asChild variant="outline"><Link href="/dashboard">Dashboard</Link></Button>
+              <Button asChild variant="outline">
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
           </div>
@@ -94,9 +115,11 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 Replace `[APP_NAME]` with the actual app name from the project.
 
 ### Step 4: Create Sign-Up Page
+
 Create `src/app/(marketing)/sign-up/page.tsx`:
 
 **IMPORTANT PATTERNS:**
+
 1. **Always use `'use client'`** directive at the top
 2. **Always implement the `mounted` state pattern** to prevent hydration errors
 3. **Center the form** with flexbox
@@ -104,11 +127,12 @@ Create `src/app/(marketing)/sign-up/page.tsx`:
 5. **Use gradient background** or subtle background that matches landing page
 
 Template structure:
-```tsx
-'use client';
 
-import { SignUp } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+```tsx
+"use client";
+
+import { SignUp } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 
 export default function SignUpPage() {
   // CRITICAL: Prevent hydration mismatch
@@ -137,14 +161,17 @@ export default function SignUpPage() {
           signInUrl="/sign-in"
           appearance={{
             elements: {
-              rootBox: 'w-full',
-              card: 'bg-card border border-border rounded-lg shadow-sm',
-              formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90 rounded-md h-10 text-sm font-medium',
-              formFieldInput: 'bg-input border border-input rounded-md h-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:focus:ring-offset-background',
-              footerActionLink: 'text-primary hover:text-primary/90 hover:underline',
-              dividerLine: 'bg-border',
-              dividerText: 'text-muted-foreground text-sm',
-              formFieldLabel: 'text-sm font-medium text-foreground',
+              rootBox: "w-full",
+              card: "bg-card border border-border rounded-lg shadow-sm",
+              formButtonPrimary:
+                "bg-primary text-primary-foreground hover:bg-primary/90 rounded-md h-10 text-sm font-medium",
+              formFieldInput:
+                "bg-input border border-input rounded-md h-9 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:focus:ring-offset-background",
+              footerActionLink:
+                "text-primary hover:text-primary/90 hover:underline",
+              dividerLine: "bg-border",
+              dividerText: "text-muted-foreground text-sm",
+              formFieldLabel: "text-sm font-medium text-foreground",
             },
           }}
         />
@@ -155,24 +182,27 @@ export default function SignUpPage() {
 ```
 
 ### Step 5: Create Sign-In Page
+
 Create `src/app/(marketing)/sign-in/page.tsx` using the same pattern:
+
 - Change heading to "Welcome back"
 - Change `<SignUp>` to `<SignIn>`
 - Swap `redirectUrl` and redirect URLs
 - Keep the same styling
 
 ### Step 6: Configure Middleware
+
 Check `src/middleware.ts` exists and includes public routes:
 
 ```tsx
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/pricing(.*)',
-  '/api/webhooks(.*)',
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/pricing(.*)",
+  "/api/webhooks(.*)",
 ]);
 
 export default clerkMiddleware((auth, request) => {
@@ -183,8 +213,8 @@ export default clerkMiddleware((auth, request) => {
 
 export const config = {
   matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
   ],
 };
 ```
@@ -192,6 +222,7 @@ export const config = {
 If middleware doesn't exist, create it.
 
 ### Step 7: Verify Design System Integration
+
 1. **Read `globals.css`** to understand the project's CSS variables
 2. **Match input heights** - common values: `h-9`, `h-10`, `h-11`
 3. **Match border radius** - look at existing Button/Card components
@@ -201,6 +232,7 @@ If middleware doesn't exist, create it.
 **Critical:** The appearance.elements styling should match the existing UI components exactly.
 
 ### Step 8: Testing Prompt
+
 After creating files, provide this testing checklist to the user:
 
 ```
@@ -226,14 +258,14 @@ If you see any styling issues, let me know and I'll adjust the appearance config
 ## Customization Options
 
 ### Option 1: Change Layout Style
+
 Ask user: "Do you want center-aligned auth (default) or side-by-side with marketing content?"
 
 For side-by-side:
+
 ```tsx
 <section className="min-h-screen grid lg:grid-cols-2">
-  <div className="flex items-center justify-center p-8">
-    {/* Auth form */}
-  </div>
+  <div className="flex items-center justify-center p-8">{/* Auth form */}</div>
   <div className="bg-muted flex items-center justify-center p-8">
     {/* Marketing content, testimonials, features */}
   </div>
@@ -241,22 +273,32 @@ For side-by-side:
 ```
 
 ### Option 2: Add Logo
+
 Ask user: "Do you want to add a logo above the auth form?"
 
 If yes:
+
 ```tsx
 <div className="text-center mb-8">
-  <Image src="/logo.svg" alt="Logo" width={48} height={48} className="mx-auto mb-4" />
+  <Image
+    src="/logo.svg"
+    alt="Logo"
+    width={48}
+    height={48}
+    className="mx-auto mb-4"
+  />
   <h1>...</h1>
 </div>
 ```
 
 ### Option 3: Custom Redirect
+
 Ask user: "Where should users go after sign-up? (default: /dashboard)"
 
 Update `redirectUrl` prop accordingly.
 
 ### Option 4: OAuth Providers
+
 Remind user: "OAuth providers (Google, GitHub, etc.) are configured in your Clerk Dashboard and will automatically appear in the form."
 
 ## Common Pitfalls to Avoid
@@ -271,6 +313,7 @@ Remind user: "OAuth providers (Google, GitHub, etc.) are configured in your Cler
 ## Success Criteria
 
 The implementation is successful when:
+
 - [ ] Pages load without console errors
 - [ ] Styling matches existing design system
 - [ ] Light and dark modes both work correctly
@@ -304,6 +347,7 @@ After creating the pages, inform the user about:
 The pages will redirect users to `/dashboard` after authentication. You can test the flow by running your dev server and visiting `/sign-up`.
 
 Next steps:
+
 - Test the sign-up flow
 - Configure OAuth providers in Clerk Dashboard (optional)
 - Customize email templates in Clerk Dashboard
@@ -314,6 +358,7 @@ Let me know if you'd like to customize anything!"
 ## Variables to Extract from Project
 
 When executing this skill, automatically detect:
+
 1. **App name** - from package.json or root README
 2. **Primary color** - from globals.css `--primary` variable
 3. **Input height** - from existing Input component (usually in `components/ui/input.tsx`)

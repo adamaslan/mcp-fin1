@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { SELECTORS } from '../constants/selectors';
+import { Page, Locator } from "@playwright/test";
+import { SELECTORS } from "../constants/selectors";
 
 /**
  * Page Object Model for Scanner feature page
@@ -28,8 +28,8 @@ export class ScannerPage {
    * Navigate to scanner page
    */
   async goto(): Promise<void> {
-    await this.page.goto('/scanner');
-    await this.page.waitForLoadState('networkidle');
+    await this.page.goto("/scanner");
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -45,7 +45,7 @@ export class ScannerPage {
    */
   async runScan(): Promise<void> {
     await this.scanButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
   }
 
   /**
@@ -68,11 +68,11 @@ export class ScannerPage {
     const option = this.page.locator(`[value="${universe}"]`);
 
     try {
-      const disabled = await option.getAttribute('disabled');
+      const disabled = await option.getAttribute("disabled");
       return disabled !== null;
     } finally {
       // Close select
-      await this.page.keyboard.press('Escape');
+      await this.page.keyboard.press("Escape");
     }
   }
 
@@ -114,17 +114,19 @@ export class ScannerPage {
   async getAvailableUniverses(): Promise<string[]> {
     await this.universeSelect.click();
 
-    const options = await this.page.locator(`${SELECTORS.SCANNER.UNIVERSE_SELECT} [value]`).all();
+    const options = await this.page
+      .locator(`${SELECTORS.SCANNER.UNIVERSE_SELECT} [value]`)
+      .all();
     const universes = [];
 
     for (const option of options) {
-      const value = await option.getAttribute('value');
+      const value = await option.getAttribute("value");
       if (value) {
         universes.push(value);
       }
     }
 
-    await this.page.keyboard.press('Escape');
+    await this.page.keyboard.press("Escape");
     return universes;
   }
 

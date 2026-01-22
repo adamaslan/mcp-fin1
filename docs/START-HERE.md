@@ -18,18 +18,22 @@ I want AI to do it     → Jump to "AI-Assisted"
 **You're new to Clerk or Next.js authentication.**
 
 ### What you'll do:
+
 1. Read the complete guide
 2. Understand the patterns
 3. Implement step-by-step
 4. Test thoroughly
 
 ### Start here:
+
 📘 **[clerk-signup-skill.md](./clerk-signup-skill.md)** - Complete implementation guide
 
 ### Time needed:
+
 ⏱️ 45-60 minutes (including testing)
 
 ### Follow this path:
+
 ```
 1. Read: Overview & Requirements → 10 min
 2. Read: Implementation Steps 1-3 → 15 min
@@ -45,17 +49,21 @@ I want AI to do it     → Jump to "AI-Assisted"
 **You've done this before or just need the templates.**
 
 ### What you'll do:
+
 1. Copy templates
 2. Customize for your project
 3. Test and deploy
 
 ### Start here:
+
 ⚡ **[clerk-auth-quick-reference.md](./clerk-auth-quick-reference.md)** - Ready-to-use templates
 
 ### Time needed:
+
 ⏱️ 15-20 minutes
 
 ### Follow this path:
+
 ```
 1. Copy: Sign-up page template → 2 min
 2. Copy: Sign-in page template → 2 min
@@ -72,23 +80,28 @@ I want AI to do it     → Jump to "AI-Assisted"
 **Let Claude do the work for you.**
 
 ### What you'll do:
+
 1. Give Claude the skill instructions
 2. Answer a few questions
 3. Review the generated code
 
 ### Start here:
+
 🤖 **[claude-skill-clerk-auth.md](./claude-skill-clerk-auth.md)** - AI implementation guide
 
 ### Time needed:
+
 ⏱️ 10 minutes (mostly review)
 
 ### What to say to Claude:
+
 ```
 "I want to add Clerk authentication to my Next.js project.
 Please implement the skill described in claude-skill-clerk-auth.md"
 ```
 
 Claude will:
+
 - Check prerequisites
 - Ask customization questions
 - Generate all necessary code
@@ -101,17 +114,21 @@ Claude will:
 **You're creating tooling or automating this across projects.**
 
 ### What you'll do:
+
 1. Parse the JSON schema
 2. Build automation
 3. Test against examples
 
 ### Start here:
+
 📄 **[clerk-auth-skill.json](./clerk-auth-skill.json)** - Machine-readable spec
 
 ### Time needed:
+
 ⏱️ 1-2 hours for initial setup
 
 ### Use the schema to:
+
 - Generate code automatically
 - Create IDE extensions
 - Build internal CLIs
@@ -124,18 +141,22 @@ Claude will:
 ### Quick Questions to Guide You:
 
 **Q: Is this your first time using Clerk?**
+
 - Yes → Use **clerk-signup-skill.md** (full guide)
 - No → Use **clerk-auth-quick-reference.md** (templates)
 
 **Q: Do you have less than 30 minutes?**
+
 - Yes → Use **claude-skill-clerk-auth.md** (AI-assisted)
 - No → Use **clerk-auth-quick-reference.md** (manual but thorough)
 
 **Q: Do you want to deeply understand the patterns?**
+
 - Yes → Use **clerk-signup-skill.md** (comprehensive)
 - No → Use **clerk-auth-quick-reference.md** (just the code)
 
 **Q: Are you implementing this in multiple projects?**
+
 - Yes → Use **claude-skill-clerk-auth.md** + consider building automation
 - No → Use **clerk-auth-quick-reference.md** (one-time setup)
 
@@ -143,15 +164,15 @@ Claude will:
 
 ## 📁 All Documentation Files
 
-| File | Purpose | When to Use |
-|------|---------|-------------|
-| **START-HERE.md** | You are here! | Entry point |
-| **README-CLERK-SKILL.md** | Overview of all docs | Understanding the documentation |
-| **clerk-signup-skill.md** | Complete guide | Learning & first implementation |
-| **clerk-auth-quick-reference.md** | Templates & shortcuts | Fast implementation |
-| **claude-skill-clerk-auth.md** | AI instructions | AI-assisted development |
-| **clerk-auth-skill.json** | JSON schema | Building tools |
-| **clerk-skill-flowchart.md** | Visual decision trees | Visual learners |
+| File                              | Purpose               | When to Use                     |
+| --------------------------------- | --------------------- | ------------------------------- |
+| **START-HERE.md**                 | You are here!         | Entry point                     |
+| **README-CLERK-SKILL.md**         | Overview of all docs  | Understanding the documentation |
+| **clerk-signup-skill.md**         | Complete guide        | Learning & first implementation |
+| **clerk-auth-quick-reference.md** | Templates & shortcuts | Fast implementation             |
+| **claude-skill-clerk-auth.md**    | AI instructions       | AI-assisted development         |
+| **clerk-auth-skill.json**         | JSON schema           | Building tools                  |
+| **clerk-skill-flowchart.md**      | Visual decision trees | Visual learners                 |
 
 ---
 
@@ -174,6 +195,7 @@ docs/
 ## 🎯 Recommended Paths by Role
 
 ### Junior Developer / Learning
+
 ```
 1. START-HERE.md (you're reading it!)
 2. clerk-signup-skill.md (read completely)
@@ -183,6 +205,7 @@ docs/
 ```
 
 ### Senior Developer / Time-Pressed
+
 ```
 1. START-HERE.md (skim this)
 2. clerk-auth-quick-reference.md (copy templates)
@@ -191,6 +214,7 @@ docs/
 ```
 
 ### Engineering Manager / Architect
+
 ```
 1. README-CLERK-SKILL.md (understand the approach)
 2. clerk-signup-skill.md (review patterns & best practices)
@@ -199,6 +223,7 @@ docs/
 ```
 
 ### DevOps / Platform Engineer
+
 ```
 1. clerk-auth-skill.json (understand structure)
 2. clerk-skill-flowchart.md (understand decision points)
@@ -226,7 +251,9 @@ After following any path above, you'll have:
 ## 🚦 Traffic Light Guide
 
 ### 🟢 Go Straight to Code
+
 Choose if you:
+
 - Have implemented Clerk before
 - Are comfortable with Next.js
 - Just need templates
@@ -237,7 +264,9 @@ Choose if you:
 ---
 
 ### 🟡 Learn Then Implement
+
 Choose if you:
+
 - Are new to Clerk
 - Want to understand patterns
 - Have time to learn
@@ -248,7 +277,9 @@ Choose if you:
 ---
 
 ### 🟣 Let AI Handle It
+
 Choose if you:
+
 - Want to save time
 - Trust AI-generated code
 - Can review and test thoroughly
@@ -271,19 +302,23 @@ Choose if you:
 ## 🆘 If You Get Stuck
 
 ### Quick Fixes
+
 Check the troubleshooting section in:
+
 - **clerk-auth-quick-reference.md** - Has a quick troubleshooting table
 - **clerk-signup-skill.md** - Has detailed troubleshooting guide
 
 ### Common Issues
-| Problem | Quick Solution | Full Guide |
-|---------|---------------|------------|
-| Hydration error | Add `mounted` state | clerk-auth-quick-reference.md |
-| Styling broken | Check CSS variables | clerk-signup-skill.md |
-| Dark mode issues | Add `suppressHydrationWarning` | clerk-auth-quick-reference.md |
-| Redirect fails | Check `redirectUrl` + middleware | Any guide |
+
+| Problem          | Quick Solution                   | Full Guide                    |
+| ---------------- | -------------------------------- | ----------------------------- |
+| Hydration error  | Add `mounted` state              | clerk-auth-quick-reference.md |
+| Styling broken   | Check CSS variables              | clerk-signup-skill.md         |
+| Dark mode issues | Add `suppressHydrationWarning`   | clerk-auth-quick-reference.md |
+| Redirect fails   | Check `redirectUrl` + middleware | Any guide                     |
 
 ### Still Stuck?
+
 1. Check the specific documentation's troubleshooting section
 2. Review the testing checklist - did you miss a step?
 3. Consult [Clerk's official documentation](https://clerk.com/docs)
@@ -320,6 +355,7 @@ Each of these could be its own skill! 🚀
 ## 🎓 Learning Resources
 
 After implementing:
+
 - [Clerk Documentation](https://clerk.com/docs)
 - [Next.js App Router](https://nextjs.org/docs/app)
 - [Tailwind CSS](https://tailwindcss.com/docs)
@@ -328,12 +364,12 @@ After implementing:
 
 ## 📊 Time Estimates
 
-| Path | Reading | Coding | Testing | Total |
-|------|---------|--------|---------|-------|
-| Quick reference | 5 min | 10 min | 5 min | **20 min** |
-| Full guide | 15 min | 15 min | 10 min | **40 min** |
-| AI-assisted | 2 min | 3 min | 5 min | **10 min** |
-| Tool building | 30 min | 60 min | 30 min | **2 hours** |
+| Path            | Reading | Coding | Testing | Total       |
+| --------------- | ------- | ------ | ------- | ----------- |
+| Quick reference | 5 min   | 10 min | 5 min   | **20 min**  |
+| Full guide      | 15 min  | 15 min | 10 min  | **40 min**  |
+| AI-assisted     | 2 min   | 3 min  | 5 min   | **10 min**  |
+| Tool building   | 30 min  | 60 min | 30 min  | **2 hours** |
 
 ---
 

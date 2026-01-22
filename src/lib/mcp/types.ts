@@ -29,10 +29,14 @@ export interface AnalysisResult {
   cached: boolean;
 }
 
-export type TradeVehicle = 'stock' | 'option_call' | 'option_put' | 'option_spread';
-export type TradeTimeframe = 'swing' | 'day' | 'scalp';
-export type TradeBias = 'bullish' | 'bearish' | 'neutral';
-export type RiskQuality = 'high' | 'medium' | 'low';
+export type TradeVehicle =
+  | "stock"
+  | "option_call"
+  | "option_put"
+  | "option_spread";
+export type TradeTimeframe = "swing" | "day" | "scalp";
+export type TradeBias = "bullish" | "bearish" | "neutral";
+export type RiskQuality = "high" | "medium" | "low";
 
 export interface SuppressionReason {
   code: string;
@@ -71,7 +75,7 @@ export interface RiskAssessment {
   metrics: {
     atr: number;
     atr_percent: number;
-    volatility_regime: 'low' | 'medium' | 'high';
+    volatility_regime: "low" | "medium" | "high";
     adx: number;
     is_trending: boolean;
     bb_width_percent: number;
@@ -116,7 +120,7 @@ export interface PortfolioRiskResult {
   total_value: number;
   total_max_loss: number;
   risk_percent_of_portfolio: number;
-  overall_risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  overall_risk_level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   positions: PortfolioPosition[];
   sector_concentration: Record<string, number>;
   hedge_suggestions: string[];
@@ -126,8 +130,8 @@ export interface WatchlistSignal {
   symbol: string;
   price: number;
   change_percent: number;
-  action: 'BUY' | 'HOLD' | 'AVOID';
-  risk_assessment: 'TRADE' | 'HOLD' | 'AVOID';
+  action: "BUY" | "HOLD" | "AVOID";
+  risk_assessment: "TRADE" | "HOLD" | "AVOID";
   top_signals: string[];
   key_support: number;
   key_resistance: number;
@@ -136,7 +140,7 @@ export interface WatchlistSignal {
 export interface EconomicEvent {
   timestamp: string;
   event_name: string;
-  importance: 'HIGH' | 'MEDIUM' | 'LOW';
+  importance: "HIGH" | "MEDIUM" | "LOW";
   forecast: string;
   previous: string;
 }
@@ -149,7 +153,7 @@ export interface SectorMovement {
 export interface MorningBriefResult {
   timestamp: string;
   market_status: {
-    market_status: 'OPEN' | 'CLOSED' | 'PRE_MARKET' | 'AFTER_HOURS';
+    market_status: "OPEN" | "CLOSED" | "PRE_MARKET" | "AFTER_HOURS";
     market_hours_remaining: string;
     current_time: string;
     futures_es: { change_percent: number };
@@ -161,4 +165,69 @@ export interface MorningBriefResult {
   sector_leaders: SectorMovement[];
   sector_losers: SectorMovement[];
   key_themes: string[];
+}
+
+export interface FibonacciLevel {
+  key: string;
+  ratio: number;
+  name: string;
+  type: string;
+  price: number;
+  strength: string;
+  distanceFromCurrent: number;
+}
+
+export interface FibonacciSignal {
+  signal: string;
+  description: string;
+  strength: string;
+  category: string;
+  timeframe: string;
+  value: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface FibonacciCluster {
+  centerPrice: number;
+  levels: string[];
+  levelCount: number;
+  strength: string;
+  type: string;
+}
+
+export interface ConfluenceZone {
+  price: number;
+  levelName: string;
+  confluenceScore: number;
+  strength: "WEAK" | "MODERATE" | "SIGNIFICANT" | "STRONG" | "VERY_STRONG";
+  signalCount: number;
+  averageSignalStrength: number;
+  multiTimeframeAligned: number;
+  signalCategories: string[];
+}
+
+export interface FibonacciAnalysisResult {
+  symbol: string;
+  timestamp: string;
+  price: number;
+  swingHigh: number;
+  swingLow: number;
+  swingRange: number;
+  levels: FibonacciLevel[];
+  signals: FibonacciSignal[];
+  clusters: FibonacciCluster[];
+  confluenceZones: ConfluenceZone[];
+  summary: {
+    totalSignals: number;
+    byCategory: Record<string, number>;
+    strongestLevel: string;
+    confluenceZoneCount: number;
+    highConfidenceZones: number;
+  };
+  tierLimit?: {
+    levelsAvailable: number;
+    categoriesAvailable: number | "all";
+    signalsShown: number;
+    signalsTotal: number;
+  };
 }

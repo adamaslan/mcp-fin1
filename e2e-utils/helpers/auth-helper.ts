@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test';
-import { SELECTORS } from '../constants/selectors';
+import { Page } from "@playwright/test";
+import { SELECTORS } from "../constants/selectors";
 
 /**
  * Helper class for Clerk authentication operations
@@ -13,10 +13,12 @@ export class AuthHelper {
    * Handles Clerk authentication form and waits for dashboard redirect
    */
   async signIn(email: string, password: string): Promise<void> {
-    await this.page.goto('/sign-in');
+    await this.page.goto("/sign-in");
 
     // Wait for Clerk sign-in form to load
-    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, { timeout: 10000 });
+    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, {
+      timeout: 10000,
+    });
 
     // Fill in credentials
     await this.page.fill(SELECTORS.AUTH.EMAIL_INPUT, email);
@@ -26,10 +28,12 @@ export class AuthHelper {
     await this.page.click(SELECTORS.AUTH.SUBMIT_BUTTON);
 
     // Wait for redirect to dashboard
-    await this.page.waitForURL('**/dashboard', { timeout: 15000 });
+    await this.page.waitForURL("**/dashboard", { timeout: 15000 });
 
     // Verify authentication successful by waiting for dashboard header
-    await this.page.waitForSelector(SELECTORS.DASHBOARD.HEADER, { timeout: 5000 });
+    await this.page.waitForSelector(SELECTORS.DASHBOARD.HEADER, {
+      timeout: 5000,
+    });
   }
 
   /**
@@ -37,9 +41,11 @@ export class AuthHelper {
    * Handles Clerk sign-up form and verifies redirect to dashboard
    */
   async signUp(email: string, password: string): Promise<void> {
-    await this.page.goto('/sign-up');
+    await this.page.goto("/sign-up");
 
-    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, { timeout: 10000 });
+    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, {
+      timeout: 10000,
+    });
 
     // Fill in credentials
     await this.page.fill(SELECTORS.AUTH.EMAIL_INPUT, email);
@@ -50,7 +56,7 @@ export class AuthHelper {
 
     // Wait for redirect to dashboard
     // (In test environment, email verification may be auto-approved)
-    await this.page.waitForURL('**/dashboard', { timeout: 20000 });
+    await this.page.waitForURL("**/dashboard", { timeout: 20000 });
   }
 
   /**
@@ -62,7 +68,7 @@ export class AuthHelper {
     await this.page.click(SELECTORS.HEADER.SIGN_OUT);
 
     // Wait for redirect to landing page
-    await this.page.waitForURL('/', { timeout: 10000 });
+    await this.page.waitForURL("/", { timeout: 10000 });
   }
 
   /**
@@ -84,15 +90,19 @@ export class AuthHelper {
    * Navigate to sign-in page and wait for it to load
    */
   async gotoSignIn(): Promise<void> {
-    await this.page.goto('/sign-in');
-    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, { timeout: 10000 });
+    await this.page.goto("/sign-in");
+    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, {
+      timeout: 10000,
+    });
   }
 
   /**
    * Navigate to sign-up page and wait for it to load
    */
   async gotoSignUp(): Promise<void> {
-    await this.page.goto('/sign-up');
-    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, { timeout: 10000 });
+    await this.page.goto("/sign-up");
+    await this.page.waitForSelector(SELECTORS.AUTH.EMAIL_INPUT, {
+      timeout: 10000,
+    });
   }
 }

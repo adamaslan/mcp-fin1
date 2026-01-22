@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Shield, TrendingDown, Zap } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Shield, TrendingDown, Zap } from "lucide-react";
 
 interface HedgeSuggestion {
   symbol: string;
-  action: 'buy_put' | 'buy_call' | 'reduce_position' | 'diversify';
+  action: "buy_put" | "buy_call" | "reduce_position" | "diversify";
   rationale: string;
   estimated_cost: number;
-  protection_level: 'low' | 'medium' | 'high';
+  protection_level: "low" | "medium" | "high";
 }
 
 interface HedgeSuggestionsProps {
@@ -22,10 +28,10 @@ export function HedgeSuggestions({ suggestions }: HedgeSuggestionsProps) {
   }
 
   const actionLabels = {
-    buy_put: 'Buy Put Option',
-    buy_call: 'Buy Call Option',
-    reduce_position: 'Reduce Position',
-    diversify: 'Diversify Holdings',
+    buy_put: "Buy Put Option",
+    buy_call: "Buy Call Option",
+    reduce_position: "Reduce Position",
+    diversify: "Diversify Holdings",
   };
 
   const actionIcons = {
@@ -36,9 +42,9 @@ export function HedgeSuggestions({ suggestions }: HedgeSuggestionsProps) {
   };
 
   const protectionColors = {
-    low: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400',
-    medium: 'bg-orange-500/10 text-orange-700 dark:text-orange-400',
-    high: 'bg-red-500/10 text-red-700 dark:text-red-400',
+    low: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
+    medium: "bg-orange-500/10 text-orange-700 dark:text-orange-400",
+    high: "bg-red-500/10 text-red-700 dark:text-red-400",
   };
 
   return (
@@ -69,13 +75,19 @@ export function HedgeSuggestions({ suggestions }: HedgeSuggestionsProps) {
                     </p>
                   </div>
                 </div>
-                <Badge className={protectionColors[suggestion.protection_level]}>
+                <Badge
+                  className={protectionColors[suggestion.protection_level]}
+                >
                   {suggestion.protection_level.toUpperCase()}
                 </Badge>
               </div>
-              <p className="text-sm text-muted-foreground mb-2">{suggestion.rationale}</p>
+              <p className="text-sm text-muted-foreground mb-2">
+                {suggestion.rationale}
+              </p>
               <div className="flex items-center justify-between pt-2 border-t border-muted">
-                <span className="text-xs text-muted-foreground">Estimated Cost</span>
+                <span className="text-xs text-muted-foreground">
+                  Estimated Cost
+                </span>
                 <span className="font-semibold text-sm">
                   ${suggestion.estimated_cost.toFixed(2)}
                 </span>

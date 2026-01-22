@@ -1,14 +1,21 @@
-'use client';
+"use client";
 
-import { ClerkLoaded, ClerkLoading, UserButton } from '@clerk/nextjs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Sidebar } from '@/components/dashboard/Sidebar';
-import { Header } from '@/components/dashboard/Header';
-import { CommandPalette } from '@/components/ui/command-palette';
-import { KeyboardShortcutsDialog, useKeyboardNavigation } from '@/components/ui/keyboard-shortcuts';
-import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
+import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Sidebar } from "@/components/dashboard/Sidebar";
+import { Header } from "@/components/dashboard/Header";
+import { CommandPalette } from "@/components/ui/command-palette";
+import {
+  KeyboardShortcutsDialog,
+  useKeyboardNavigation,
+} from "@/components/ui/keyboard-shortcuts";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // Enable keyboard navigation shortcuts
   useKeyboardNavigation();
 
@@ -48,9 +55,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Page content */}
         <main className="flex-1 overflow-auto">
-          <div className="container py-6 sm:py-8">
-            {children}
-          </div>
+          <div className="container py-6 sm:py-8">{children}</div>
         </main>
       </div>
     </div>

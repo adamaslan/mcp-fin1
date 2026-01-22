@@ -1,5 +1,10 @@
 // Server-side exports
-export { stripe, STRIPE_PRICES, getTierFromPriceId, PRICING_CONFIG } from './config';
+export {
+  stripe,
+  STRIPE_PRICES,
+  getTierFromPriceId,
+  PRICING_CONFIG,
+} from "./config";
 
 // Type exports
 export type {
@@ -10,4 +15,4 @@ export type {
   SubscriptionStatus,
   CustomerPortalResponse,
   StripeWebhookEvent,
-} from './types';
+} from "./types";

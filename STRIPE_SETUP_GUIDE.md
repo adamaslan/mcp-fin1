@@ -29,13 +29,13 @@ STRIPE_MAX_YEARLY_PRICE_ID=price_xxxxxxxxxxxxxxxxxxxxxx
 
 1. **Publishable Key & Secret Key**
    - Go to: https://dashboard.stripe.com/test/apikeys
-   - Copy the test keys (pk_test_* and sk_test_*)
+   - Copy the test keys (pk*test*_ and sk*test*_)
    - Never expose these in public code or logs
 
 2. **Webhook Secret**
    - Go to: https://dashboard.stripe.com/test/webhooks
    - Create endpoint: `POST {APP_URL}/api/webhooks/stripe`
-   - Copy the signing secret (whsec_*)
+   - Copy the signing secret (whsec\_\*)
 
 3. **Price IDs**
    - Create products in Stripe Dashboard
@@ -64,15 +64,15 @@ vercel env add STRIPE_WEBHOOK_SECRET production
 
 ### Environment Variable Scope
 
-| Variable | Scope | Visibility |
-|----------|-------|------------|
+| Variable                             | Scope  | Visibility      |
+| ------------------------------------ | ------ | --------------- |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Public | Client & server |
-| `STRIPE_SECRET_KEY` | Secret | Server only |
-| `STRIPE_WEBHOOK_SECRET` | Secret | Server only |
-| `STRIPE_PRO_MONTHLY_PRICE_ID` | Secret | Server only |
-| `STRIPE_PRO_YEARLY_PRICE_ID` | Secret | Server only |
-| `STRIPE_MAX_MONTHLY_PRICE_ID` | Secret | Server only |
-| `STRIPE_MAX_YEARLY_PRICE_ID` | Secret | Server only |
+| `STRIPE_SECRET_KEY`                  | Secret | Server only     |
+| `STRIPE_WEBHOOK_SECRET`              | Secret | Server only     |
+| `STRIPE_PRO_MONTHLY_PRICE_ID`        | Secret | Server only     |
+| `STRIPE_PRO_YEARLY_PRICE_ID`         | Secret | Server only     |
+| `STRIPE_MAX_MONTHLY_PRICE_ID`        | Secret | Server only     |
+| `STRIPE_MAX_YEARLY_PRICE_ID`         | Secret | Server only     |
 
 ## API Endpoints
 
@@ -83,6 +83,7 @@ All Stripe API endpoints are server-side only and require authentication.
 **Route:** `POST /api/stripe/checkout`
 
 **Request Body:**
+
 ```json
 {
   "tier": "pro" | "max",
@@ -91,6 +92,7 @@ All Stripe API endpoints are server-side only and require authentication.
 ```
 
 **Response:**
+
 ```json
 {
   "sessionId": "cs_test_xxxxx",
@@ -99,6 +101,7 @@ All Stripe API endpoints are server-side only and require authentication.
 ```
 
 **Usage:**
+
 - Called from `src/components/landing/PricingCards.tsx`
 - Redirects to Stripe Checkout
 - Requires authenticated user (Clerk)
@@ -108,6 +111,7 @@ All Stripe API endpoints are server-side only and require authentication.
 **Route:** `GET /api/stripe/subscription`
 
 **Response:**
+
 ```json
 {
   "tier": "free" | "pro" | "max",
@@ -119,6 +123,7 @@ All Stripe API endpoints are server-side only and require authentication.
 ```
 
 **Purpose:**
+
 - Retrieve current subscription status from Stripe
 - Updates user metadata in Clerk
 
@@ -127,6 +132,7 @@ All Stripe API endpoints are server-side only and require authentication.
 **Route:** `GET /api/stripe/portal`
 
 **Response:**
+
 ```json
 {
   "url": "https://billing.stripe.com/session/xxxxx"
@@ -134,6 +140,7 @@ All Stripe API endpoints are server-side only and require authentication.
 ```
 
 **Usage:**
+
 - Allows users to manage subscriptions
 - Access payment methods, invoices, etc.
 - Called from `src/components/subscription/SubscriptionManager.tsx`
@@ -143,11 +150,13 @@ All Stripe API endpoints are server-side only and require authentication.
 **Route:** `POST /api/webhooks/stripe`
 
 **Signature Verification:**
+
 - Uses `STRIPE_WEBHOOK_SECRET`
 - Validates all incoming requests
 - Returns 400 if signature invalid
 
 **Handled Events:**
+
 - `checkout.session.completed` - Purchase completed
 - `customer.subscription.created` - New subscription
 - `customer.subscription.updated` - Subscription changed
@@ -156,6 +165,7 @@ All Stripe API endpoints are server-side only and require authentication.
 - `invoice.payment_succeeded` - Payment successful
 
 **Actions:**
+
 - Updates Clerk user `publicMetadata`:
   - `tier` (free/pro/max)
   - `stripeCustomerId`
@@ -176,9 +186,14 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     scanResultsLimit: 5,
     watchlistCount: 1,
     watchlistSymbolLimit: 10,
-    timeframes: ['swing'],
-    universes: ['sp500'],
-    features: ['basic_trade_plan', 'signal_help', 'indicator_help', 'morning_brief_limited']
+    timeframes: ["swing"],
+    universes: ["sp500"],
+    features: [
+      "basic_trade_plan",
+      "signal_help",
+      "indicator_help",
+      "morning_brief_limited",
+    ],
   },
   pro: {
     analysesPerDay: 50,
@@ -186,14 +201,21 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     scanResultsLimit: 25,
     watchlistCount: 5,
     watchlistSymbolLimit: 50,
-    timeframes: ['swing', 'day', 'scalp'],
-    universes: ['sp500', 'nasdaq100', 'etf_large_cap'],
+    timeframes: ["swing", "day", "scalp"],
+    universes: ["sp500", "nasdaq100", "etf_large_cap"],
     features: [
-      'basic_trade_plan', 'full_trade_plan', 'all_timeframes',
-      'portfolio_risk', 'sector_concentration', 'position_tracking',
-      'trade_journal', 'option_suggestions', 'morning_brief_full',
-      'signal_help', 'indicator_help'
-    ]
+      "basic_trade_plan",
+      "full_trade_plan",
+      "all_timeframes",
+      "portfolio_risk",
+      "sector_concentration",
+      "position_tracking",
+      "trade_journal",
+      "option_suggestions",
+      "morning_brief_full",
+      "signal_help",
+      "indicator_help",
+    ],
   },
   max: {
     analysesPerDay: Infinity,
@@ -201,18 +223,31 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
     scanResultsLimit: 50,
     watchlistCount: Infinity,
     watchlistSymbolLimit: Infinity,
-    timeframes: ['swing', 'day', 'scalp'],
-    universes: ['sp500', 'nasdaq100', 'etf_large_cap', 'crypto'],
+    timeframes: ["swing", "day", "scalp"],
+    universes: ["sp500", "nasdaq100", "etf_large_cap", "crypto"],
     features: [
-      'basic_trade_plan', 'full_trade_plan', 'all_timeframes',
-      'portfolio_risk', 'sector_concentration', 'position_tracking',
-      'trade_journal', 'option_suggestions', 'hedge_suggestions',
-      'raw_signals', 'raw_indicators', 'alerts', 'email_briefs',
-      'api_access', 'export', 'multi_universe_scan',
-      'signal_help', 'indicator_help', 'morning_brief_full'
-    ]
-  }
-}
+      "basic_trade_plan",
+      "full_trade_plan",
+      "all_timeframes",
+      "portfolio_risk",
+      "sector_concentration",
+      "position_tracking",
+      "trade_journal",
+      "option_suggestions",
+      "hedge_suggestions",
+      "raw_signals",
+      "raw_indicators",
+      "alerts",
+      "email_briefs",
+      "api_access",
+      "export",
+      "multi_universe_scan",
+      "signal_help",
+      "indicator_help",
+      "morning_brief_full",
+    ],
+  },
+};
 ```
 
 ### Access Control Functions
@@ -275,22 +310,18 @@ Protect features at the component level with visual feedback.
 
 ```typescript
 interface TierGateProps {
-  feature: string;              // Feature name from TIER_LIMITS
-  requiredTier?: 'pro' | 'max'; // Tier required (default: 'pro')
-  children: React.ReactNode;    // Content to gate
-  fallback?: React.ReactNode;   // Alternative content
-  blurContent?: boolean;        // Blur locked content (default: true)
+  feature: string; // Feature name from TIER_LIMITS
+  requiredTier?: "pro" | "max"; // Tier required (default: 'pro')
+  children: React.ReactNode; // Content to gate
+  fallback?: React.ReactNode; // Alternative content
+  blurContent?: boolean; // Blur locked content (default: true)
 }
 ```
 
 ### Usage Example
 
 ```tsx
-<TierGate
-  feature="hedge_suggestions"
-  requiredTier="max"
-  blurContent={true}
->
+<TierGate feature="hedge_suggestions" requiredTier="max" blurContent={true}>
   <HedgeSuggestionsComponent />
 </TierGate>
 ```
@@ -326,7 +357,7 @@ const { tier, loading } = useTier();
 
 if (loading) return <div>Loading...</div>;
 
-if (tier === 'max') {
+if (tier === "max") {
   return <AdvancedFeatures />;
 }
 ```

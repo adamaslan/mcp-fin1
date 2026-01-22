@@ -22,8 +22,8 @@ export const SELECTORS = {
   },
 
   SIDEBAR: {
-    TIER_BADGE: 'text=/Tier: (FREE|PRO|MAX)/i',
-    LOCKED_LINK: '.opacity-50',
+    TIER_BADGE: "text=/Tier: (FREE|PRO|MAX)/i",
+    LOCKED_LINK: ".opacity-50",
     DASHBOARD_LINK: 'a:has-text("Dashboard")',
     ANALYZE_LINK: 'a:has-text("Analyze")',
     SCANNER_LINK: 'a:has-text("Scanner")',
@@ -37,22 +37,23 @@ export const SELECTORS = {
     SYMBOL_INPUT: 'input[placeholder*="symbol"], input[placeholder*="ticker"]',
     SEARCH_BUTTON: 'button:has-text("Search"), button:has-text("Analyze")',
     TRADE_PLAN_CARD: '[data-testid="trade-plan-card"]',
-    TIMEFRAME_SELECTOR: '[data-testid="timeframe-selector"], select, button:has-text("Swing")',
-    SIGNAL_LIMIT_TEXT: 'text=/Top 3|Top 10|All/',
-    ERROR_MESSAGE: '.text-red-700, text=/error|failed/i',
+    TIMEFRAME_SELECTOR:
+      '[data-testid="timeframe-selector"], select, button:has-text("Swing")',
+    SIGNAL_LIMIT_TEXT: "text=/Top 3|Top 10|All/",
+    ERROR_MESSAGE: ".text-red-700, text=/error|failed/i",
   },
 
   SCANNER: {
     UNIVERSE_SELECT: '[data-testid="universe-select"], select',
     SCAN_BUTTON: 'button:has-text("Scan")',
-    RESULTS_TABLE: 'table',
-    RESULT_ROWS: 'tbody tr',
-    ERROR_MESSAGE: '.text-red-700, text=/error|failed/i',
-    LIMIT_WARNING: '.text-blue-700, text=/limit|quota/i',
+    RESULTS_TABLE: "table",
+    RESULT_ROWS: "tbody tr",
+    ERROR_MESSAGE: ".text-red-700, text=/error|failed/i",
+    LIMIT_WARNING: ".text-blue-700, text=/limit|quota/i",
   },
 
   TIER_GATE: {
-    UPGRADE_PROMPT: 'text=/upgrade|premium|pro|max/i',
+    UPGRADE_PROMPT: "text=/upgrade|premium|pro|max/i",
     UPGRADE_BUTTON: 'a[href*="/pricing"], button:has-text("Upgrade")',
     LOCKED_FEATURE: '.opacity-50, [aria-disabled="true"]',
   },

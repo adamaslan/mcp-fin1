@@ -176,20 +176,21 @@ graph TD
 
 ## Quick Decision Table
 
-| If you... | Use this | Because |
-|-----------|----------|---------|
-| Are new to Clerk | 📘 clerk-signup-skill.md | Complete learning path |
-| Need code fast | ⚡ clerk-auth-quick-reference.md | Ready templates |
-| Want AI to do it | 🤖 claude-skill-clerk-auth.md | AI instructions |
-| Are building tools | 📄 clerk-auth-skill.json | Machine-readable |
-| Have < 30 minutes | ⚡ clerk-auth-quick-reference.md | Fastest option |
-| Want to understand deeply | 📘 clerk-signup-skill.md | Most comprehensive |
-| Hit an error | Any doc's troubleshooting | All have solutions |
-| Multiple projects | 🤖 + 📄 | Automation friendly |
+| If you...                 | Use this                         | Because                |
+| ------------------------- | -------------------------------- | ---------------------- |
+| Are new to Clerk          | 📘 clerk-signup-skill.md         | Complete learning path |
+| Need code fast            | ⚡ clerk-auth-quick-reference.md | Ready templates        |
+| Want AI to do it          | 🤖 claude-skill-clerk-auth.md    | AI instructions        |
+| Are building tools        | 📄 clerk-auth-skill.json         | Machine-readable       |
+| Have < 30 minutes         | ⚡ clerk-auth-quick-reference.md | Fastest option         |
+| Want to understand deeply | 📘 clerk-signup-skill.md         | Most comprehensive     |
+| Hit an error              | Any doc's troubleshooting        | All have solutions     |
+| Multiple projects         | 🤖 + 📄                          | Automation friendly    |
 
 ## Summary
 
 ### 🎯 Most Common Path
+
 ```
 First time:     clerk-signup-skill.md (full guide)
                       ↓
@@ -199,6 +200,7 @@ Future:         Bookmark quick reference for 15-minute implementations
 ```
 
 ### 🤖 AI-Assisted Path
+
 ```
 Any time:       Give claude-skill-clerk-auth.md to Claude
                       ↓
@@ -208,6 +210,7 @@ Any time:       Give claude-skill-clerk-auth.md to Claude
 ```
 
 ### 🛠️ Tool Builder Path
+
 ```
 Planning:       Read clerk-signup-skill.md (understand patterns)
                       ↓

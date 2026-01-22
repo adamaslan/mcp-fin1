@@ -7,6 +7,7 @@ This document outlines security best practices for the MCP Finance dashboard.
 ### Critical: DO NOT Commit Secrets
 
 The following files are **NEVER** to be committed to git:
+
 - `.env.local`
 - `.env.*.local`
 - Any file containing API keys, passwords, or credentials
@@ -15,6 +16,7 @@ The following files are **NEVER** to be committed to git:
 **What to do instead:**
 
 1. **Local Development:**
+
    ```bash
    cp .env.example .env.local
    # Fill in your local values
@@ -35,6 +37,7 @@ The following files are **NEVER** to be committed to git:
 ### Environment Variables Checklist
 
 **Before committing code:**
+
 - [ ] `.env.local` is in `.gitignore`
 - [ ] No hardcoded API keys in code
 - [ ] No database passwords in code
@@ -42,6 +45,7 @@ The following files are **NEVER** to be committed to git:
 - [ ] No private key files (`*.pem`, `*.key`) in repo
 
 **Before deploying to production:**
+
 - [ ] Vercel environment variables set to PRODUCTION keys
 - [ ] Different keys for dev/staging/production
 - [ ] Secrets rotated (at least quarterly)
@@ -60,11 +64,14 @@ All tier-based features are validated on the server:
 export async function POST(request: Request) {
   const { userId } = await auth();
   const { sessionClaims } = await auth();
-  const tier = (sessionClaims?.publicMetadata as any)?.tier || 'free';
+  const tier = (sessionClaims?.publicMetadata as any)?.tier || "free";
 
   // Server-side check - client cannot bypass
-  if (tier !== 'max') {
-    return Response.json({ error: 'Feature available for Max tier only' }, { status: 403 });
+  if (tier !== "max") {
+    return Response.json(
+      { error: "Feature available for Max tier only" },
+      { status: 403 },
+    );
   }
 
   // Process request...
@@ -72,6 +79,7 @@ export async function POST(request: Request) {
 ```
 
 **Why this matters:**
+
 - Client-side checks can be bypassed
 - Always validate on server
 - Never trust client-provided tier data
@@ -79,11 +87,13 @@ export async function POST(request: Request) {
 ### Clerk Integration
 
 **Security:**
+
 - Session tokens validated automatically via Clerk middleware
 - Tier metadata stored securely in Clerk
 - Webhook validation prevents spoofing
 
 **Configuration:**
+
 1. Set `CLERK_WEBHOOK_SECRET` in environment
 2. Verify webhook signature on all incoming events
 3. Only update user metadata via Clerk, not from client
@@ -95,11 +105,13 @@ export async function POST(request: Request) {
 ### Connection Security
 
 **For Cloud SQL:**
+
 - Use Cloud SQL Proxy for secure local connections
 - Use Unix sockets when possible (more secure than TCP)
 - Enable Cloud SQL Auth Proxy for Vercel
 
 **Connection string format:**
+
 ```
 postgresql://user:password@/dbname?host=/cloudsql/project:region:instance
 ```
@@ -115,6 +127,7 @@ postgresql://user:password@/dbname?host=/cloudsql/project:region:instance
 ### Query Security
 
 **SAFE - Using Drizzle ORM:**
+
 ```typescript
 const user = await db.query.users.findFirst({
   where: eq(users.clerk_id, userId), // Parameterized
@@ -122,6 +135,7 @@ const user = await db.query.users.findFirst({
 ```
 
 **UNSAFE - Never do this:**
+
 ```typescript
 // DON'T: SQL injection vulnerability
 const user = await db.raw(`SELECT * FROM users WHERE id = '${userId}'`);
@@ -139,7 +153,11 @@ Implement rate limiting on sensitive endpoints:
 // Example: Implement rate limiting per user
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
 
-function checkRateLimit(userId: string, maxRequests = 100, windowSeconds = 3600) {
+function checkRateLimit(
+  userId: string,
+  maxRequests = 100,
+  windowSeconds = 3600,
+) {
   const now = Date.now();
   const record = rateLimit.get(userId);
 
@@ -160,6 +178,7 @@ function checkRateLimit(userId: string, maxRequests = 100, windowSeconds = 3600)
 ### CORS Configuration
 
 **For Cloud Run MCP API:**
+
 ```
 Access-Control-Allow-Origin: https://yourdomain.com (specific domain, not *)
 Access-Control-Allow-Methods: POST, GET
@@ -167,6 +186,7 @@ Access-Control-Allow-Headers: Content-Type, Authorization
 ```
 
 **Never use:**
+
 ```
 Access-Control-Allow-Origin: * (wildcard)
 ```
@@ -212,16 +232,18 @@ curl -I https://yourdomain.vercel.app | grep -i "strict-transport-security"
 ### XSS Prevention (Cross-Site Scripting)
 
 **Safe in Next.js/React:**
+
 ```tsx
 // Safe - React escapes by default
-<div>{userInput}</div>
+<div>{userInput}</div>;
 
 // Safe - Using sanitization library
-import DOMPurify from 'dompurify';
-<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />
+import DOMPurify from "dompurify";
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />;
 ```
 
 **Unsafe - Never do this:**
+
 ```tsx
 // DON'T - Direct HTML injection
 <div dangerouslySetInnerHTML={{ __html: userInput }} />
@@ -240,12 +262,14 @@ import DOMPurify from 'dompurify';
 ### What to Log
 
 ✅ **Safe to log:**
+
 - User actions (login, trade logged, alert created)
 - API request counts
 - Error messages (non-sensitive)
 - Performance metrics
 
 ❌ **Never log:**
+
 - Passwords or API keys
 - Database connection strings
 - Personal identifiable information (PII)
@@ -255,13 +279,13 @@ import DOMPurify from 'dompurify';
 ### Logging Example
 
 ```typescript
-import logger from '@/lib/logger';
+import logger from "@/lib/logger";
 
 // Good
-logger.info('Trade logged', { userId, symbol, shares });
+logger.info("Trade logged", { userId, symbol, shares });
 
 // Bad
-logger.info('User login', { userId, password }); // DON'T
+logger.info("User login", { userId, password }); // DON'T
 ```
 
 ### Error Reporting (Sentry Optional)
@@ -278,7 +302,7 @@ Sentry.init({
 
 // Capture error without sensitive data
 Sentry.captureException(error, {
-  tags: { userId, feature: 'portfolio' },
+  tags: { userId, feature: "portfolio" },
   // Don't include: apiKey, password, database_url
 });
 ```
@@ -306,6 +330,7 @@ npm outdated
 ### .gitignore Protection
 
 The robust `.gitignore` file includes:
+
 - ✅ All `.env*` files
 - ✅ All `.key`, `.pem` files
 - ✅ Credentials and secrets
@@ -314,6 +339,7 @@ The robust `.gitignore` file includes:
 - ✅ Build artifacts
 
 **Verification:**
+
 ```bash
 # Check what git tracks
 git ls-files | grep -E "\.(env|key|pem|credentials)" # Should be empty

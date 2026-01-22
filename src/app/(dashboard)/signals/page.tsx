@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Loader2, Search } from 'lucide-react';
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Loader2, Search } from "lucide-react";
 
 interface SignalData {
   name: string;
@@ -18,7 +24,7 @@ export default function SignalsPage() {
   const [signals, setSignals] = useState<SignalData[]>([]);
   const [filteredSignals, setFilteredSignals] = useState<SignalData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,18 +33,19 @@ export default function SignalsPage() {
 
   useEffect(() => {
     let filtered = signals;
-    
+
     if (searchTerm) {
-      filtered = filtered.filter((s) =>
-        s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.description.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (s) =>
+          s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          s.description.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
-    
+
     if (selectedCategory) {
       filtered = filtered.filter((s) => s.category === selectedCategory);
     }
-    
+
     setFilteredSignals(filtered);
   }, [searchTerm, selectedCategory, signals]);
 
@@ -46,26 +53,26 @@ export default function SignalsPage() {
     try {
       setSignals([
         {
-          name: 'RSI',
-          category: 'Momentum',
-          description: 'Relative Strength Index - measures overbought/oversold',
+          name: "RSI",
+          category: "Momentum",
+          description: "Relative Strength Index - measures overbought/oversold",
           values: { value: 65, overbought: 70, oversold: 30 },
         },
         {
-          name: 'MACD',
-          category: 'Trend',
-          description: 'Moving Average Convergence Divergence',
+          name: "MACD",
+          category: "Trend",
+          description: "Moving Average Convergence Divergence",
           values: { macd_line: 2.5, signal_line: 2.1, histogram: 0.4 },
         },
         {
-          name: 'Bollinger Bands',
-          category: 'Volatility',
-          description: 'Volatility bands around moving average',
+          name: "Bollinger Bands",
+          category: "Volatility",
+          description: "Volatility bands around moving average",
           values: { upper: 152.5, middle: 150, lower: 147.5 },
         },
       ]);
     } catch (error) {
-      console.error('Failed to fetch signals:', error);
+      console.error("Failed to fetch signals:", error);
     } finally {
       setLoading(false);
     }
@@ -99,7 +106,7 @@ export default function SignalsPage() {
             </div>
             <div className="flex gap-2 flex-wrap">
               <Button
-                variant={selectedCategory === null ? 'default' : 'outline'}
+                variant={selectedCategory === null ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(null)}
               >
@@ -108,7 +115,7 @@ export default function SignalsPage() {
               {categories.map((cat) => (
                 <Button
                   key={cat}
-                  variant={selectedCategory === cat ? 'default' : 'outline'}
+                  variant={selectedCategory === cat ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(cat)}
                 >
@@ -142,10 +149,10 @@ export default function SignalsPage() {
                   {Object.entries(signal.values).map(([key, value]) => (
                     <div key={key} className="p-3 bg-muted/50 rounded-lg">
                       <p className="text-xs text-muted-foreground mb-1 capitalize">
-                        {key.replace(/_/g, ' ')}
+                        {key.replace(/_/g, " ")}
                       </p>
                       <p className="font-semibold">
-                        {typeof value === 'number' ? value.toFixed(2) : value}
+                        {typeof value === "number" ? value.toFixed(2) : value}
                       </p>
                     </div>
                   ))}

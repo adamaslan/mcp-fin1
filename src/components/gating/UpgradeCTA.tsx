@@ -1,16 +1,20 @@
-'use client';
+"use client";
 
-import { UserTier } from '@/lib/auth/tiers';
-import { Button } from '@/components/ui/button';
-import { Lock } from 'lucide-react';
+import { UserTier } from "@/lib/auth/tiers";
+import { Button } from "@/components/ui/button";
+import { Lock } from "lucide-react";
 
 interface UpgradeCTAProps {
   currentTier: UserTier;
-  requiredTier: 'pro' | 'max';
+  requiredTier: "pro" | "max";
   feature: string;
 }
 
-export function UpgradeCTA({ currentTier, requiredTier, feature }: UpgradeCTAProps) {
+export function UpgradeCTA({
+  currentTier,
+  requiredTier,
+  feature,
+}: UpgradeCTAProps) {
   const messages = {
     free: {
       pro: `Upgrade to Pro to unlock ${feature}`,
@@ -32,11 +36,7 @@ export function UpgradeCTA({ currentTier, requiredTier, feature }: UpgradeCTAPro
     <div className="flex flex-col items-center gap-3">
       <Lock className="h-6 w-6 text-muted-foreground" />
       <p className="text-sm text-muted-foreground">{message}</p>
-      <Button
-        asChild
-        variant="default"
-        size="sm"
-      >
+      <Button asChild variant="default" size="sm">
         <a href="/pricing">View Plans</a>
       </Button>
     </div>
