@@ -14,28 +14,21 @@ interface Trade {
   risk_reward?: number;
 }
 
+// Placeholder structure - no real price data
+// Real trades require live connection to MCP server
 const DEFAULT_TRADES: Trade[] = [
   {
-    symbol: "NVDA",
-    entry_price: 142.3,
-    stop_loss: 135.5,
-    target_price: 152.8,
+    symbol: "SAMPLE1",
     bias: "Bullish",
     signal_quality: "HIGH",
   },
   {
-    symbol: "MSFT",
-    entry_price: 438.2,
-    stop_loss: 428.4,
-    target_price: 455.8,
+    symbol: "SAMPLE2",
     bias: "Bullish",
     signal_quality: "HIGH",
   },
   {
-    symbol: "GOOGL",
-    entry_price: 188.5,
-    stop_loss: 180.1,
-    target_price: 201.3,
+    symbol: "SAMPLE3",
     bias: "Bullish",
     signal_quality: "MEDIUM",
   },
@@ -95,14 +88,14 @@ export function ScannerPreview({ trades }: { trades?: Trade[] | null }) {
                   {displayTrades.map((trade) => (
                     <tr key={trade.symbol} className="border-b last:border-b-0">
                       <td className="py-3 font-semibold">{trade.symbol}</td>
-                      <td className="text-right">
-                        ${(trade.entry_price || 0).toFixed(2)}
+                      <td className="text-right text-muted-foreground">
+                        [Entry]
                       </td>
-                      <td className="text-right text-red-500">
-                        ${(trade.stop_loss || 0).toFixed(2)}
+                      <td className="text-right text-muted-foreground">
+                        [Stop]
                       </td>
-                      <td className="text-right text-green-500">
-                        ${(trade.target_price || 0).toFixed(2)}
+                      <td className="text-right text-muted-foreground">
+                        [Target]
                       </td>
                       <td className="text-center">
                         <Badge

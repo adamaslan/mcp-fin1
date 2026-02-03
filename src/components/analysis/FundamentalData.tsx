@@ -40,28 +40,29 @@ interface FundamentalMetrics {
   institutionalOwnership: number;
 }
 
-// Mock data - in production, fetch from API
-const MOCK_FUNDAMENTALS: FundamentalMetrics = {
-  marketCap: "$3.45T",
-  peRatio: 32.5,
-  forwardPE: 28.4,
-  pegRatio: 2.1,
-  eps: 6.42,
-  epsGrowth: 12.3,
-  revenue: "$394.3B",
-  revenueGrowth: 8.2,
-  profitMargin: 24.8,
-  operatingMargin: 30.5,
-  roe: 147.3,
-  debtToEquity: 1.87,
-  dividendYield: 0.52,
-  payoutRatio: 15.8,
-  beta: 1.28,
-  fiftyTwoWeekHigh: 199.62,
-  fiftyTwoWeekLow: 143.9,
-  avgVolume: "54.2M",
-  sharesOutstanding: "15.44B",
-  institutionalOwnership: 60.8,
+// Real data must be fetched from API
+// No mock fundamental data
+const EMPTY_FUNDAMENTALS: FundamentalMetrics = {
+  marketCap: "",
+  peRatio: null,
+  forwardPE: null,
+  pegRatio: null,
+  eps: 0,
+  epsGrowth: 0,
+  revenue: "",
+  revenueGrowth: 0,
+  profitMargin: 0,
+  operatingMargin: 0,
+  roe: 0,
+  debtToEquity: 0,
+  dividendYield: null,
+  payoutRatio: null,
+  beta: 0,
+  fiftyTwoWeekHigh: 0,
+  fiftyTwoWeekLow: 0,
+  avgVolume: "",
+  sharesOutstanding: "",
+  institutionalOwnership: 0,
 };
 
 interface FundamentalDataProps {
@@ -114,11 +115,32 @@ function MetricCard({
   );
 }
 
+interface FundamentalDataPropsWithPrice extends FundamentalDataProps {
+  currentPrice?: number;
+}
+
 export function FundamentalData({
   symbol,
-  data = MOCK_FUNDAMENTALS,
-}: FundamentalDataProps) {
-  const currentPrice = 185.42; // Mock current price
+  data,
+  currentPrice,
+}: FundamentalDataPropsWithPrice) {
+  // currentPrice must be provided from real API
+  if (!data || !currentPrice) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Fundamental Analysis</CardTitle>
+          <CardDescription>No data available</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            Real-time fundamental data requires live connection to market data
+            API.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
   const percentFromHigh =
     ((data.fiftyTwoWeekHigh - currentPrice) / data.fiftyTwoWeekHigh) * 100;
   const percentFromLow =

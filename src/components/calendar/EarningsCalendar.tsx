@@ -32,89 +32,9 @@ interface EarningsEvent {
   inWatchlist?: boolean;
 }
 
-// Mock data - in production, fetch from earnings API
-const MOCK_EARNINGS: EarningsEvent[] = [
-  {
-    id: "1",
-    symbol: "AAPL",
-    company: "Apple Inc.",
-    date: "Today",
-    time: "AMC",
-    epsEstimate: "$2.10",
-    epsPrior: "$1.88",
-    revenueEstimate: "$118.2B",
-    revenuePrior: "$117.2B",
-    inWatchlist: true,
-  },
-  {
-    id: "2",
-    symbol: "MSFT",
-    company: "Microsoft Corporation",
-    date: "Today",
-    time: "AMC",
-    epsEstimate: "$2.78",
-    epsPrior: "$2.45",
-    revenueEstimate: "$61.1B",
-    revenuePrior: "$56.5B",
-  },
-  {
-    id: "3",
-    symbol: "TSLA",
-    company: "Tesla Inc.",
-    date: "Tomorrow",
-    time: "AMC",
-    epsEstimate: "$0.73",
-    epsPrior: "$0.66",
-    revenueEstimate: "$25.6B",
-    revenuePrior: "$23.4B",
-    inWatchlist: true,
-  },
-  {
-    id: "4",
-    symbol: "META",
-    company: "Meta Platforms Inc.",
-    date: "Tomorrow",
-    time: "AMC",
-    epsEstimate: "$5.25",
-    epsPrior: "$4.39",
-    revenueEstimate: "$39.2B",
-    revenuePrior: "$34.1B",
-  },
-  {
-    id: "5",
-    symbol: "GOOGL",
-    company: "Alphabet Inc.",
-    date: "Wed, Jan 15",
-    time: "AMC",
-    epsEstimate: "$1.85",
-    epsPrior: "$1.55",
-    revenueEstimate: "$85.3B",
-    revenuePrior: "$76.7B",
-  },
-  {
-    id: "6",
-    symbol: "AMZN",
-    company: "Amazon.com Inc.",
-    date: "Thu, Jan 16",
-    time: "AMC",
-    epsEstimate: "$1.15",
-    epsPrior: "$0.94",
-    revenueEstimate: "$166.2B",
-    revenuePrior: "$149.2B",
-  },
-  {
-    id: "7",
-    symbol: "NVDA",
-    company: "NVIDIA Corporation",
-    date: "Fri, Jan 17",
-    time: "AMC",
-    epsEstimate: "$0.74",
-    epsPrior: "$0.57",
-    revenueEstimate: "$20.4B",
-    revenuePrior: "$18.1B",
-    inWatchlist: true,
-  },
-];
+// Real data must be fetched from earnings API
+// No mock earnings data - show empty state instead
+const EMPTY_EARNINGS: EarningsEvent[] = [];
 
 const TIME_LABELS = {
   BMO: { label: "Before Open", color: "bg-blue-500" },
@@ -132,8 +52,8 @@ export function EarningsCalendar({
   const [watchlistFilter, setWatchlistFilter] = useState(showWatchlistOnly);
 
   const filteredEarnings = watchlistFilter
-    ? MOCK_EARNINGS.filter((e) => e.inWatchlist)
-    : MOCK_EARNINGS;
+    ? EMPTY_EARNINGS.filter((e) => e.inWatchlist)
+    : EMPTY_EARNINGS;
 
   // Group by date
   const groupedEarnings = filteredEarnings.reduce(

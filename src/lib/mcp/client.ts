@@ -14,6 +14,27 @@ export class MCPClient {
     this.baseUrl = process.env.MCP_CLOUD_RUN_URL || "http://localhost:8000";
   }
 
+  private async handleResponse<T>(
+    response: Response,
+    endpoint: string,
+  ): Promise<T> {
+    if (!response.ok) {
+      let errorDetails = "";
+      try {
+        const body = await response.json();
+        errorDetails = JSON.stringify(body);
+      } catch {
+        errorDetails = await response.text();
+      }
+
+      throw new Error(
+        `MCP API error (${response.status} ${response.statusText}): ${endpoint} - ${errorDetails || "No response body"}`,
+      );
+    }
+
+    return response.json();
+  }
+
   async analyzeSecurity(
     symbol: string,
     period = "1mo",
@@ -25,11 +46,7 @@ export class MCPClient {
       body: JSON.stringify({ symbol, period, use_ai: useAi }),
     });
 
-    if (!response.ok) {
-      throw new Error(`MCP API error: ${response.statusText}`);
-    }
-
-    return response.json();
+    return this.handleResponse(response, `/api/analyze (symbol=${symbol})`);
   }
 
   async getTradePlan(
@@ -43,11 +60,10 @@ export class MCPClient {
       body: JSON.stringify({ symbol, period }),
     });
 
-    if (!response.ok) {
-      throw new Error(`MCP API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    const data = await this.handleResponse<any>(
+      response,
+      `/api/analyze (symbol=${symbol})`,
+    );
 
     // Transform analyze response to trade plan format
     return {
@@ -63,68 +79,44 @@ export class MCPClient {
       body: JSON.stringify({ universe, max_results: maxResults }),
     });
 
-    if (!response.ok) {
-      throw new Error(`MCP API error: ${response.statusText}`);
-    }
-
-    return response.json();
+    return this.handleResponse<ScanResult>(
+      response,
+      `/api/screen (universe=${universe})`,
+    );
   }
 
   async portfolioRisk(
     positions: Array<{ symbol: string; shares: number; entry_price: number }>,
   ): Promise<PortfolioRiskResult> {
-    // Portfolio risk endpoint not available, return mock data
-    return {
-      total_value: 0,
-      total_max_loss: 0,
-      risk_percent_of_portfolio: 0,
-      overall_risk_level: "LOW",
-      positions: positions.map((p) => ({
-        symbol: p.symbol,
-        shares: p.shares,
-        entry_price: p.entry_price,
-        current_price: p.entry_price,
-        current_value: p.shares * p.entry_price,
-        max_loss_dollar: 0,
-        max_loss_percent: 0,
-        stop_level: p.entry_price,
-        risk_quality: "low" as const,
-      })),
-      sector_concentration: {},
-      hedge_suggestions: [],
-    };
+    const response = await fetch(`${this.baseUrl}/api/portfolio-risk`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ positions }),
+    });
+
+    return this.handleResponse<PortfolioRiskResult>(
+      response,
+      `/api/portfolio-risk`,
+    );
   }
 
   async morningBrief(
     watchlist?: string[],
     marketRegion = "US",
   ): Promise<MorningBriefResult> {
-    // Morning brief endpoint not available, return mock data
-    return {
-      timestamp: new Date().toISOString(),
-      market_status: {
-        market_status: "CLOSED",
-        market_hours_remaining: "Market Closed",
-        current_time: new Date().toISOString(),
-        futures_es: { change_percent: 0 },
-        futures_nq: { change_percent: 0 },
-        vix: 0,
-      },
-      economic_events: [],
-      watchlist_signals: (watchlist || []).map((symbol) => ({
-        symbol,
-        price: 0,
-        change_percent: 0,
-        action: "HOLD" as const,
-        risk_assessment: "HOLD" as const,
-        top_signals: [],
-        key_support: 0,
-        key_resistance: 0,
-      })),
-      sector_leaders: [],
-      sector_losers: [],
-      key_themes: ["Market data unavailable"],
-    };
+    const response = await fetch(`${this.baseUrl}/api/morning-brief`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        watchlist: watchlist || [],
+        market_region: marketRegion,
+      }),
+    });
+
+    return this.handleResponse<MorningBriefResult>(
+      response,
+      `/api/morning-brief`,
+    );
   }
 
   async compareSecurity(symbols: string[], metric = "signals"): Promise<any> {
@@ -134,11 +126,10 @@ export class MCPClient {
       body: JSON.stringify({ symbols, metric }),
     });
 
-    if (!response.ok) {
-      throw new Error(`MCP API error: ${response.statusText}`);
-    }
-
-    return response.json();
+    return this.handleResponse<any>(
+      response,
+      `/api/compare (symbols=${symbols.join(",")})`,
+    );
   }
 
   async screenSecurities(
@@ -152,11 +143,10 @@ export class MCPClient {
       body: JSON.stringify({ universe, criteria, limit }),
     });
 
-    if (!response.ok) {
-      throw new Error(`MCP API error: ${response.statusText}`);
-    }
-
-    return response.json();
+    return this.handleResponse<any>(
+      response,
+      `/api/screen (universe=${universe}, limit=${limit})`,
+    );
   }
 
   async analyzeFibonacci(
@@ -170,11 +160,10 @@ export class MCPClient {
       body: JSON.stringify({ symbol, period, window }),
     });
 
-    if (!response.ok) {
-      throw new Error(`MCP API error: ${response.statusText}`);
-    }
-
-    return response.json();
+    return this.handleResponse<FibonacciAnalysisResult>(
+      response,
+      `/api/fibonacci (symbol=${symbol})`,
+    );
   }
 }
 

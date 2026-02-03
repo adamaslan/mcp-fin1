@@ -37,51 +37,9 @@ interface TimeframeAnalysis {
   notes: string;
 }
 
-// Mock data - in production, this comes from the MCP server
-const MOCK_ANALYSIS: TimeframeAnalysis[] = [
-  {
-    timeframe: "daily",
-    trend: "bullish",
-    strength: "strong",
-    keyLevels: { support: 178.5, resistance: 192.3 },
-    indicators: [
-      { name: "MACD", signal: "buy" },
-      { name: "RSI", signal: "neutral" },
-      { name: "Moving Averages", signal: "buy" },
-      { name: "Volume", signal: "buy" },
-    ],
-    notes:
-      "Price above all major MAs. MACD bullish crossover. Volume confirming.",
-  },
-  {
-    timeframe: "weekly",
-    trend: "bullish",
-    strength: "moderate",
-    keyLevels: { support: 165.0, resistance: 200.0 },
-    indicators: [
-      { name: "MACD", signal: "buy" },
-      { name: "RSI", signal: "neutral" },
-      { name: "Moving Averages", signal: "buy" },
-      { name: "Volume", signal: "neutral" },
-    ],
-    notes:
-      "Healthy uptrend. RSI approaching overbought. Weekly support at 165.",
-  },
-  {
-    timeframe: "monthly",
-    trend: "bullish",
-    strength: "strong",
-    keyLevels: { support: 140.0, resistance: 210.0 },
-    indicators: [
-      { name: "MACD", signal: "buy" },
-      { name: "RSI", signal: "buy" },
-      { name: "Moving Averages", signal: "buy" },
-      { name: "Volume", signal: "buy" },
-    ],
-    notes:
-      "Long-term uptrend intact. Major support at 140. All-time highs in sight.",
-  },
-];
+// Real data must come from MCP server
+// No mock analysis data - show empty state instead
+const EMPTY_ANALYSIS: TimeframeAnalysis[] = [];
 
 const TREND_CONFIG: Record<
   TrendDirection,
@@ -126,7 +84,7 @@ interface MultiTimeframeProps {
 
 export function MultiTimeframe({
   symbol,
-  data = MOCK_ANALYSIS,
+  data = EMPTY_ANALYSIS,
 }: MultiTimeframeProps) {
   // Calculate confluence
   const bullishCount = data.filter((d) => d.trend === "bullish").length;

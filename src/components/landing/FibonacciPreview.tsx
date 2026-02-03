@@ -5,57 +5,51 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Target, Waves, Zap, ArrowRight } from "lucide-react";
 
-// Demo data for landing page (no API calls)
+// UI structure placeholders - no real market data
+// Real data requires connection to MCP server
 const DEMO_LEVELS = [
-  { name: "23.6%", price: 178.45, strength: "MODERATE", distance: 0.012 },
-  { name: "38.2%", price: 174.32, strength: "SIGNIFICANT", distance: 0.035 },
-  { name: "50.0%", price: 171.2, strength: "STRONG", distance: 0.053 },
-  { name: "61.8%", price: 168.08, strength: "STRONG", distance: 0.071 },
-  { name: "78.6%", price: 164.15, strength: "MODERATE", distance: 0.093 },
+  { name: "23.6%", placeholder: true, strength: "MODERATE", distance: 0.012 },
+  {
+    name: "38.2%",
+    placeholder: true,
+    strength: "SIGNIFICANT",
+    distance: 0.035,
+  },
+  { name: "50.0%", placeholder: true, strength: "STRONG", distance: 0.053 },
+  { name: "61.8%", placeholder: true, strength: "STRONG", distance: 0.071 },
+  { name: "78.6%", placeholder: true, strength: "MODERATE", distance: 0.093 },
 ];
 
 const DEMO_SIGNALS = [
   {
     signal: "FIB RETRACE 61.8%",
-    description: "Price approaching key Fibonacci support level",
+    description: "Fibonacci retracement signal",
     strength: "STRONG",
     category: "FIB_PRICE_LEVEL",
   },
   {
     signal: "FIB BOUNCE DETECTED",
-    description: "Bullish bounce off 50% retracement level",
+    description: "Fibonacci bounce signal",
     strength: "SIGNIFICANT",
     category: "FIB_BOUNCE",
   },
   {
     signal: "GOLDEN POCKET",
-    description: "Price within 61.8%-65% zone (Golden Pocket)",
+    description: "Fibonacci confluence zone",
     strength: "STRONG",
     category: "FIB_GOLDEN_POCKET",
-  },
-  {
-    signal: "FIB CLUSTER SUPPORT",
-    description: "3 Fibonacci levels converging at $168",
-    strength: "SIGNIFICANT",
-    category: "FIB_CLUSTER",
-  },
-  {
-    signal: "FIB MA CONFLUENCE",
-    description: "50% retracement aligns with 50-day MA",
-    strength: "MODERATE",
-    category: "FIB_MA_CONFLUENCE",
   },
 ];
 
 const DEMO_CLUSTERS = [
   {
-    centerPrice: 168.5,
+    placeholder: true,
     levels: ["61.8%", "50.0% Ext", "127.2% Proj"],
     count: 3,
     strength: "STRONG",
   },
   {
-    centerPrice: 174.2,
+    placeholder: true,
     levels: ["38.2%", "78.6% Ext"],
     count: 2,
     strength: "MODERATE",
@@ -128,7 +122,9 @@ export function FibonacciPreview() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-mono text-sm">${level.price}</div>
+                      <div className="font-mono text-sm text-muted-foreground">
+                        [Price Data]
+                      </div>
                       <Badge
                         variant="outline"
                         className={`text-xs ${getStrengthColor(level.strength)} text-white border-none`}
@@ -202,8 +198,8 @@ export function FibonacciPreview() {
                       <Badge variant="outline" className="text-xs">
                         {cluster.count} levels
                       </Badge>
-                      <span className="font-mono text-sm font-semibold">
-                        ${cluster.centerPrice.toFixed(2)}
+                      <span className="font-mono text-sm font-semibold text-muted-foreground">
+                        [Price Zone]
                       </span>
                     </div>
                     <div className="text-xs text-muted-foreground mb-2">

@@ -9,21 +9,13 @@ interface MarketData {
   economicEvents?: any[];
 }
 
-const DEFAULT_DATA: MarketData = {
-  status: "UNKNOWN",
-  futuresES: 0.45,
-  futuresNQ: 0.62,
-  vix: 14.2,
-  economicEvents: [],
-};
-
 export function LiveMarketPulse({ data }: { data?: MarketData | null }) {
-  const marketData = data || DEFAULT_DATA;
+  const hasData = data !== null && data !== undefined;
   const esChange =
-    typeof marketData.futuresES === "number" ? marketData.futuresES : 0.45;
+    hasData && typeof data.futuresES === "number" ? data.futuresES : 0;
   const nqChange =
-    typeof marketData.futuresNQ === "number" ? marketData.futuresNQ : 0.62;
-  const vixValue = typeof marketData.vix === "number" ? marketData.vix : 14.2;
+    hasData && typeof data.futuresNQ === "number" ? data.futuresNQ : 0;
+  const vixValue = hasData && typeof data.vix === "number" ? data.vix : 0;
 
   const getVixSentiment = (vix: number) => {
     if (vix < 15) return "Low volatility";
@@ -52,19 +44,25 @@ export function LiveMarketPulse({ data }: { data?: MarketData | null }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2">
-              {isESUp ? (
-                <TrendingUp className="h-5 w-5 text-green-500" />
-              ) : (
-                <TrendingDown className="h-5 w-5 text-red-500" />
-              )}
-              <span
-                className={`text-2xl font-bold ${isESUp ? "text-green-500" : "text-red-500"}`}
-              >
-                {isESUp ? "+" : ""}
-                {esChange.toFixed(2)}%
+            {hasData ? (
+              <div className="flex items-center gap-2">
+                {isESUp ? (
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                ) : (
+                  <TrendingDown className="h-5 w-5 text-red-500" />
+                )}
+                <span
+                  className={`text-2xl font-bold ${isESUp ? "text-green-500" : "text-red-500"}`}
+                >
+                  {isESUp ? "+" : ""}
+                  {esChange.toFixed(2)}%
+                </span>
+              </div>
+            ) : (
+              <span className="text-2xl font-bold text-muted-foreground">
+                [Data]
               </span>
-            </div>
+            )}
             <p className="text-xs text-muted-foreground mt-2">
               Pre-market trading
             </p>
@@ -78,19 +76,25 @@ export function LiveMarketPulse({ data }: { data?: MarketData | null }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2">
-              {isNQUp ? (
-                <TrendingUp className="h-5 w-5 text-green-500" />
-              ) : (
-                <TrendingDown className="h-5 w-5 text-red-500" />
-              )}
-              <span
-                className={`text-2xl font-bold ${isNQUp ? "text-green-500" : "text-red-500"}`}
-              >
-                {isNQUp ? "+" : ""}
-                {nqChange.toFixed(2)}%
+            {hasData ? (
+              <div className="flex items-center gap-2">
+                {isNQUp ? (
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                ) : (
+                  <TrendingDown className="h-5 w-5 text-red-500" />
+                )}
+                <span
+                  className={`text-2xl font-bold ${isNQUp ? "text-green-500" : "text-red-500"}`}
+                >
+                  {isNQUp ? "+" : ""}
+                  {nqChange.toFixed(2)}%
+                </span>
+              </div>
+            ) : (
+              <span className="text-2xl font-bold text-muted-foreground">
+                [Data]
               </span>
-            </div>
+            )}
             <p className="text-xs text-muted-foreground mt-2">
               Pre-market trading
             </p>
@@ -102,16 +106,24 @@ export function LiveMarketPulse({ data }: { data?: MarketData | null }) {
             <CardTitle className="text-sm font-medium">VIX Index</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2">
-              {vixValue < 20 ? (
-                <TrendingDown className="h-5 w-5 text-green-500" />
-              ) : (
-                <TrendingUp className="h-5 w-5 text-orange-500" />
-              )}
-              <span className="text-2xl font-bold">{vixValue.toFixed(1)}</span>
-            </div>
+            {hasData ? (
+              <div className="flex items-center gap-2">
+                {vixValue < 20 ? (
+                  <TrendingDown className="h-5 w-5 text-green-500" />
+                ) : (
+                  <TrendingUp className="h-5 w-5 text-orange-500" />
+                )}
+                <span className="text-2xl font-bold">
+                  {vixValue.toFixed(1)}
+                </span>
+              </div>
+            ) : (
+              <span className="text-2xl font-bold text-muted-foreground">
+                [Data]
+              </span>
+            )}
             <p className="text-xs text-muted-foreground mt-2">
-              {getVixSentiment(vixValue)}
+              {hasData ? getVixSentiment(vixValue) : "No data"}
             </p>
           </CardContent>
         </Card>
