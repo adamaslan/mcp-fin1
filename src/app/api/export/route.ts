@@ -2,6 +2,10 @@ import { db } from "@/lib/db/client";
 import { tradeJournal, positions } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
+import type { InferSelectModel } from "drizzle-orm";
+
+type Trade = InferSelectModel<typeof tradeJournal>;
+type Position = InferSelectModel<typeof positions>;
 
 export async function GET(request: Request) {
   try {
@@ -37,19 +41,19 @@ export async function GET(request: Request) {
   }
 }
 
-function generateCSV(trades: any[], userPositions: any[]) {
+function generateCSV(trades: Trade[], userPositions: Position[]) {
   let csv = "Trade Journal\n";
   csv +=
     "Symbol,Entry Price,Exit Price,Shares,Entry Date,Exit Date,P&L,P&L %,Status,Notes\n";
 
-  trades.forEach((trade) => {
+  trades.forEach((trade: Trade) => {
     csv += `${trade.symbol},${trade.entry_price},${trade.exit_price || ""},${trade.shares},${trade.entry_date},${trade.exit_date || ""},${trade.pnl || ""},${trade.pnl_percent || ""},${trade.status},"${(trade.notes || "").replace(/"/g, '""')}"\n`;
   });
 
   csv += "\n\nPortfolio Positions\n";
   csv += "Symbol,Shares,Entry Price,Current Value\n";
 
-  userPositions.forEach((pos) => {
+  userPositions.forEach((pos: Position) => {
     csv += `${pos.symbol},${pos.shares},${pos.entry_price},${pos.current_value || ""}\n`;
   });
 
@@ -61,20 +65,22 @@ function generateCSV(trades: any[], userPositions: any[]) {
   });
 }
 
-function generateJSON(trades: any[], userPositions: any[]) {
+function generateJSON(trades: Trade[], userPositions: Position[]) {
+  const closedTrades = trades.filter((t: Trade) => t.status === "closed");
+  const winningClosedTrades = trades.filter(
+    (t: Trade) => t.status === "closed" && (t.pnl || 0) > 0,
+  );
+
   const data = {
     exportDate: new Date().toISOString(),
     summary: {
       totalTrades: trades.length,
-      closedTrades: trades.filter((t) => t.status === "closed").length,
-      openTrades: trades.filter((t) => t.status === "open").length,
-      totalPnL: trades.reduce((sum, t) => sum + (t.pnl || 0), 0),
+      closedTrades: closedTrades.length,
+      openTrades: trades.filter((t: Trade) => t.status === "open").length,
+      totalPnL: trades.reduce((sum: number, t: Trade) => sum + (t.pnl || 0), 0),
       winRate:
-        trades.filter((t) => t.status === "closed").length > 0
-          ? (trades.filter((t) => t.status === "closed" && (t.pnl || 0) > 0)
-              .length /
-              trades.filter((t) => t.status === "closed").length) *
-            100
+        closedTrades.length > 0
+          ? (winningClosedTrades.length / closedTrades.length) * 100
           : 0,
     },
     trades,

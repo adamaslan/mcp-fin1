@@ -7,7 +7,11 @@ import {
   recordAnalysis,
   UsageLimitExceededError,
 } from "@/lib/auth/usage-limits";
-import type { FibonacciAnalysisResult } from "@/lib/mcp/types";
+import type {
+  FibonacciAnalysisResult,
+  FibonacciLevel,
+  FibonacciSignal,
+} from "@/lib/mcp/types";
 
 export async function POST(request: Request) {
   try {
@@ -39,7 +43,7 @@ export async function POST(request: Request) {
     let filteredLevels = result.levels;
     if (tier === "free") {
       // Free tier: only basic levels
-      filteredLevels = result.levels.filter((l) =>
+      filteredLevels = result.levels.filter((l: FibonacciLevel) =>
         Array.isArray(tierLimits.fibonacciLevels)
           ? tierLimits.fibonacciLevels.includes(l.key)
           : false,
@@ -48,7 +52,7 @@ export async function POST(request: Request) {
       // Pro tier: retracements and extensions only
       if (tierLimits.fibonacciLevels === "all_retracements_extensions") {
         filteredLevels = result.levels.filter(
-          (l) => l.type === "RETRACE" || l.type === "EXTENSION",
+          (l: FibonacciLevel) => l.type === "RETRACE" || l.type === "EXTENSION",
         );
       }
     }
@@ -57,7 +61,7 @@ export async function POST(request: Request) {
     // Filter signals by category
     let filteredSignals = result.signals;
     if (tierLimits.fibonacciCategories !== "all") {
-      filteredSignals = filteredSignals.filter((s) =>
+      filteredSignals = filteredSignals.filter((s: FibonacciSignal) =>
         Array.isArray(tierLimits.fibonacciCategories)
           ? tierLimits.fibonacciCategories.includes(s.category)
           : false,
