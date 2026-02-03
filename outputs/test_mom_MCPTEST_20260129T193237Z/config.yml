@@ -1,0 +1,20 @@
+backtest:
+  apply_to:
+    - MCPTEST
+  id: test_mom
+  params:
+    fixed_fee: 1.0
+    lookback: 20
+    max_position_pct: 0.5
+    rebalance: monthly
+    save_plots: true
+    slippage_pct: 0.001
+    starting_cash: 1000.0
+    top_n: 3
+  type: momentum
+global:
+  cache_dir: /private/var/folders/49/6ydqkbq172ngzt6p49xfm6b00000gn/T/pytest-of-adamaslan/pytest-4/test_momentum_runs_and_writes_0/cache
+  end_date: "2020-12-31"
+  random_seed: 123
+  start_date: "2020-01-01"
+  transaction_cost_bps: 1

@@ -1,0 +1,14 @@
+backtest:
+  apply_to:
+    - MCPTEST
+  id: momentum_base
+  params:
+    lookback: 20
+    rebalance: monthly
+    top_n: 2
+  type: momentum
+global:
+  end_date: "2020-12-31"
+  random_seed: 42
+  start_date: "2020-01-01"
+  transaction_cost_bps: 1
