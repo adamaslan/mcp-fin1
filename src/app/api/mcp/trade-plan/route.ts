@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getMCPClient } from "@/lib/mcp/client";
 import { canAccessTimeframe, TIER_LIMITS } from "@/lib/auth/tiers";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
+import type { TradePlan } from "@/lib/mcp/types";
 
 export async function POST(request: Request) {
   try {
@@ -22,13 +23,15 @@ export async function POST(request: Request) {
     const result = await mcp.getTradePlan(symbol, period);
 
     // Filter trade plans based on timeframe access
-    let filteredPlans = result.trade_plans || [];
+    let filteredPlans = (result.trade_plans || []) as TradePlan[];
     if (tier === "free") {
       // Free users only see swing trades
-      filteredPlans = filteredPlans.filter((p) => p.timeframe === "swing");
+      filteredPlans = filteredPlans.filter(
+        (p: TradePlan) => p.timeframe === "swing",
+      );
     } else if (tier === "pro") {
       // Pro users see swing, day, and scalp
-      filteredPlans = filteredPlans.filter((p) =>
+      filteredPlans = filteredPlans.filter((p: TradePlan) =>
         canAccessTimeframe(tier, p.timeframe),
       );
     }

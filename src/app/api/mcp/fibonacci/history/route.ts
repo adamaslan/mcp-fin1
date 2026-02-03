@@ -79,17 +79,15 @@ export async function GET(request: Request) {
         and(
           eq(fibonacciSignalHistory.symbol, symbolUpper),
           gte(fibonacciSignalHistory.timestamp, cutoffDate),
-          gte(
-            fibonacciSignalHistory.confluenceScore,
-            minConfluence.toString() as never,
-          ),
+          // confluenceScore is stored as string (PgNumeric) in DB
+          gte(fibonacciSignalHistory.confluenceScore, minConfluence.toString()),
         ),
       )
       .orderBy(desc(fibonacciSignalHistory.timestamp))
       .limit(limit);
 
     // Filter by strength (after query since ENUM filtering is complex in Drizzle)
-    const filteredSignals = signals.filter((s) =>
+    const filteredSignals = signals.filter((s: FibonacciSignalRecord) =>
       validStrengths.includes(s.strength),
     );
 
@@ -173,7 +171,9 @@ export async function GET(request: Request) {
     ): Record<string, FormattedMetrics> => {
       const result: Record<string, FormattedMetrics> = {};
 
-      for (const [key, metrics] of Object.entries(data)) {
+      for (const [key, metrics] of Object.entries(data) as Array<
+        [string, PerformanceMetrics]
+      >) {
         const winRate30d =
           metrics.returns_30d.length > 0
             ? (metrics.wins_30d / metrics.returns_30d.length) * 100
@@ -237,7 +237,7 @@ export async function GET(request: Request) {
       min_strength: validStrength,
       min_confluence: minConfluence,
       signals_returned: filteredSignals.length,
-      signals: filteredSignals.map((s) => ({
+      signals: filteredSignals.map((s: FibonacciSignalRecord) => ({
         id: s.id,
         timestamp: s.timestamp,
         signal: s.signal,

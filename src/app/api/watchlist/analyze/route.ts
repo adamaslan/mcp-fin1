@@ -5,6 +5,28 @@ import { watchlists } from "@/lib/db/schema";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
 import { canAccessFeature } from "@/lib/auth/tiers";
 import { eq, and } from "drizzle-orm";
+import type { Signal } from "@/lib/mcp/types";
+
+interface AnalysisResult {
+  symbol: string;
+  success: boolean;
+  sentiment?: "bullish" | "bearish" | "neutral";
+  signalCounts?: {
+    total: number;
+    bullish: number;
+    bearish: number;
+    neutral: number;
+  };
+  price?: number;
+  priceChange?: number;
+  priceChangePercent?: number;
+  topSignals?: Array<{
+    name: string;
+    direction: string;
+    strength: string;
+  }>;
+  error?: string;
+}
 
 /**
  * POST /api/watchlist/analyze
@@ -79,12 +101,12 @@ export async function POST(request: Request) {
           const analysis = await mcp.analyzeSecurity(symbol, period, false);
 
           // Calculate signal summary
-          const signals = analysis.signals || [];
+          const signals = (analysis.signals || []) as Signal[];
           const bullishCount = signals.filter(
-            (s: any) => s.direction === "bullish",
+            (s: Signal) => (s as any).direction === "bullish",
           ).length;
           const bearishCount = signals.filter(
-            (s: any) => s.direction === "bearish",
+            (s: Signal) => (s as any).direction === "bearish",
           ).length;
           const neutralCount = signals.length - bullishCount - bearishCount;
 
@@ -107,9 +129,9 @@ export async function POST(request: Request) {
             priceChange: analysis.change,
             priceChangePercent: (analysis.change / analysis.price) * 100,
             // Include top 3 signals for quick view
-            topSignals: signals.slice(0, 3).map((s: any) => ({
-              name: s.name,
-              direction: s.direction,
+            topSignals: signals.slice(0, 3).map((s: Signal) => ({
+              name: (s as any).name || s.signal,
+              direction: (s as any).direction,
               strength: s.strength,
             })),
           };
@@ -138,16 +160,21 @@ export async function POST(request: Request) {
     });
 
     // Calculate overall summary
-    const successfulResults = analysisResults.filter((r) => r.success);
+    const successfulResults = analysisResults.filter(
+      (r: AnalysisResult) => r.success,
+    );
     const summary = {
       total: successfulResults.length,
-      bullish: successfulResults.filter((r) => r.sentiment === "bullish")
-        .length,
-      bearish: successfulResults.filter((r) => r.sentiment === "bearish")
-        .length,
-      neutral: successfulResults.filter((r) => r.sentiment === "neutral")
-        .length,
-      failed: analysisResults.filter((r) => !r.success).length,
+      bullish: successfulResults.filter(
+        (r: AnalysisResult) => r.sentiment === "bullish",
+      ).length,
+      bearish: successfulResults.filter(
+        (r: AnalysisResult) => r.sentiment === "bearish",
+      ).length,
+      neutral: successfulResults.filter(
+        (r: AnalysisResult) => r.sentiment === "neutral",
+      ).length,
+      failed: analysisResults.filter((r: AnalysisResult) => !r.success).length,
     };
 
     return NextResponse.json({
