@@ -100,17 +100,17 @@
 
 ### Complete Reference Table
 
-| # | Tool Name | Purpose | Frontend Page | Primary Data | AI Analysis Output |
-|---|-----------|---------|---------------|--------------|-------------------|
-| 1 | `analyze_security` | Deep technical analysis of a single stock | `/analyze/[symbol]` | Price, signals, indicators | Market bias, key drivers, action items |
-| 2 | `compare_securities` | Side-by-side comparison of multiple stocks | `/compare` | Rankings, metrics comparison | Best pick, rationale, strategy |
-| 3 | `screen_securities` | Filter stocks by technical/fundamental criteria | `/scanner` | Filtered stock list | Pattern recognition, refinements |
-| 4 | `get_trade_plan` | Entry/stop/target levels for a trade | `/analyze/[symbol]` | Trade plans per timeframe | Risk analysis, execution plan |
-| 5 | `scan_trades` | Find high-probability setups in real-time | `/scanner` | Qualified trades list | Opportunity ranking, themes |
-| 6 | `portfolio_risk` | Quantify total portfolio risk exposure | `/portfolio` | Risk metrics, positions | Hedge recommendations, rebalancing |
-| 7 | `morning_brief` | Daily market briefing | `/` (dashboard) | Market status, events, signals | Top opportunities, key risks |
-| 8 | `analyze_fibonacci` | Fibonacci levels and confluence zones | `/fibonacci` | Levels, clusters, zones | Setup type, trading zones |
-| 9 | `options_risk_analysis` | Options flow sentiment and risk | `/options` | Greeks, scenarios, flow | Strategy recommendations |
+| #   | Tool Name               | Purpose                                         | Frontend Page       | Primary Data                   | AI Analysis Output                     |
+| --- | ----------------------- | ----------------------------------------------- | ------------------- | ------------------------------ | -------------------------------------- |
+| 1   | `analyze_security`      | Deep technical analysis of a single stock       | `/analyze/[symbol]` | Price, signals, indicators     | Market bias, key drivers, action items |
+| 2   | `compare_securities`    | Side-by-side comparison of multiple stocks      | `/compare`          | Rankings, metrics comparison   | Best pick, rationale, strategy         |
+| 3   | `screen_securities`     | Filter stocks by technical/fundamental criteria | `/scanner`          | Filtered stock list            | Pattern recognition, refinements       |
+| 4   | `get_trade_plan`        | Entry/stop/target levels for a trade            | `/analyze/[symbol]` | Trade plans per timeframe      | Risk analysis, execution plan          |
+| 5   | `scan_trades`           | Find high-probability setups in real-time       | `/scanner`          | Qualified trades list          | Opportunity ranking, themes            |
+| 6   | `portfolio_risk`        | Quantify total portfolio risk exposure          | `/portfolio`        | Risk metrics, positions        | Hedge recommendations, rebalancing     |
+| 7   | `morning_brief`         | Daily market briefing                           | `/` (dashboard)     | Market status, events, signals | Top opportunities, key risks           |
+| 8   | `analyze_fibonacci`     | Fibonacci levels and confluence zones           | `/fibonacci`        | Levels, clusters, zones        | Setup type, trading zones              |
+| 9   | `options_risk_analysis` | Options flow sentiment and risk                 | `/options`          | Greeks, scenarios, flow        | Strategy recommendations               |
 
 ---
 
@@ -201,6 +201,7 @@ Component renders data:
 ## MCP Client Layer
 
 ### Location
+
 `nextjs-mcp-finance/src/lib/mcp/client.ts`
 
 ### Complete Client API
@@ -212,67 +213,67 @@ class MCPClient {
   // Tool 1: Analyze Security
   async analyzeSecurity(
     symbol: string,
-    period: string = '1mo',
-    useAi: boolean = false
-  ): Promise<AnalysisResult>
+    period: string = "1mo",
+    useAi: boolean = false,
+  ): Promise<AnalysisResult>;
 
   // Tool 2: Compare Securities
   async compareSecurity(
-    symbols: string[],        // Up to 10 symbols
-    metric: string = 'signals',
-    useAi: boolean = false
-  ): Promise<ComparisonResult>
+    symbols: string[], // Up to 10 symbols
+    metric: string = "signals",
+    useAi: boolean = false,
+  ): Promise<ComparisonResult>;
 
   // Tool 3: Screen Securities
   async screenSecurities(
-    universe: string = 'sp500',
+    universe: string = "sp500",
     criteria: ScreeningCriteria = {},
     limit: number = 20,
-    useAi: boolean = false
-  ): Promise<ScreeningResult>
+    useAi: boolean = false,
+  ): Promise<ScreeningResult>;
 
   // Tool 4: Get Trade Plan
   async getTradePlan(
     symbol: string,
-    period: string = '1mo',
-    useAi: boolean = false
-  ): Promise<TradePlanResult>
+    period: string = "1mo",
+    useAi: boolean = false,
+  ): Promise<TradePlanResult>;
 
   // Tool 5: Scan Trades
   async scanTrades(
-    universe: string = 'sp500',
+    universe: string = "sp500",
     maxResults: number = 10,
-    useAi: boolean = false
-  ): Promise<ScanResult>
+    useAi: boolean = false,
+  ): Promise<ScanResult>;
 
   // Tool 6: Portfolio Risk
   async portfolioRisk(
     positions: PortfolioPosition[],
-    useAi: boolean = false
-  ): Promise<PortfolioRiskResult>
+    useAi: boolean = false,
+  ): Promise<PortfolioRiskResult>;
 
   // Tool 7: Morning Brief
   async morningBrief(
     watchlist: string[] = [],
-    marketRegion: string = 'US',
-    useAi: boolean = false
-  ): Promise<MorningBriefResult>
+    marketRegion: string = "US",
+    useAi: boolean = false,
+  ): Promise<MorningBriefResult>;
 
   // Tool 8: Analyze Fibonacci
   async analyzeFibonacci(
     symbol: string,
-    period: string = '1d',
+    period: string = "1d",
     window: number = 50,
-    useAi: boolean = false
-  ): Promise<FibonacciAnalysisResult>
+    useAi: boolean = false,
+  ): Promise<FibonacciAnalysisResult>;
 
   // Tool 9: Options Risk Analysis
   async optionsRiskAnalysis(
     symbol: string,
-    positionType: 'call' | 'put' | 'spread',
+    positionType: "call" | "put" | "spread",
     options: OptionsParams = {},
-    useAi: boolean = false
-  ): Promise<OptionsRiskResult>
+    useAi: boolean = false,
+  ): Promise<OptionsRiskResult>;
 }
 ```
 
@@ -311,6 +312,7 @@ export interface NewToolResult {
 ## API Routes Layer
 
 ### Location
+
 `nextjs-mcp-finance/src/app/api/mcp/[tool]/route.ts`
 
 ### Standard Route Pattern
@@ -319,11 +321,11 @@ Every MCP API route follows this pattern:
 
 ```typescript
 // /api/mcp/[tool]/route.ts
-import { NextResponse } from 'next/server';
-import { getMCPClient } from '@/lib/mcp';
-import { ensureUserInitialized } from '@/lib/auth/user-init';
-import { checkUsageLimit, recordUsage } from '@/lib/auth/usage-limits';
-import { TIER_LIMITS, filterByTier } from '@/lib/auth/tiers';
+import { NextResponse } from "next/server";
+import { getMCPClient } from "@/lib/mcp";
+import { ensureUserInitialized } from "@/lib/auth/user-init";
+import { checkUsageLimit, recordUsage } from "@/lib/auth/usage-limits";
+import { TIER_LIMITS, filterByTier } from "@/lib/auth/tiers";
 
 export async function POST(request: Request) {
   try {
@@ -337,17 +339,17 @@ export async function POST(request: Request) {
     // 3. VALIDATE INPUT
     if (!param1) {
       return NextResponse.json(
-        { error: 'param1 is required' },
-        { status: 400 }
+        { error: "param1 is required" },
+        { status: 400 },
       );
     }
 
     // 4. CHECK USAGE LIMITS (if applicable)
-    const canProceed = await checkUsageLimit(userId, 'tool_name');
+    const canProceed = await checkUsageLimit(userId, "tool_name");
     if (!canProceed) {
       return NextResponse.json(
-        { error: 'Daily limit reached', upgrade: true },
-        { status: 429 }
+        { error: "Daily limit reached", upgrade: true },
+        { status: 429 },
       );
     }
 
@@ -355,8 +357,8 @@ export async function POST(request: Request) {
     const tierLimit = TIER_LIMITS[tier];
     if (tierLimit.toolName === false) {
       return NextResponse.json(
-        { error: 'Upgrade required for this feature' },
-        { status: 403 }
+        { error: "Upgrade required for this feature" },
+        { status: 403 },
       );
     }
 
@@ -365,31 +367,30 @@ export async function POST(request: Request) {
     const result = await mcp.toolMethod(param1, param2, use_ai);
 
     // 7. APPLY TIER FILTERING
-    const filteredResult = filterByTier(result, tier, 'tool_name');
+    const filteredResult = filterByTier(result, tier, "tool_name");
 
     // 8. RECORD USAGE
-    await recordUsage(userId, 'tool_name');
+    await recordUsage(userId, "tool_name");
 
     // 9. RETURN RESPONSE
     return NextResponse.json({
       ...filteredResult,
       tierLimit: tierLimit,
     });
-
   } catch (error) {
     // 10. ERROR HANDLING
-    console.error('[API /mcp/tool] Error:', error);
+    console.error("[API /mcp/tool] Error:", error);
 
-    if (error.message.includes('MCP API error')) {
+    if (error.message.includes("MCP API error")) {
       return NextResponse.json(
-        { error: 'Analysis service unavailable' },
-        { status: 503 }
+        { error: "Analysis service unavailable" },
+        { status: 503 },
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 }
+      { error: "Failed to process request" },
+      { status: 500 },
     );
   }
 }
@@ -397,17 +398,17 @@ export async function POST(request: Request) {
 
 ### Route-to-Tool Mapping
 
-| API Route | MCP Tool | Client Method |
-|-----------|----------|---------------|
-| `POST /api/mcp/analyze` | `analyze_security` | `analyzeSecurity()` |
-| `POST /api/mcp/compare` | `compare_securities` | `compareSecurity()` |
-| `POST /api/mcp/screen` | `screen_securities` | `screenSecurities()` |
-| `POST /api/mcp/trade-plan` | `get_trade_plan` | `getTradePlan()` |
-| `POST /api/mcp/scan` | `scan_trades` | `scanTrades()` |
-| `POST /api/mcp/portfolio-risk` | `portfolio_risk` | `portfolioRisk()` |
-| `POST /api/dashboard/morning-brief` | `morning_brief` | `morningBrief()` |
-| `POST /api/mcp/fibonacci` | `analyze_fibonacci` | `analyzeFibonacci()` |
-| `POST /api/mcp/options-risk` | `options_risk_analysis` | `optionsRiskAnalysis()` |
+| API Route                           | MCP Tool                | Client Method           |
+| ----------------------------------- | ----------------------- | ----------------------- |
+| `POST /api/mcp/analyze`             | `analyze_security`      | `analyzeSecurity()`     |
+| `POST /api/mcp/compare`             | `compare_securities`    | `compareSecurity()`     |
+| `POST /api/mcp/screen`              | `screen_securities`     | `screenSecurities()`    |
+| `POST /api/mcp/trade-plan`          | `get_trade_plan`        | `getTradePlan()`        |
+| `POST /api/mcp/scan`                | `scan_trades`           | `scanTrades()`          |
+| `POST /api/mcp/portfolio-risk`      | `portfolio_risk`        | `portfolioRisk()`       |
+| `POST /api/dashboard/morning-brief` | `morning_brief`         | `morningBrief()`        |
+| `POST /api/mcp/fibonacci`           | `analyze_fibonacci`     | `analyzeFibonacci()`    |
+| `POST /api/mcp/options-risk`        | `options_risk_analysis` | `optionsRiskAnalysis()` |
 
 ---
 
@@ -602,31 +603,31 @@ All 9 tools return AI analysis in a consistent structure:
 ```typescript
 interface AIAnalysis {
   // Always present
-  summary: string;                    // Plain English summary
+  summary: string; // Plain English summary
 
   // Usually present
-  market_bias?: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
-  bias_explanation?: string;          // Why this bias
+  market_bias?: "BULLISH" | "BEARISH" | "NEUTRAL";
+  bias_explanation?: string; // Why this bias
 
   // Structured insights
   key_drivers?: {
-    signal: string;                   // What signal
-    importance: 'HIGH' | 'MEDIUM' | 'LOW';
-    explanation: string;              // Why it matters
+    signal: string; // What signal
+    importance: "HIGH" | "MEDIUM" | "LOW";
+    explanation: string; // Why it matters
   }[];
 
   // Actionable items
   action_items?: {
-    priority: number;                 // 1-5
-    timeframe: 'IMMEDIATE' | 'TODAY' | 'THIS_WEEK' | 'MONITOR';
-    action: string;                   // What to do
+    priority: number; // 1-5
+    timeframe: "IMMEDIATE" | "TODAY" | "THIS_WEEK" | "MONITOR";
+    action: string; // What to do
   }[];
 
   // Risk awareness
-  risk_factors?: string[];            // Key risks
+  risk_factors?: string[]; // Key risks
 
   // Confidence
-  confidence_score?: number;          // 0-100
+  confidence_score?: number; // 0-100
 }
 ```
 
@@ -637,7 +638,7 @@ Each tool adds specific fields:
 ```typescript
 // analyze_security
 interface SecurityAIAnalysis extends AIAnalysis {
-  indicator_analysis: Record<string, string>;  // RSI, MACD, ADX explanations
+  indicator_analysis: Record<string, string>; // RSI, MACD, ADX explanations
   trading_implications: {
     setup_type: string;
     timeframe: string;
@@ -651,7 +652,7 @@ interface OptionsAIAnalysis extends AIAnalysis {
   sentiment_from_flow: string;
   iv_analysis: string;
   strategy_recommendations: {
-    type: 'directional' | 'spread' | 'income';
+    type: "directional" | "spread" | "income";
     strategy: string;
     rationale: string;
   }[];
@@ -712,7 +713,7 @@ async def analyze_security(symbol: str, period: str = "1mo") -> dict:
 export interface AnalysisResult {
   symbol: string;
   price: number;
-  sector: string;  // NEW
+  sector: string; // NEW
   // ... rest of interface
 }
 ```
@@ -786,15 +787,15 @@ async sentimentAnalysis(
 export interface SentimentResult {
   symbol: string;
   timestamp: string;
-  overall_sentiment: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
-  sentiment_score: number;  // -100 to 100
+  overall_sentiment: "BULLISH" | "BEARISH" | "NEUTRAL";
+  sentiment_score: number; // -100 to 100
   sources: SentimentSource[];
   ai_analysis?: SentimentAIAnalysis;
 }
 
 export interface SentimentSource {
   source: string;
-  sentiment: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
+  sentiment: "BULLISH" | "BEARISH" | "NEUTRAL";
   confidence: number;
   sample_headlines?: string[];
 }
@@ -810,9 +811,9 @@ export interface SentimentAIAnalysis extends AIAnalysis {
 
 ```typescript
 // nextjs-mcp-finance/src/app/api/mcp/sentiment/route.ts
-import { NextResponse } from 'next/server';
-import { getMCPClient } from '@/lib/mcp';
-import { ensureUserInitialized } from '@/lib/auth/user-init';
+import { NextResponse } from "next/server";
+import { getMCPClient } from "@/lib/mcp";
+import { ensureUserInitialized } from "@/lib/auth/user-init";
 
 export async function POST(request: Request) {
   try {
@@ -820,7 +821,7 @@ export async function POST(request: Request) {
     const { symbol, sources, use_ai } = await request.json();
 
     if (!symbol) {
-      return NextResponse.json({ error: 'Symbol required' }, { status: 400 });
+      return NextResponse.json({ error: "Symbol required" }, { status: 400 });
     }
 
     const mcp = getMCPClient();
@@ -828,8 +829,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('[API /mcp/sentiment] Error:', error);
-    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    console.error("[API /mcp/sentiment] Error:", error);
+    return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
 ```
@@ -869,7 +870,7 @@ export default function SentimentPage() {
 // nextjs-mcp-finance/src/components/dashboard/Sidebar.tsx
 const navItems = [
   // ... existing items
-  { name: 'Sentiment', href: '/sentiment', icon: MessageCircleIcon },
+  { name: "Sentiment", href: "/sentiment", icon: MessageCircleIcon },
 ];
 ```
 
@@ -879,14 +880,14 @@ const navItems = [
 
 ### Quick Reference: Where to Make Changes
 
-| What You Want | Files to Change |
-|---------------|-----------------|
-| New field in existing tool response | `types.ts` → Component |
-| New parameter for existing tool | `client.ts` → Route → Component |
-| New AI analysis field | `types.ts` → `AIInsightsPanel` |
-| New MCP tool | All files (see above) |
-| New UI for existing data | Component only |
-| New tier restriction | `tiers.ts` → Route |
+| What You Want                       | Files to Change                 |
+| ----------------------------------- | ------------------------------- |
+| New field in existing tool response | `types.ts` → Component          |
+| New parameter for existing tool     | `client.ts` → Route → Component |
+| New AI analysis field               | `types.ts` → `AIInsightsPanel`  |
+| New MCP tool                        | All files (see above)           |
+| New UI for existing data            | Component only                  |
+| New tier restriction                | `tiers.ts` → Route              |
 
 ### Data Pipeline Checklist
 
@@ -913,19 +914,19 @@ export const TIER_LIMITS = {
   free: {
     analyze_security: { daily: 5, ai: false },
     compare_securities: { maxSymbols: 2, ai: false },
-    screen_securities: { criteria: 'basic', ai: false },
-    get_trade_plan: { timeframes: ['swing'], ai: false },
+    screen_securities: { criteria: "basic", ai: false },
+    get_trade_plan: { timeframes: ["swing"], ai: false },
     scan_trades: { daily: 1, maxResults: 5, ai: false },
-    portfolio_risk: false,  // Not available
+    portfolio_risk: false, // Not available
     morning_brief: { basic: true, ai: false },
     analyze_fibonacci: { levels: 3, ai: false },
-    options_risk_analysis: false,  // Not available
+    options_risk_analysis: false, // Not available
   },
   pro: {
     analyze_security: { daily: 50, ai: true },
     compare_securities: { maxSymbols: 5, ai: true },
-    screen_securities: { criteria: 'advanced', ai: true },
-    get_trade_plan: { timeframes: ['swing', 'day'], ai: true },
+    screen_securities: { criteria: "advanced", ai: true },
+    get_trade_plan: { timeframes: ["swing", "day"], ai: true },
     scan_trades: { daily: 10, maxResults: 25, ai: true },
     portfolio_risk: { basic: true, ai: false },
     morning_brief: { full: true, ai: true },
@@ -935,8 +936,8 @@ export const TIER_LIMITS = {
   max: {
     analyze_security: { daily: Infinity, ai: true },
     compare_securities: { maxSymbols: 10, ai: true },
-    screen_securities: { criteria: 'all', ai: true },
-    get_trade_plan: { timeframes: ['swing', 'day', 'scalp'], ai: true },
+    screen_securities: { criteria: "all", ai: true },
+    get_trade_plan: { timeframes: ["swing", "day", "scalp"], ai: true },
     scan_trades: { daily: Infinity, maxResults: 50, ai: true },
     portfolio_risk: { full: true, ai: true },
     morning_brief: { full: true, ai: true },
@@ -953,7 +954,7 @@ export const TIER_LIMITS = {
 ```typescript
 // Check feature availability
 if (TIER_LIMITS[tier].tool_name === false) {
-  return NextResponse.json({ error: 'Upgrade required' }, { status: 403 });
+  return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
 }
 
 // Check AI availability
@@ -1035,10 +1036,10 @@ Type 'AnalysisResult' is missing property 'newField'
 ```typescript
 // Debug in component
 const { tier } = useTier();
-console.log('Current tier:', tier);
+console.log("Current tier:", tier);
 
 // Debug in API route
-console.log('User tier:', tier, 'Limit:', TIER_LIMITS[tier]);
+console.log("User tier:", tier, "Limit:", TIER_LIMITS[tier]);
 ```
 
 ### Debug Mode

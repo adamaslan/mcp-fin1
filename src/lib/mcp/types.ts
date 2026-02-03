@@ -1,3 +1,8 @@
+import type { AIAnalysis } from "./ai-types";
+
+// Re-export AI types for convenience
+export type { AIAnalysis } from "./ai-types";
+
 export interface Signal {
   signal: string;
   desc: string;
@@ -27,6 +32,12 @@ export interface AnalysisResult {
     volume: number;
   };
   cached: boolean;
+  trade_plans?: TradePlan[];
+  ai_analysis?: AIAnalysis;
+  tierLimit?: {
+    daily: number;
+    ai: boolean;
+  };
 }
 
 export type TradeVehicle =
@@ -102,6 +113,12 @@ export interface ScanResult {
   qualified_trades: QualifiedTrade[];
   timestamp: string;
   duration_seconds: number;
+  ai_analysis?: AIAnalysis;
+  resultsLimited?: boolean;
+  tierLimit?: {
+    daily: number;
+    resultsLimit: number;
+  };
 }
 
 export interface PortfolioPosition {
@@ -124,6 +141,7 @@ export interface PortfolioRiskResult {
   positions: PortfolioPosition[];
   sector_concentration: Record<string, number>;
   hedge_suggestions: string[];
+  ai_analysis?: AIAnalysis;
 }
 
 export interface WatchlistSignal {
@@ -165,6 +183,7 @@ export interface MorningBriefResult {
   sector_leaders: SectorMovement[];
   sector_losers: SectorMovement[];
   key_themes: string[];
+  ai_analysis?: AIAnalysis;
 }
 
 export interface FibonacciLevel {
@@ -224,10 +243,122 @@ export interface FibonacciAnalysisResult {
     confluenceZoneCount: number;
     highConfidenceZones: number;
   };
+  ai_analysis?: AIAnalysis;
   tierLimit?: {
     levelsAvailable: number;
     categoriesAvailable: number | "all";
     signalsShown: number;
     signalsTotal: number;
+  };
+}
+
+// ============================================
+// Tool #2: compare_securities types
+// ============================================
+
+export interface ComparisonMetric {
+  [key: string]: number | string;
+}
+
+export interface SecurityComparison {
+  symbol: string;
+  price: number;
+  change_percent: number;
+  metrics: ComparisonMetric;
+  signal_count: number;
+  bullish_signals: number;
+  bearish_signals: number;
+  ranking_reason?: string;
+  recommended?: boolean;
+}
+
+export interface ComparisonResult {
+  symbols: string[];
+  metric: string;
+  metrics: string[];
+  comparisons: SecurityComparison[];
+  timestamp: string;
+  winner?: string;
+  ai_analysis?: AIAnalysis;
+}
+
+// ============================================
+// Tool #3: screen_securities types
+// ============================================
+
+export interface ScreeningMatch {
+  symbol: string;
+  price: number;
+  change_percent: number;
+  matching_criteria: string[];
+  score: number;
+  signals: Signal[];
+}
+
+export interface ScreeningResult {
+  universe: string;
+  criteria: Record<string, unknown>;
+  total_scanned: number;
+  matches: ScreeningMatch[];
+  timestamp: string;
+  ai_analysis?: AIAnalysis;
+}
+
+// ============================================
+// Tool #9: options_risk_analysis types
+// ============================================
+
+export type OptionType = "call" | "put";
+export type PositionType = "call" | "put" | "spread";
+
+export interface OptionsGreeks {
+  delta: number;
+  gamma: number;
+  theta: number;
+  vega: number;
+  rho: number;
+}
+
+export interface OptionsPosition {
+  type: PositionType;
+  strike: number;
+  expiry: string;
+  contracts: number;
+  premium: number;
+  implied_volatility: number;
+  days_to_expiry: number;
+}
+
+export interface OptionsRiskMetrics {
+  max_profit: number;
+  max_loss: number;
+  breakeven: number;
+  probability_of_profit: number;
+  expected_return: number;
+  risk_reward_ratio: number;
+}
+
+export interface PriceScenario {
+  name: string;
+  price_change_percent: number;
+  new_price: number;
+  pnl: number;
+  pnl_percent: number;
+  new_delta: number;
+  new_gamma: number;
+}
+
+export interface OptionsRiskResult {
+  symbol: string;
+  underlying_price: number;
+  timestamp: string;
+  position: OptionsPosition;
+  greeks: OptionsGreeks;
+  risk_metrics: OptionsRiskMetrics;
+  scenarios: PriceScenario[];
+  ai_analysis?: AIAnalysis;
+  tierLimit?: {
+    scenariosAvailable: number;
+    strategiesAvailable: string[];
   };
 }

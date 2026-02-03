@@ -20,17 +20,17 @@ This document outlines the complete refactoring plan to integrate all 9 MCP tool
 
 ### Existing MCP Client Methods (7 of 9)
 
-| # | MCP Tool | Client Method | API Route | UI Page | AI Support |
-|---|----------|---------------|-----------|---------|------------|
-| 1 | `analyze_security` | `analyzeSecurity()` | `/api/mcp/analyze` | `/analyze/[symbol]` | `useAi` param |
-| 2 | `compare_securities` | `compareSecurity()` | ❌ Missing | ❌ Missing | ❌ |
-| 3 | `screen_securities` | `screenSecurities()` | `/api/mcp/scan` | `/scanner` | ❌ |
-| 4 | `get_trade_plan` | `getTradePlan()` | `/api/mcp/trade-plan` | `/analyze/[symbol]` | ❌ |
-| 5 | `scan_trades` | `scanTrades()` | `/api/mcp/scan` | `/scanner` | ❌ |
-| 6 | `portfolio_risk` | `portfolioRisk()` | `/api/mcp/portfolio-risk` | `/portfolio` | ❌ |
-| 7 | `morning_brief` | `morningBrief()` | `/api/dashboard/morning-brief` | `/` (dashboard) | ❌ |
-| 8 | `analyze_fibonacci` | `analyzeFibonacci()` | `/api/mcp/fibonacci` | `/fibonacci` | ❌ |
-| 9 | `options_risk_analysis` | ❌ **MISSING** | ❌ **MISSING** | ❌ **MISSING** | ❌ |
+| #   | MCP Tool                | Client Method        | API Route                      | UI Page             | AI Support    |
+| --- | ----------------------- | -------------------- | ------------------------------ | ------------------- | ------------- |
+| 1   | `analyze_security`      | `analyzeSecurity()`  | `/api/mcp/analyze`             | `/analyze/[symbol]` | `useAi` param |
+| 2   | `compare_securities`    | `compareSecurity()`  | ❌ Missing                     | ❌ Missing          | ❌            |
+| 3   | `screen_securities`     | `screenSecurities()` | `/api/mcp/scan`                | `/scanner`          | ❌            |
+| 4   | `get_trade_plan`        | `getTradePlan()`     | `/api/mcp/trade-plan`          | `/analyze/[symbol]` | ❌            |
+| 5   | `scan_trades`           | `scanTrades()`       | `/api/mcp/scan`                | `/scanner`          | ❌            |
+| 6   | `portfolio_risk`        | `portfolioRisk()`    | `/api/mcp/portfolio-risk`      | `/portfolio`        | ❌            |
+| 7   | `morning_brief`         | `morningBrief()`     | `/api/dashboard/morning-brief` | `/` (dashboard)     | ❌            |
+| 8   | `analyze_fibonacci`     | `analyzeFibonacci()` | `/api/mcp/fibonacci`           | `/fibonacci`        | ❌            |
+| 9   | `options_risk_analysis` | ❌ **MISSING**       | ❌ **MISSING**                 | ❌ **MISSING**      | ❌            |
 
 ### Key Gaps Identified
 
@@ -78,7 +78,7 @@ async analyzeFibonacci(symbol: string, period: string, window: number, useAi = f
 // NEW: AI Analysis Types (shared across all tools)
 export interface AIAnalysis {
   summary: string;
-  market_bias?: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
+  market_bias?: "BULLISH" | "BEARISH" | "NEUTRAL";
   bias_explanation?: string;
   key_drivers?: AIKeyDriver[];
   action_items?: AIActionItem[];
@@ -88,13 +88,13 @@ export interface AIAnalysis {
 
 export interface AIKeyDriver {
   signal: string;
-  importance: 'HIGH' | 'MEDIUM' | 'LOW';
+  importance: "HIGH" | "MEDIUM" | "LOW";
   explanation: string;
 }
 
 export interface AIActionItem {
   priority: number;
-  timeframe: 'IMMEDIATE' | 'TODAY' | 'THIS_WEEK' | 'MONITOR';
+  timeframe: "IMMEDIATE" | "TODAY" | "THIS_WEEK" | "MONITOR";
   action: string;
 }
 
@@ -111,7 +111,7 @@ export interface OptionsRiskResult {
 }
 
 export interface OptionsPosition {
-  type: 'call' | 'put' | 'spread';
+  type: "call" | "put" | "spread";
   strike: number;
   expiration: string;
   premium: number;
@@ -236,14 +236,11 @@ export function useMCPQuery<T>({
 
 ```typescript
 // Hook to request AI analysis on-demand
-export function useAIAnalysis<T>({
-  tool: MCPTool,
-  data: T,
-}): {
+export function useAIAnalysis<T>({ tool: MCPTool, data: T }): {
   aiAnalysis: AIAnalysis | null;
   loading: boolean;
   requestAnalysis: () => void;
-}
+};
 ```
 
 ### 7. Landing Page Enhancements
@@ -275,7 +272,7 @@ useEffect(() => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/mcp/...');
+      const response = await fetch("/api/mcp/...");
       // ... same pattern repeated 10+ times
     } catch (err) {
       setError(err.message);
@@ -291,7 +288,7 @@ useEffect(() => {
 
 ```typescript
 const { data, loading, error, refetch } = useMCPQuery<TradePlanResult>({
-  endpoint: '/api/mcp/trade-plan',
+  endpoint: "/api/mcp/trade-plan",
   params: { symbol, period },
   useAi: aiEnabled,
 });
@@ -329,68 +326,68 @@ if (tier === 'free' && someFeature) {
 
 ### 1. MCP Client (`src/lib/mcp/client.ts`)
 
-| Change | Before | After |
-|--------|--------|-------|
-| AI parameter | Only on `analyzeSecurity` | On ALL 9 methods |
-| Options method | Missing | `optionsRiskAnalysis()` added |
-| Return types | Partial AI types | Full AI analysis types |
+| Change         | Before                    | After                         |
+| -------------- | ------------------------- | ----------------------------- |
+| AI parameter   | Only on `analyzeSecurity` | On ALL 9 methods              |
+| Options method | Missing                   | `optionsRiskAnalysis()` added |
+| Return types   | Partial AI types          | Full AI analysis types        |
 
 ### 2. API Routes
 
-| Route | Change |
-|-------|--------|
-| `/api/mcp/trade-plan` | Add `use_ai` query param |
-| `/api/mcp/scan` | Add `use_ai` query param |
-| `/api/mcp/fibonacci` | Add `use_ai` query param |
-| `/api/mcp/portfolio-risk` | Add `use_ai` query param |
+| Route                          | Change                   |
+| ------------------------------ | ------------------------ |
+| `/api/mcp/trade-plan`          | Add `use_ai` query param |
+| `/api/mcp/scan`                | Add `use_ai` query param |
+| `/api/mcp/fibonacci`           | Add `use_ai` query param |
+| `/api/mcp/portfolio-risk`      | Add `use_ai` query param |
 | `/api/dashboard/morning-brief` | Add `use_ai` query param |
-| `/api/mcp/compare` | NEW route |
-| `/api/mcp/options-risk` | NEW route |
+| `/api/mcp/compare`             | NEW route                |
+| `/api/mcp/options-risk`        | NEW route                |
 
 ### 3. Dashboard Pages
 
-| Page | Modifications |
-|------|---------------|
-| `/` (Dashboard) | Add AI insights toggle, use shared loading state |
+| Page                | Modifications                                     |
+| ------------------- | ------------------------------------------------- |
+| `/` (Dashboard)     | Add AI insights toggle, use shared loading state  |
 | `/analyze/[symbol]` | Add AI toggle, display AI panel, use shared hooks |
-| `/scanner` | Add AI toggle, display AI panel, use shared hooks |
-| `/watchlist` | Add AI signal explanations |
-| `/fibonacci` | Add AI toggle, display AI panel |
-| `/portfolio` | Add AI toggle, display AI recommendations |
+| `/scanner`          | Add AI toggle, display AI panel, use shared hooks |
+| `/watchlist`        | Add AI signal explanations                        |
+| `/fibonacci`        | Add AI toggle, display AI panel                   |
+| `/portfolio`        | Add AI toggle, display AI recommendations         |
 
 ### 4. Landing Page
 
-| Section | Modifications |
-|---------|---------------|
-| Hero | Add "AI-Powered" badge, update value prop |
-| Feature previews | Add AI examples to each preview |
-| Tool grid | Show all 9 tools with AI badges |
-| Pricing | Highlight AI features per tier |
+| Section          | Modifications                             |
+| ---------------- | ----------------------------------------- |
+| Hero             | Add "AI-Powered" badge, update value prop |
+| Feature previews | Add AI examples to each preview           |
+| Tool grid        | Show all 9 tools with AI badges           |
+| Pricing          | Highlight AI features per tier            |
 
 ### 5. Navigation (Sidebar)
 
-| Change | Details |
-|--------|---------|
-| Add Options | New nav item for `/options` |
-| Add Compare | New nav item for `/compare` |
+| Change       | Details                          |
+| ------------ | -------------------------------- |
+| Add Options  | New nav item for `/options`      |
+| Add Compare  | New nav item for `/compare`      |
 | AI indicator | Show AI availability per feature |
 
 ---
 
 ## Tier Access Matrix (Updated)
 
-| Feature | Free | Pro | Max |
-|---------|------|-----|-----|
-| `analyze_security` | 5/day, no AI | 50/day, AI | Unlimited, AI |
-| `compare_securities` | 2 symbols | 5 symbols | 10 symbols |
-| `screen_securities` | Basic criteria | Advanced | All + custom |
-| `get_trade_plan` | Swing only | +Day | +Scalp |
-| `scan_trades` | 1/day, 5 results | 10/day, 25 results | Unlimited |
-| `portfolio_risk` | ❌ | Basic | Full + AI |
-| `morning_brief` | Basic | Full | Full + AI |
-| `analyze_fibonacci` | 3 levels | 15 levels | Unlimited |
-| `options_risk_analysis` | ❌ | Basic | Full + AI |
-| **AI Analysis** | ❌ | On request | Always available |
+| Feature                 | Free             | Pro                | Max              |
+| ----------------------- | ---------------- | ------------------ | ---------------- |
+| `analyze_security`      | 5/day, no AI     | 50/day, AI         | Unlimited, AI    |
+| `compare_securities`    | 2 symbols        | 5 symbols          | 10 symbols       |
+| `screen_securities`     | Basic criteria   | Advanced           | All + custom     |
+| `get_trade_plan`        | Swing only       | +Day               | +Scalp           |
+| `scan_trades`           | 1/day, 5 results | 10/day, 25 results | Unlimited        |
+| `portfolio_risk`        | ❌               | Basic              | Full + AI        |
+| `morning_brief`         | Basic            | Full               | Full + AI        |
+| `analyze_fibonacci`     | 3 levels         | 15 levels          | Unlimited        |
+| `options_risk_analysis` | ❌               | Basic              | Full + AI        |
+| **AI Analysis**         | ❌               | On request         | Always available |
 
 ---
 
@@ -398,23 +395,23 @@ if (tier === 'free' && someFeature) {
 
 ### Before (Current State)
 
-| Pattern | Occurrences | Lines |
-|---------|-------------|-------|
-| Fetch + useState + useEffect | 8 pages | ~320 lines |
-| Loading skeleton | 8 pages | ~160 lines |
-| Error handling | 8 pages | ~120 lines |
-| Tier checking | 12 components | ~180 lines |
-| **Total duplicated** | | **~780 lines** |
+| Pattern                      | Occurrences   | Lines          |
+| ---------------------------- | ------------- | -------------- |
+| Fetch + useState + useEffect | 8 pages       | ~320 lines     |
+| Loading skeleton             | 8 pages       | ~160 lines     |
+| Error handling               | 8 pages       | ~120 lines     |
+| Tier checking                | 12 components | ~180 lines     |
+| **Total duplicated**         |               | **~780 lines** |
 
 ### After (Refactored)
 
-| Shared Utility | Replaces | Lines Saved |
-|----------------|----------|-------------|
-| `useMCPQuery` hook | 8 fetch patterns | ~280 lines |
-| `<MCPLoadingState>` | 8 skeletons | ~140 lines |
-| `<MCPErrorState>` | 8 error handlers | ~100 lines |
-| `<TierGate>` wrapper | 12 tier checks | ~150 lines |
-| **Total saved** | | **~670 lines** |
+| Shared Utility       | Replaces         | Lines Saved    |
+| -------------------- | ---------------- | -------------- |
+| `useMCPQuery` hook   | 8 fetch patterns | ~280 lines     |
+| `<MCPLoadingState>`  | 8 skeletons      | ~140 lines     |
+| `<MCPErrorState>`    | 8 error handlers | ~100 lines     |
+| `<TierGate>` wrapper | 12 tier checks   | ~150 lines     |
+| **Total saved**      |                  | **~670 lines** |
 
 ### Net Impact
 
@@ -512,24 +509,28 @@ src/app/page.tsx                       # Landing page updates
 ## Implementation Priority
 
 ### Phase 1: Foundation (Week 1)
+
 1. Create shared hooks (`useMCPQuery`, `useAIAnalysis`)
 2. Create shared MCP components (loading, error, empty states)
 3. Update MCP client with AI parameters
 4. Add new types for AI analysis
 
 ### Phase 2: AI Integration (Week 2)
+
 1. Add `AIInsightsPanel` and related components
 2. Update existing pages to use shared hooks
 3. Add AI toggle to all analysis pages
 4. Implement AI analysis display
 
 ### Phase 3: New Features (Week 3)
+
 1. Add `options_risk_analysis` to MCP client
 2. Create `/options` page with full UI
 3. Create `/compare` page with comparison features
 4. Add new API routes
 
 ### Phase 4: Landing Page & Polish (Week 4)
+
 1. Update landing page with all 9 tools
 2. Add AI showcase section
 3. Update pricing to reflect AI tiers
@@ -540,18 +541,21 @@ src/app/page.tsx                       # Landing page updates
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] `useMCPQuery` hook with all endpoints
 - [ ] `useAIAnalysis` hook with all tools
 - [ ] AI type transformations
 - [ ] Tier gating logic
 
 ### Integration Tests
+
 - [ ] All 9 MCP tools return data
 - [ ] AI analysis toggle works
 - [ ] Tier restrictions enforced
 - [ ] Error handling works
 
 ### E2E Tests
+
 - [ ] Full flow: landing → signup → analysis → AI insights
 - [ ] Options analysis workflow
 - [ ] Comparison workflow

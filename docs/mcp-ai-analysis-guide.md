@@ -28,6 +28,7 @@ This guide explains how to enhance all 9 MCP tool outputs with AI-powered natura
 The AI analyzer takes the raw technical data from each MCP tool and provides:
 
 ### For `analyze_security`:
+
 - **Market Bias** - Bullish/bearish/neutral assessment with reasoning
 - **Key Drivers** - Top 3 signals driving the setup
 - **Indicator Analysis** - Plain-English explanation of RSI, MACD, ADX, Volume
@@ -38,6 +39,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Plain English Summary** - For non-technical readers
 
 ### For `compare_securities`:
+
 - **Ranking Rationale** - Why the winner ranks #1
 - **Detailed Comparison** - Strengths/weaknesses of top 3 securities
 - **Recommendations** - Best picks for aggressive vs. conservative traders
@@ -45,6 +47,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Action Plan** - How to act on the comparison
 
 ### For `screen_securities`:
+
 - **Screening Effectiveness** - Quality assessment of results
 - **Top Picks** - Highlighted best opportunities
 - **Pattern Recognition** - Common characteristics
@@ -52,6 +55,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Refinement Suggestions** - How to improve the screen
 
 ### For `get_trade_plan`:
+
 - **Trade Assessment** - Quality and conviction level
 - **Risk Analysis** - Stop placement, R:R ratio, position sizing
 - **Execution Plan** - Step-by-step entry guide
@@ -60,6 +64,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Suppression Reasons** - Why no tradeable setup (if suppressed)
 
 ### For `scan_trades`:
+
 - **Scan Quality** - Hit rate and overall assessment
 - **Best Opportunities** - Top 3 trades with detailed reasoning
 - **Market Themes** - Patterns and dominant bias
@@ -68,6 +73,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Risk Management** - Aggregate risk guidance
 
 ### For `portfolio_risk`:
+
 - **Risk Assessment** - Overall portfolio risk evaluation
 - **Position Analysis** - Individual position risks
 - **Concentration Analysis** - Sector/correlation risks
@@ -77,6 +83,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Action Items** - Prioritized risk management steps
 
 ### For `morning_brief`:
+
 - **Market Outlook** - Today's bias and volatility expectation
 - **Top Opportunities** - Best trades for today
 - **Key Risks** - What could disrupt the market
@@ -85,6 +92,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Time-Specific Guidance** - Pre-market, open, midday, close strategies
 
 ### For `analyze_fibonacci`:
+
 - **Fibonacci Setup** - Type and quality of setup
 - **Key Levels** - Most important levels to watch
 - **Price Action Context** - Where is price in the structure
@@ -94,6 +102,7 @@ The AI analyzer takes the raw technical data from each MCP tool and provides:
 - **Execution Guide** - How to trade the setup
 
 ### For `options_risk_analysis`:
+
 - **Market Sentiment** - What options flow reveals about sentiment (bullish/bearish/neutral)
 - **IV Analysis** - Implied volatility interpretation (high/medium/low, buyer vs seller edge)
 - **Liquidity Assessment** - Tradability evaluation with best liquid strikes
@@ -244,6 +253,7 @@ python nu-logs/test_mcp_ai_analysis.py
 ```
 
 This will:
+
 1. Test all 8 MCP tools
 2. Enhance each with AI analysis
 3. Generate formatted reports
@@ -453,7 +463,7 @@ enhanced2 = analyzer.analyze_security_output(result2)
 
 The AI sometimes returns markdown-wrapped JSON. The analyzer handles this automatically:
 
-```python
+````python
 def _parse_ai_response(self, response_text: str) -> dict[str, Any]:
     cleaned = response_text.strip()
 
@@ -466,7 +476,7 @@ def _parse_ai_response(self, response_text: str) -> dict[str, Any]:
         cleaned = cleaned[:-3]
 
     return json.loads(cleaned.strip())
-```
+````
 
 If parsing still fails, check `enhanced["ai_analysis"]["raw_response"]` for the original text.
 
@@ -474,20 +484,21 @@ If parsing still fails, check `enhanced["ai_analysis"]["raw_response"]` for the 
 
 ## Comparison with Options AI Analyzer
 
-| Feature | Options AI Analyzer | MCP Tools AI Analyzer |
-|---------|---------------------|----------------------|
-| **Purpose** | Analyze options portfolio risk | Analyze stock technical signals |
-| **Tools** | 1 (options risk assessment) | 8 (all MCP tools) |
-| **Model** | Gemini 1.5 Flash | Gemini 1.5 Flash |
-| **Input** | Greeks, positions, risk metrics | Technical indicators, signals, levels |
-| **Output** | Portfolio risk insights | Trading insights for each tool |
-| **File** | `nu-logs/options_ai_analyzer.py` | `mcp-finance1/src/technical_analysis_mcp/ai_analyzer.py` |
+| Feature     | Options AI Analyzer              | MCP Tools AI Analyzer                                    |
+| ----------- | -------------------------------- | -------------------------------------------------------- |
+| **Purpose** | Analyze options portfolio risk   | Analyze stock technical signals                          |
+| **Tools**   | 1 (options risk assessment)      | 8 (all MCP tools)                                        |
+| **Model**   | Gemini 1.5 Flash                 | Gemini 1.5 Flash                                         |
+| **Input**   | Greeks, positions, risk metrics  | Technical indicators, signals, levels                    |
+| **Output**  | Portfolio risk insights          | Trading insights for each tool                           |
+| **File**    | `nu-logs/options_ai_analyzer.py` | `mcp-finance1/src/technical_analysis_mcp/ai_analyzer.py` |
 
 ---
 
 ## Next Steps
 
 1. **Run the test script** to verify everything works:
+
    ```bash
    python nu-logs/test_mcp_ai_analysis.py
    ```

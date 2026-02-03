@@ -109,8 +109,8 @@ cat nu-logs/test_options_risk_ai.json
     "atm_iv": 29.2,
     "atm_delta": 0.52,
     "top_volume_strikes": [
-      {"strike": 150.0, "volume": 5000, "iv": 29.2},
-      {"strike": 155.0, "volume": 3000, "iv": 31.5}
+      { "strike": 150.0, "volume": 5000, "iv": 29.2 },
+      { "strike": 155.0, "volume": 3000, "iv": 31.5 }
     ]
   },
   "puts": {
@@ -124,7 +124,7 @@ cat nu-logs/test_options_risk_ai.json
     "atm_delta": -0.48
   },
   "put_call_ratio": {
-    "volume": 0.80,
+    "volume": 0.8,
     "open_interest": 0.84
   },
   "risk_warnings": [
@@ -187,18 +187,19 @@ cat nu-logs/test_options_risk_ai.json
 
 ## Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `symbol` | string | **required** | Ticker symbol (e.g., "AAPL", "MSFT") |
-| `expiration_date` | string | nearest | Specific expiration (YYYY-MM-DD). If omitted, uses nearest expiration |
-| `option_type` | string | "both" | "calls", "puts", or "both" |
-| `min_volume` | integer | 10 | Minimum volume threshold for considering options liquid |
+| Parameter         | Type    | Default      | Description                                                           |
+| ----------------- | ------- | ------------ | --------------------------------------------------------------------- |
+| `symbol`          | string  | **required** | Ticker symbol (e.g., "AAPL", "MSFT")                                  |
+| `expiration_date` | string  | nearest      | Specific expiration (YYYY-MM-DD). If omitted, uses nearest expiration |
+| `option_type`     | string  | "both"       | "calls", "puts", or "both"                                            |
+| `min_volume`      | integer | 10           | Minimum volume threshold for considering options liquid               |
 
 ---
 
 ## Use Cases
 
 ### 1. Volatility Analysis
+
 ```python
 # Check if IV is high or low for options buying/selling
 result = await server.options_risk_analysis("TSLA")
@@ -210,6 +211,7 @@ else:
 ```
 
 ### 2. Liquidity Check
+
 ```python
 # Verify sufficient liquidity before trading
 result = await server.options_risk_analysis("NVDA", min_volume=100)
@@ -221,6 +223,7 @@ else:
 ```
 
 ### 3. Sentiment Analysis
+
 ```python
 # Use Put/Call ratio to gauge market sentiment
 result = await server.options_risk_analysis("SPY")
@@ -235,6 +238,7 @@ else:
 ```
 
 ### 4. Strategy Selection
+
 ```python
 # Get AI recommendations for specific market conditions
 analyzer = MCPToolAIAnalyzer()
@@ -256,6 +260,7 @@ for strategy in bullish_strategies:
 ## Integration Points
 
 ### 1. Combines with `analyze_security`
+
 ```python
 # Get stock technical analysis
 stock_analysis = await server.analyze_security("AAPL", period="1mo")
@@ -273,6 +278,7 @@ if stock_analysis['summary']['bullish'] > stock_analysis['summary']['bearish']:
 ```
 
 ### 2. Combines with `get_trade_plan`
+
 ```python
 # Get trade plan for stock
 trade_plan = await server.get_trade_plan("MSFT")
@@ -302,23 +308,27 @@ nu-logs/
 ## Key Features
 
 ### ✅ Real Data Only
+
 - Fetches live options data from yfinance
 - No mock data, placeholders, or fake values
 - Returns errors if data unavailable
 
 ### ✅ Comprehensive Analysis
+
 - IV analysis for calls and puts separately
 - Volume and open interest tracking
 - Put/Call ratio calculation
 - Liquidity assessment
 
 ### ✅ AI-Powered Insights
+
 - Market sentiment interpretation
 - Strategy recommendations (directional, spreads, income)
 - Risk factor identification
 - Position sizing guidance
 
 ### ✅ Actionable Outputs
+
 - Specific strike recommendations
 - Step-by-step execution plans
 - Risk mitigation strategies

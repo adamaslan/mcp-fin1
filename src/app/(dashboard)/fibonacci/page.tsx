@@ -6,10 +6,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, TrendingUp, Download } from "lucide-react";
+import { TrendingUp, Download, Sparkles } from "lucide-react";
 import { AnalysisSummary } from "@/components/fibonacci/AnalysisSummary";
 import { ConfluenceZonesCard } from "@/components/fibonacci/ConfluenceZonesCard";
 import { SignalsBreakdown } from "@/components/fibonacci/SignalsBreakdown";
+import { useLazyMCPQuery } from "@/hooks/useMCPQuery";
+import { useTier } from "@/hooks/useTier";
+import {
+  MCPLoadingState,
+  MCPErrorState,
+  MCPEmptyState,
+  AIInsightsPanel,
+} from "@/components/mcp";
+import { canAccessAI } from "@/lib/auth/tiers";
 import type { FibonacciAnalysisResult } from "@/lib/mcp/types";
 
 function getStrengthColor(strength: string): string {
@@ -28,49 +37,43 @@ function getStrengthColor(strength: string): string {
 
 export default function FibonacciAnalysisPage() {
   const [symbol, setSymbol] = useState("AAPL");
-  const [result, setResult] = useState<FibonacciAnalysisResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [aiEnabled, setAiEnabled] = useState(false);
+  const { tier, loading: tierLoading } = useTier();
+
+  // Use lazy query for on-demand fetching
+  const {
+    data: result,
+    loading,
+    error,
+    execute,
+    reset,
+  } = useLazyMCPQuery<FibonacciAnalysisResult>();
+
+  // Check AI access
+  const canUseAi = !tierLoading && canAccessAI(tier, "analyze_fibonacci");
 
   const analyzeFibonacci = async () => {
     if (!symbol.trim()) {
-      setError("Please enter a symbol");
       return;
     }
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/mcp/fibonacci", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          symbol: symbol.toUpperCase(),
-          period: "1d",
-          window: 50,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Analysis failed");
-      }
-
-      const data = await response.json();
-      setResult(data);
-    } catch (err) {
-      console.error("Analysis failed:", err);
-      setError(err instanceof Error ? err.message : "Analysis failed");
-    } finally {
-      setLoading(false);
-    }
+    await execute("/api/mcp/fibonacci", {
+      symbol: symbol.toUpperCase(),
+      period: "1d",
+      window: 50,
+      use_ai: aiEnabled && canUseAi,
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       analyzeFibonacci();
     }
+  };
+
+  const handleReset = () => {
+    reset();
+    setSymbol("");
   };
 
   return (
@@ -85,7 +88,7 @@ export default function FibonacciAnalysisPage() {
       {/* Input Section */}
       <Card className="mb-8">
         <CardContent className="pt-6">
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap items-center">
             <Input
               placeholder="Symbol (e.g., AAPL)"
               value={symbol}
@@ -94,12 +97,35 @@ export default function FibonacciAnalysisPage() {
               className="max-w-xs"
               disabled={loading}
             />
-            <Button onClick={analyzeFibonacci} disabled={loading}>
+
+            {/* AI Toggle */}
+            {canUseAi && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={aiEnabled}
+                  onChange={(e) => setAiEnabled(e.target.checked)}
+                  className="rounded border-gray-300"
+                  disabled={loading}
+                />
+                <Sparkles className="h-4 w-4 text-purple-500" />
+                <span className="text-sm">AI Analysis</span>
+              </label>
+            )}
+
+            {!canUseAi && tier === "free" && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Sparkles className="h-3 w-3" />
+                AI available on Pro+
+              </span>
+            )}
+
+            <Button
+              onClick={analyzeFibonacci}
+              disabled={loading || !symbol.trim()}
+            >
               {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing...
-                </>
+                "Analyzing..."
               ) : (
                 <>
                   <TrendingUp className="mr-2 h-4 w-4" />
@@ -108,16 +134,19 @@ export default function FibonacciAnalysisPage() {
               )}
             </Button>
           </div>
-          {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-              {error}
-            </div>
-          )}
         </CardContent>
       </Card>
 
+      {/* Loading State */}
+      {loading && <MCPLoadingState tool="analyze_fibonacci" />}
+
+      {/* Error State */}
+      {error && !loading && (
+        <MCPErrorState error={error} onRetry={analyzeFibonacci} />
+      )}
+
       {/* Results Section */}
-      {result && (
+      {result && !loading && !error && (
         <>
           {/* Action Bar */}
           <div className="mb-6 flex items-center justify-between">
@@ -128,12 +157,33 @@ export default function FibonacciAnalysisPage() {
               <span className="text-xs text-muted-foreground">
                 Analyzed: {new Date(result.timestamp).toLocaleString()}
               </span>
+              {result.ai_analysis && (
+                <Badge className="bg-purple-500 text-white">
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  AI Enhanced
+                </Badge>
+              )}
             </div>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handleReset}>
+                Clear
+              </Button>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+            </div>
           </div>
+
+          {/* AI Insights Panel */}
+          {result.ai_analysis && (
+            <div className="mb-6">
+              <AIInsightsPanel
+                analysis={result.ai_analysis}
+                tool="analyze_fibonacci"
+              />
+            </div>
+          )}
 
           {/* Tabbed Results */}
           <Tabs defaultValue="summary" className="space-y-6">
@@ -238,16 +288,12 @@ export default function FibonacciAnalysisPage() {
         </>
       )}
 
-      {!result && !loading && (
-        <Card>
-          <CardContent className="py-16 text-center text-muted-foreground">
-            <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>
-              Enter a symbol and click Analyze to see Fibonacci levels and
-              signals
-            </p>
-          </CardContent>
-        </Card>
+      {/* Empty State */}
+      {!result && !loading && !error && (
+        <MCPEmptyState
+          tool="analyze_fibonacci"
+          onAction={() => document.querySelector("input")?.focus()}
+        />
       )}
     </div>
   );
