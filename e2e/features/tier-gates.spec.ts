@@ -235,3 +235,47 @@ test.describe("Tier Gates - Max Features (Free Tier)", () => {
     expect(isLocked).toBe(true);
   });
 });
+
+test.describe("AI Access - Free Tier", () => {
+  test("morning brief AI toggle disabled for free tier", async ({
+    authenticatedPage,
+  }) => {
+    const { MorningBriefPage } =
+      await import("../../e2e-utils/pages/morning-brief-page");
+    const morningBrief = new MorningBriefPage(authenticatedPage);
+    await morningBrief.goto();
+
+    expect(await morningBrief.isAIToggleDisabled()).toBe(true);
+  });
+
+  test("scanner AI toggle disabled for free tier", async ({
+    authenticatedPage,
+  }) => {
+    const { ScannerPage } = await import("../../e2e-utils/pages/scanner-page");
+    const scanner = new ScannerPage(authenticatedPage);
+    await scanner.goto();
+
+    expect(await scanner.isAIToggleDisabled()).toBe(true);
+  });
+
+  test("analyze AI toggle disabled for free tier", async ({
+    authenticatedPage,
+  }) => {
+    const { AnalyzePage } = await import("../../e2e-utils/pages/analyze-page");
+    const analyze = new AnalyzePage(authenticatedPage);
+    await analyze.goto("AAPL");
+
+    expect(await analyze.isAIToggleDisabled()).toBe(true);
+  });
+
+  test("morning brief shows (Pro+) badge for free tier", async ({
+    authenticatedPage,
+  }) => {
+    const { MorningBriefPage } =
+      await import("../../e2e-utils/pages/morning-brief-page");
+    const morningBrief = new MorningBriefPage(authenticatedPage);
+    await morningBrief.goto();
+
+    expect(await morningBrief.hasAIPlusBadge()).toBe(true);
+  });
+});
