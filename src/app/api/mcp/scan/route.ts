@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMCPClient } from "@/lib/mcp/client";
-import { canAccessUniverse, TIER_LIMITS } from "@/lib/auth/tiers";
+import { canAccessUniverse, canAccessAI, TIER_LIMITS } from "@/lib/auth/tiers";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
 import {
   checkScanLimit,
@@ -16,7 +16,11 @@ export async function POST(request: Request) {
     // Check usage limit before processing
     await checkScanLimit(userId, tier);
 
-    const { universe = "sp500", maxResults = 10 } = await request.json();
+    const {
+      universe = "sp500",
+      maxResults = 10,
+      use_ai = false,
+    } = await request.json();
 
     // Check if user can access this universe
     if (!canAccessUniverse(tier, universe)) {
@@ -29,11 +33,16 @@ export async function POST(request: Request) {
     const tierLimits = TIER_LIMITS[tier];
     const resultsLimit = tierLimits.scanResultsLimit;
 
+    // Check if AI is allowed
+    const canUseAi = canAccessAI(tier, "scan_trades");
+    const useAiActual = use_ai && canUseAi;
+
     // Call MCP server
     const mcp = getMCPClient();
     const result = await mcp.scanTrades(
       universe,
       Math.min(maxResults, resultsLimit),
+      useAiActual,
     );
 
     // Record usage after successful scan
@@ -45,7 +54,10 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ...result,
       qualified_trades: limitedTrades,
-      tierLimit: tierLimits,
+      tierLimit: {
+        ...tierLimits,
+        ai: canUseAi,
+      },
       resultsLimited: result.qualified_trades?.length > resultsLimit,
       usage: {
         scanCount,

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getMCPClient } from "@/lib/mcp/client";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
-import { TIER_LIMITS } from "@/lib/auth/tiers";
+import { TIER_LIMITS, canAccessAI } from "@/lib/auth/tiers";
 import {
   checkAnalysisLimit,
   recordAnalysis,
@@ -22,11 +22,20 @@ export async function POST(request: Request) {
     await checkAnalysisLimit(userId, tier);
 
     // 3. Parse request
-    const { symbol, period = "1d", window = 50 } = await request.json();
+    const {
+      symbol,
+      period = "1d",
+      window = 50,
+      use_ai = false,
+    } = await request.json();
 
     if (!symbol) {
       return NextResponse.json({ error: "Symbol required" }, { status: 400 });
     }
+
+    // 3.5 Check if AI is allowed
+    const canUseAi = canAccessAI(tier, "analyze_fibonacci");
+    const useAiActual = use_ai && canUseAi;
 
     // 4. Call MCP for Fibonacci analysis
     const mcp = getMCPClient();
@@ -34,6 +43,7 @@ export async function POST(request: Request) {
       symbol,
       period,
       window,
+      useAiActual,
     );
 
     // 5. Filter by tier limits
@@ -92,6 +102,7 @@ export async function POST(request: Request) {
               : 0,
         signalsShown: filteredSignals.length,
         signalsTotal: result.signals.length,
+        ai: canUseAi,
       },
       usage: {
         analysisCount,
