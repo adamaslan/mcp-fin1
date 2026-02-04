@@ -40,7 +40,11 @@ export default function PortfolioPage() {
   const [formError, setFormError] = useState(null);
   const [useAI, setUseAI] = useState(false);
 
-  const { data: riskData, loading, error } = useMCPQuery({
+  const {
+    data: riskData,
+    loading,
+    error,
+  } = useMCPQuery({
     endpoint: "/api/mcp/portfolio-risk",
     params: {
       positions,
@@ -136,7 +140,8 @@ export default function PortfolioPage() {
                 <div>
                   <p className="font-semibold">{position.symbol}</p>
                   <p className="text-xs text-muted-foreground">
-                    {position.shares} shares @ \${position.entry_price.toFixed(2)}
+                    {position.shares} shares @ \$
+                    {position.entry_price.toFixed(2)}
                   </p>
                 </div>
                 <Button

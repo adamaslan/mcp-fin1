@@ -23,7 +23,13 @@ import { canAccessUniverse, TIER_LIMITS } from "@/lib/auth/tiers";
 import { useLazyMCPQuery } from "@/hooks/useMCPQuery";
 import { AIInsightsPanel } from "@/components/mcp/AIInsightsPanel";
 import type { ScanResult } from "@/lib/mcp/types";
-import { Loader2, AlertCircle, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  TrendingUp,
+  TrendingDown,
+  Sparkles,
+} from "lucide-react";
 
 export default function ScannerPage() {
   const { tier } = useTier();
@@ -190,7 +196,9 @@ export default function ScannerPage() {
                       <th className="text-right py-3 font-semibold">Target</th>
                       <th className="text-right py-3 font-semibold">R:R</th>
                       <th className="text-center py-3 font-semibold">Bias</th>
-                      <th className="text-center py-3 font-semibold">Quality</th>
+                      <th className="text-center py-3 font-semibold">
+                        Quality
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -220,7 +228,9 @@ export default function ScannerPage() {
                           )}
                         </td>
                         <td className="text-center">
-                          <Badge className={getRiskQualityColor(trade.risk_quality)}>
+                          <Badge
+                            className={getRiskQualityColor(trade.risk_quality)}
+                          >
                             {trade.risk_quality.toUpperCase()}
                           </Badge>
                         </td>
@@ -248,7 +258,10 @@ export default function ScannerPage() {
       {!loading && trades.length === 0 && !error && data && (
         <Card>
           <CardContent className="pt-6 text-center text-muted-foreground">
-            <p>No qualified trades found in {selectedUniverse}. Try a different universe.</p>
+            <p>
+              No qualified trades found in {selectedUniverse}. Try a different
+              universe.
+            </p>
           </CardContent>
         </Card>
       )}
