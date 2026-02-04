@@ -10,11 +10,15 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { RiskDashboard } from "@/components/portfolio/RiskDashboard";
 import { DividendTracker } from "@/components/portfolio/DividendTracker";
 import { CorrelationMatrix } from "@/components/portfolio/CorrelationMatrix";
-import { PortfolioRiskResult } from "@/lib/mcp/types";
-import { Loader2, AlertCircle, Plus, Trash2 } from "lucide-react";
+import { useTier } from "@/hooks/useTier";
+import { useMCPQuery } from "@/hooks/useMCPQuery";
+import { AIInsightsPanel } from "@/components/mcp/AIInsightsPanel";
+import type { PortfolioRiskResult } from "@/lib/mcp/types";
+import { Loader2, AlertCircle, Plus, Trash2, Sparkles } from "lucide-react";
 
 interface Position {
   symbol: string;
@@ -23,60 +27,36 @@ interface Position {
 }
 
 export default function PortfolioPage() {
-  const [positions, setPositions] = useState<Position[]>([
+  const { tier } = useTier();
+  const [positions, setPositions] = useState([
     { symbol: "AAPL", shares: 100, entry_price: 150 },
     { symbol: "MSFT", shares: 50, entry_price: 300 },
     { symbol: "GOOGL", shares: 25, entry_price: 140 },
   ]);
 
-  const [riskData, setRiskData] = useState<PortfolioRiskResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const [newSymbol, setNewSymbol] = useState("");
   const [newShares, setNewShares] = useState("");
   const [newPrice, setNewPrice] = useState("");
+  const [formError, setFormError] = useState(null);
+  const [useAI, setUseAI] = useState(false);
 
-  const fetchRiskAssessment = async () => {
-    if (positions.length === 0) {
-      setRiskData(null);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/mcp/portfolio-risk", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ positions }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to calculate portfolio risk");
-      }
-
-      const data = await response.json();
-      setRiskData(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRiskAssessment();
-  }, [positions]);
+  const { data: riskData, loading, error } = useMCPQuery({
+    endpoint: "/api/mcp/portfolio-risk",
+    params: {
+      positions,
+      use_ai: useAI,
+    },
+    enabled: positions.length > 0,
+    refetchOnParamsChange: true,
+  });
 
   const handleAddPosition = () => {
     if (!newSymbol.trim() || !newShares || !newPrice) {
-      setError("Please fill in all fields");
+      setFormError("Please fill in all fields");
       return;
     }
 
-    const newPosition: Position = {
+    const newPosition = {
       symbol: newSymbol.toUpperCase(),
       shares: parseFloat(newShares),
       entry_price: parseFloat(newPrice),
@@ -86,10 +66,10 @@ export default function PortfolioPage() {
     setNewSymbol("");
     setNewShares("");
     setNewPrice("");
-    setError(null);
+    setFormError(null);
   };
 
-  const handleRemovePosition = (symbol: string) => {
+  const handleRemovePosition = (symbol) => {
     setPositions(positions.filter((p) => p.symbol !== symbol));
   };
 
@@ -108,7 +88,7 @@ export default function PortfolioPage() {
         <CardHeader>
           <CardTitle className="text-base">Add Position</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
           <div className="flex gap-2 flex-wrap">
             <Input
               placeholder="Symbol"
@@ -135,7 +115,7 @@ export default function PortfolioPage() {
               Add
             </Button>
           </div>
-          {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+          {formError && <p className="text-xs text-red-500">{formError}</p>}
         </CardContent>
       </Card>
 
@@ -156,8 +136,7 @@ export default function PortfolioPage() {
                 <div>
                   <p className="font-semibold">{position.symbol}</p>
                   <p className="text-xs text-muted-foreground">
-                    {position.shares} shares @ $
-                    {position.entry_price.toFixed(2)}
+                    {position.shares} shares @ \${position.entry_price.toFixed(2)}
                   </p>
                 </div>
                 <Button
@@ -173,6 +152,37 @@ export default function PortfolioPage() {
         </CardContent>
       </Card>
 
+      {/* AI Toggle */}
+      {positions.length > 0 && (
+        <Card className="border-purple-200 dark:border-purple-900">
+          <CardContent className="pt-6 flex items-center gap-2">
+            <Checkbox
+              id="portfolio-ai-toggle"
+              checked={useAI}
+              onCheckedChange={(checked) => setUseAI(checked)}
+              disabled={loading || tier === "free"}
+            />
+            <label
+              htmlFor="portfolio-ai-toggle"
+              className="text-sm cursor-pointer flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4 text-purple-500" />
+              AI Risk Analysis {tier === "free" && "(Pro+)"}
+            </label>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Error */}
+      {error && (
+        <Card className="bg-red-500/10 border-red-200 dark:border-red-800">
+          <CardContent className="pt-6 flex gap-3">
+            <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Risk assessment */}
       {loading && (
         <div className="flex items-center justify-center py-12">
@@ -180,7 +190,20 @@ export default function PortfolioPage() {
         </div>
       )}
 
-      {riskData && !loading && <RiskDashboard riskData={riskData} />}
+      {riskData && !loading && (
+        <>
+          {/* AI Analysis */}
+          {riskData.ai_analysis && (
+            <AIInsightsPanel
+              analysis={riskData.ai_analysis}
+              tool="portfolio_risk_analysis"
+              title="Portfolio AI Analysis"
+            />
+          )}
+
+          <RiskDashboard riskData={riskData} />
+        </>
+      )}
 
       {positions.length === 0 && !loading && (
         <Card>

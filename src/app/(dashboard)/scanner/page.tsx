@@ -17,18 +17,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useTier } from "@/hooks/useTier";
 import { canAccessUniverse, TIER_LIMITS } from "@/lib/auth/tiers";
-import { QualifiedTrade } from "@/lib/mcp/types";
-import { Loader2, AlertCircle, TrendingUp, TrendingDown } from "lucide-react";
+import { useLazyMCPQuery } from "@/hooks/useMCPQuery";
+import { AIInsightsPanel } from "@/components/mcp/AIInsightsPanel";
+import type { ScanResult } from "@/lib/mcp/types";
+import { Loader2, AlertCircle, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 
 export default function ScannerPage() {
   const { tier } = useTier();
-  const [selectedUniverse, setSelectedUniverse] = useState<string>("sp500");
-  const [trades, setTrades] = useState<QualifiedTrade[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [resultsLimited, setResultsLimited] = useState(false);
+  const [selectedUniverse, setSelectedUniverse] = useState("sp500");
+  const [useAI, setUseAI] = useState(false);
+  const { data, loading, error, execute } = useLazyMCPQuery();
 
   const tierLimits = TIER_LIMITS[tier];
 
@@ -53,43 +54,20 @@ export default function ScannerPage() {
 
   const handleScan = async () => {
     if (!canAccessUniverse(tier, selectedUniverse)) {
-      setError(`${selectedUniverse} is not available in your tier`);
       return;
     }
 
-    setLoading(true);
-    setError(null);
-    setTrades([]);
-
-    try {
-      const response = await fetch("/api/mcp/scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          universe: selectedUniverse,
-          maxResults: tierLimits.scanResultsLimit,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to scan trades");
-      }
-
-      const data = await response.json();
-      setTrades(data.qualified_trades || []);
-      setResultsLimited(data.resultsLimited || false);
-
-      if (!data.qualified_trades || data.qualified_trades.length === 0) {
-        setError("No trades found matching the criteria in this universe.");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error occurred");
-    } finally {
-      setLoading(false);
-    }
+    await execute("/api/mcp/scan", {
+      universe: selectedUniverse,
+      maxResults: tierLimits.scanResultsLimit,
+      use_ai: useAI,
+    });
   };
 
-  const getRiskQualityColor = (quality: string) => {
+  const trades = data?.qualified_trades || [];
+  const resultsLimited = data?.resultsLimited || false;
+
+  const getRiskQualityColor = (quality) => {
     switch (quality) {
       case "high":
         return "bg-green-500/10 text-green-700 dark:text-green-400";
@@ -113,7 +91,7 @@ export default function ScannerPage() {
             Pro: 10/day (25 results), Max: Unlimited
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="flex gap-4 items-end">
             <div className="flex-1">
               <label className="text-sm font-medium mb-2 block">Universe</label>
@@ -141,6 +119,23 @@ export default function ScannerPage() {
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Scan Now
             </Button>
+          </div>
+
+          {/* AI Toggle */}
+          <div className="flex items-center gap-2 pt-2 border-t">
+            <Checkbox
+              id="ai-toggle"
+              checked={useAI}
+              onCheckedChange={(checked) => setUseAI(checked)}
+              disabled={loading || tier === "free"}
+            />
+            <label
+              htmlFor="ai-toggle"
+              className="text-sm cursor-pointer flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4 text-purple-500" />
+              AI Insights {tier === "free" && "(Pro+)"}
+            </label>
           </div>
         </CardContent>
       </Card>
@@ -174,6 +169,15 @@ export default function ScannerPage() {
             </p>
           </div>
 
+          {/* AI Analysis */}
+          {data?.ai_analysis && (
+            <AIInsightsPanel
+              analysis={data.ai_analysis}
+              tool="scan_securities"
+              title="Scan AI Analysis"
+            />
+          )}
+
           <Card>
             <CardContent className="pt-6">
               <div className="overflow-x-auto">
@@ -186,9 +190,7 @@ export default function ScannerPage() {
                       <th className="text-right py-3 font-semibold">Target</th>
                       <th className="text-right py-3 font-semibold">R:R</th>
                       <th className="text-center py-3 font-semibold">Bias</th>
-                      <th className="text-center py-3 font-semibold">
-                        Quality
-                      </th>
+                      <th className="text-center py-3 font-semibold">Quality</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -199,13 +201,13 @@ export default function ScannerPage() {
                       >
                         <td className="py-3 font-semibold">{trade.symbol}</td>
                         <td className="text-right">
-                          ${trade.entry_price.toFixed(2)}
+                          \${trade.entry_price.toFixed(2)}
                         </td>
                         <td className="text-right text-red-500">
-                          ${trade.stop_price.toFixed(2)}
+                          \${trade.stop_price.toFixed(2)}
                         </td>
                         <td className="text-right text-green-500">
-                          ${trade.target_price.toFixed(2)}
+                          \${trade.target_price.toFixed(2)}
                         </td>
                         <td className="text-right">
                           {trade.risk_reward_ratio.toFixed(2)}:1
@@ -218,9 +220,7 @@ export default function ScannerPage() {
                           )}
                         </td>
                         <td className="text-center">
-                          <Badge
-                            className={getRiskQualityColor(trade.risk_quality)}
-                          >
+                          <Badge className={getRiskQualityColor(trade.risk_quality)}>
                             {trade.risk_quality.toUpperCase()}
                           </Badge>
                         </td>
@@ -245,7 +245,15 @@ export default function ScannerPage() {
         </div>
       )}
 
-      {!loading && trades.length === 0 && !error && (
+      {!loading && trades.length === 0 && !error && data && (
+        <Card>
+          <CardContent className="pt-6 text-center text-muted-foreground">
+            <p>No qualified trades found in {selectedUniverse}. Try a different universe.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {!loading && !data && (
         <Card>
           <CardContent className="pt-6 text-center text-muted-foreground">
             <p>Select a universe and click Scan to find trade opportunities</p>
