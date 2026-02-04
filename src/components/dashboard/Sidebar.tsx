@@ -20,6 +20,8 @@ import {
   Code,
   Newspaper,
   Target,
+  Scale,
+  Activity,
 } from "lucide-react";
 
 interface NavItem {
@@ -59,6 +61,18 @@ export function Sidebar() {
       label: "Fibonacci",
       href: "/dashboard/fibonacci",
       icon: <Target className="h-5 w-5" />,
+    },
+    {
+      label: "Compare",
+      href: "/dashboard/compare",
+      icon: <Scale className="h-5 w-5" />,
+      requiresTier: "pro",
+    },
+    {
+      label: "Options",
+      href: "/dashboard/options",
+      icon: <Activity className="h-5 w-5" />,
+      requiresTier: "pro",
     },
     {
       label: "Portfolio",

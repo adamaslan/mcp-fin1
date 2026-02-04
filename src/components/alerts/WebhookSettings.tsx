@@ -35,27 +35,9 @@ interface WebhookConfig {
   lastTriggered?: string;
 }
 
-// Mock data
-const MOCK_WEBHOOKS: WebhookConfig[] = [
-  {
-    id: "1",
-    name: "Trading Alerts Channel",
-    type: "slack",
-    url: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXX",
-    enabled: true,
-    events: ["price_target", "trade_signal"],
-    lastTriggered: "2 hours ago",
-  },
-  {
-    id: "2",
-    name: "Discord Server",
-    type: "discord",
-    url: "https://discord.com/api/webhooks/0000000000/XXXXXXXXXXXX",
-    enabled: true,
-    events: ["price_target", "volume_spike"],
-    lastTriggered: "1 day ago",
-  },
-];
+// Real webhook data must come from database
+// No mock webhooks
+const EMPTY_WEBHOOKS: WebhookConfig[] = [];
 
 const WEBHOOK_TYPES: Record<
   WebhookType,
@@ -91,7 +73,7 @@ interface WebhookSettingsProps {
 }
 
 export function WebhookSettings({
-  webhooks = MOCK_WEBHOOKS,
+  webhooks = EMPTY_WEBHOOKS,
 }: WebhookSettingsProps) {
   const [configs, setConfigs] = useState(webhooks);
   const [isAdding, setIsAdding] = useState(false);

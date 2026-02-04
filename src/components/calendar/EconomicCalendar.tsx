@@ -32,87 +32,9 @@ interface EconomicEvent {
   actual?: string;
 }
 
-// Mock data - in production, fetch from API like TradingEconomics or Forex Factory
-const MOCK_EVENTS: EconomicEvent[] = [
-  {
-    id: "1",
-    date: "Today",
-    time: "8:30 AM",
-    event: "CPI (YoY)",
-    country: "US",
-    impact: "high",
-    previous: "3.2%",
-    forecast: "3.1%",
-  },
-  {
-    id: "2",
-    date: "Today",
-    time: "10:00 AM",
-    event: "Consumer Sentiment",
-    country: "US",
-    impact: "medium",
-    previous: "69.7",
-    forecast: "70.0",
-  },
-  {
-    id: "3",
-    date: "Tomorrow",
-    time: "2:00 PM",
-    event: "FOMC Minutes",
-    country: "US",
-    impact: "high",
-  },
-  {
-    id: "4",
-    date: "Tomorrow",
-    time: "8:30 AM",
-    event: "Initial Jobless Claims",
-    country: "US",
-    impact: "medium",
-    previous: "218K",
-    forecast: "215K",
-  },
-  {
-    id: "5",
-    date: "Wed, Jan 15",
-    time: "8:30 AM",
-    event: "Retail Sales (MoM)",
-    country: "US",
-    impact: "high",
-    previous: "0.7%",
-    forecast: "0.4%",
-  },
-  {
-    id: "6",
-    date: "Thu, Jan 16",
-    time: "8:30 AM",
-    event: "Building Permits",
-    country: "US",
-    impact: "low",
-    previous: "1.46M",
-    forecast: "1.48M",
-  },
-  {
-    id: "7",
-    date: "Thu, Jan 16",
-    time: "9:15 AM",
-    event: "Industrial Production",
-    country: "US",
-    impact: "medium",
-    previous: "0.0%",
-    forecast: "0.3%",
-  },
-  {
-    id: "8",
-    date: "Fri, Jan 17",
-    time: "10:00 AM",
-    event: "Existing Home Sales",
-    country: "US",
-    impact: "low",
-    previous: "3.79M",
-    forecast: "3.82M",
-  },
-];
+// Real data must be fetched from API (TradingEconomics, Forex Factory, etc)
+// No mock economic data - show empty state instead
+const EMPTY_EVENTS: EconomicEvent[] = [];
 
 const IMPACT_CONFIG: Record<
   ImpactLevel,
@@ -132,8 +54,8 @@ export function EconomicCalendar() {
 
   const filteredEvents =
     filter === "all"
-      ? MOCK_EVENTS
-      : MOCK_EVENTS.filter((e) => e.impact === filter);
+      ? EMPTY_EVENTS
+      : EMPTY_EVENTS.filter((e) => e.impact === filter);
 
   // Group by date
   const groupedEvents = filteredEvents.reduce(

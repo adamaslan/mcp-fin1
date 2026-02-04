@@ -36,44 +36,16 @@ interface PriceAlert {
   triggeredAt?: string;
 }
 
-// Mock data
-const MOCK_ALERTS: PriceAlert[] = [
-  {
-    id: "1",
-    symbol: "AAPL",
-    targetPrice: 200,
-    direction: "above",
-    currentPrice: 185.42,
-    enabled: true,
-    createdAt: "2024-01-10",
-  },
-  {
-    id: "2",
-    symbol: "NVDA",
-    targetPrice: 800,
-    direction: "below",
-    currentPrice: 875.32,
-    enabled: true,
-    createdAt: "2024-01-08",
-  },
-  {
-    id: "3",
-    symbol: "TSLA",
-    targetPrice: 250,
-    direction: "above",
-    currentPrice: 242.18,
-    enabled: false,
-    createdAt: "2024-01-05",
-    triggeredAt: "2024-01-09",
-  },
-];
+// Real alert data must come from database/API
+// No mock alerts
+const EMPTY_ALERTS: PriceAlert[] = [];
 
 interface PriceTargetAlertsProps {
   alerts?: PriceAlert[];
 }
 
 export function PriceTargetAlerts({
-  alerts = MOCK_ALERTS,
+  alerts = EMPTY_ALERTS,
 }: PriceTargetAlertsProps) {
   const [alertsList, setAlertsList] = useState(alerts);
   const [isAdding, setIsAdding] = useState(false);
@@ -96,19 +68,15 @@ export function PriceTargetAlerts({
   const handleAdd = () => {
     if (!newAlert.symbol || !newAlert.targetPrice) return;
 
-    const alert: PriceAlert = {
-      id: Date.now().toString(),
-      symbol: newAlert.symbol.toUpperCase(),
-      targetPrice: parseFloat(newAlert.targetPrice),
-      direction: newAlert.direction,
-      currentPrice: 100 + Math.random() * 100, // Mock current price
-      enabled: true,
-      createdAt: new Date().toISOString().split("T")[0],
-    };
+    // NOTE: Real implementation must fetch current price from API
+    // Never use mock/random prices for financial alerts
+    console.warn(
+      `Alert creation requires real price data from API for ${newAlert.symbol}. ` +
+        `Implement API call to fetch current price before creating alert.`,
+    );
 
-    setAlertsList((prev) => [...prev, alert]);
-    setNewAlert({ symbol: "", targetPrice: "", direction: "above" });
-    setIsAdding(false);
+    // For now, prevent creation without real price data
+    return;
   };
 
   const getDistancePercent = (alert: PriceAlert) => {

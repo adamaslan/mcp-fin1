@@ -42,80 +42,15 @@ interface DividendSummary {
   avgYield: number;
 }
 
-// Mock data
-const MOCK_DIVIDENDS: DividendRecord[] = [
-  {
-    id: "1",
-    symbol: "AAPL",
-    company: "Apple Inc.",
-    exDate: "2024-02-09",
-    payDate: "2024-02-15",
-    amount: 0.24,
-    yield: 0.52,
-    frequency: "quarterly",
-    shares: 100,
-    totalPayout: 24.0,
-    status: "upcoming",
-  },
-  {
-    id: "2",
-    symbol: "MSFT",
-    company: "Microsoft Corporation",
-    exDate: "2024-02-14",
-    payDate: "2024-03-14",
-    amount: 0.75,
-    yield: 0.72,
-    frequency: "quarterly",
-    shares: 50,
-    totalPayout: 37.5,
-    status: "upcoming",
-  },
-  {
-    id: "3",
-    symbol: "JNJ",
-    company: "Johnson & Johnson",
-    exDate: "2024-02-20",
-    payDate: "2024-03-05",
-    amount: 1.24,
-    yield: 2.92,
-    frequency: "quarterly",
-    shares: 30,
-    totalPayout: 37.2,
-    status: "upcoming",
-  },
-  {
-    id: "4",
-    symbol: "O",
-    company: "Realty Income Corp",
-    exDate: "2024-01-30",
-    payDate: "2024-02-15",
-    amount: 0.256,
-    yield: 5.48,
-    frequency: "monthly",
-    shares: 75,
-    totalPayout: 19.2,
-    status: "ex-date-passed",
-  },
-  {
-    id: "5",
-    symbol: "KO",
-    company: "Coca-Cola Company",
-    exDate: "2024-01-11",
-    payDate: "2024-01-15",
-    amount: 0.485,
-    yield: 3.12,
-    frequency: "quarterly",
-    shares: 40,
-    totalPayout: 19.4,
-    status: "paid",
-  },
-];
+// Real dividend data must come from portfolio API
+// No mock dividend data
+const EMPTY_DIVIDENDS: DividendRecord[] = [];
 
-const MOCK_SUMMARY: DividendSummary = {
-  totalAnnual: 1847.2,
-  totalYTD: 156.8,
-  nextMonthProjected: 118.9,
-  avgYield: 2.34,
+const EMPTY_SUMMARY: DividendSummary = {
+  totalAnnual: 0,
+  totalYTD: 0,
+  nextMonthProjected: 0,
+  avgYield: 0,
 };
 
 const FREQUENCY_LABELS = {
@@ -145,8 +80,8 @@ interface DividendTrackerProps {
 }
 
 export function DividendTracker({
-  dividends = MOCK_DIVIDENDS,
-  summary = MOCK_SUMMARY,
+  dividends = EMPTY_DIVIDENDS,
+  summary = EMPTY_SUMMARY,
 }: DividendTrackerProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "upcoming" | "paid">("all");

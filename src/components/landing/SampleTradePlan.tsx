@@ -21,13 +21,13 @@ interface AnalysisData {
 }
 
 export function SampleTradePlan({ data }: { data?: AnalysisData | null }) {
-  const symbol = data?.symbol || "SPY";
-  const bullishCount = data?.summary?.bullish || 75;
-  const bearishCount = data?.summary?.bearish || 15;
-  const totalSignals =
-    bullishCount + bearishCount + (data?.summary?.neutral || 10);
-  const topSignal = data?.signals?.[0]?.name || "Moving Average Crossover";
-  const isLive = !!data && data.signals && data.signals.length > 0;
+  const hasData = !!data && data.signals && data.signals.length > 0;
+  const symbol = data?.symbol || "[Symbol]";
+  const bullishCount = data?.summary?.bullish || 0;
+  const bearishCount = data?.summary?.bearish || 0;
+  const neutralCount = data?.summary?.neutral || 0;
+  const totalSignals = bullishCount + bearishCount + neutralCount;
+  const topSignal = data?.signals?.[0]?.name || "[Signal]";
 
   const getQualityBadge = () => {
     if (bullishCount > 70)
@@ -44,7 +44,7 @@ export function SampleTradePlan({ data }: { data?: AnalysisData | null }) {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">See What You Get</h2>
         <p className="text-muted-foreground">
-          {isLive
+          {hasData
             ? "🔴 Live Signal Analysis"
             : "Risk-qualified trade plans with entry, stop, and target prices"}
         </p>
@@ -57,7 +57,7 @@ export function SampleTradePlan({ data }: { data?: AnalysisData | null }) {
               <div>
                 <CardTitle className="text-2xl">{symbol}</CardTitle>
                 <CardDescription>
-                  {isLive
+                  {hasData
                     ? `${totalSignals} Signals Analyzed • ${bullishCount} Bullish • ${bearishCount} Bearish`
                     : "Apple Inc. • Swing Trade • Bullish Bias"}
                 </CardDescription>
@@ -133,7 +133,7 @@ export function SampleTradePlan({ data }: { data?: AnalysisData | null }) {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-muted-foreground mb-4">
-            {isLive ? (
+            {hasData ? (
               <>
                 <span className="font-semibold">🔴 Live analysis from GCP</span>{" "}
                 • Sign up to see real-time trade plans for any stock with entry,

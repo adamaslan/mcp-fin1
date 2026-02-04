@@ -31,75 +31,9 @@ interface NewsItem {
   imageUrl?: string;
 }
 
-// Mock data - in production, fetch from news API
-const MOCK_NEWS: NewsItem[] = [
-  {
-    id: "1",
-    title: "Apple Reports Record Q4 Revenue Driven by iPhone 16 Sales",
-    summary:
-      "Apple Inc. announced quarterly revenue of $123.9 billion, up 8% year over year, with strong iPhone and Services growth...",
-    source: "Reuters",
-    url: "#",
-    publishedAt: "2 hours ago",
-    symbols: ["AAPL"],
-    sentiment: "bullish",
-  },
-  {
-    id: "2",
-    title: "Fed Officials Signal Patience on Rate Cuts Amid Inflation Concerns",
-    summary:
-      "Federal Reserve officials indicated they are in no rush to cut interest rates, citing persistent inflation pressures...",
-    source: "Bloomberg",
-    url: "#",
-    publishedAt: "3 hours ago",
-    symbols: ["SPY", "QQQ"],
-    sentiment: "bearish",
-  },
-  {
-    id: "3",
-    title: "NVIDIA Unveils Next-Gen AI Chips at CES 2026",
-    summary:
-      "NVIDIA announced its latest Blackwell Ultra architecture, promising 3x performance improvement for AI workloads...",
-    source: "CNBC",
-    url: "#",
-    publishedAt: "5 hours ago",
-    symbols: ["NVDA", "AMD"],
-    sentiment: "bullish",
-  },
-  {
-    id: "4",
-    title: "Tesla Deliveries Miss Estimates as Competition Intensifies",
-    summary:
-      "Tesla reported Q4 deliveries of 484,507 vehicles, below analyst expectations of 490,000, as Chinese rivals gain market share...",
-    source: "Wall Street Journal",
-    url: "#",
-    publishedAt: "6 hours ago",
-    symbols: ["TSLA"],
-    sentiment: "bearish",
-  },
-  {
-    id: "5",
-    title: "Microsoft Cloud Revenue Beats Estimates on AI Demand",
-    summary:
-      "Microsoft Azure revenue grew 29% year-over-year, exceeding expectations as enterprise AI adoption accelerates...",
-    source: "Financial Times",
-    url: "#",
-    publishedAt: "8 hours ago",
-    symbols: ["MSFT"],
-    sentiment: "bullish",
-  },
-  {
-    id: "6",
-    title: "Oil Prices Stabilize as OPEC+ Maintains Production Cuts",
-    summary:
-      "Crude oil prices held steady around $75/barrel after OPEC+ confirmed it will maintain current production levels through Q1...",
-    source: "Reuters",
-    url: "#",
-    publishedAt: "10 hours ago",
-    symbols: ["XLE", "USO"],
-    sentiment: "neutral",
-  },
-];
+// Real news must be fetched from news API
+// No mock news - show empty state instead
+const EMPTY_NEWS: NewsItem[] = [];
 
 const SENTIMENT_CONFIG: Record<
   Sentiment,
@@ -130,8 +64,8 @@ interface NewsFeedProps {
 export function NewsFeed({ symbols, limit = 10 }: NewsFeedProps) {
   // Filter by symbols if provided
   const filteredNews = symbols
-    ? MOCK_NEWS.filter((news) => news.symbols.some((s) => symbols.includes(s)))
-    : MOCK_NEWS;
+    ? EMPTY_NEWS.filter((news) => news.symbols.some((s) => symbols.includes(s)))
+    : EMPTY_NEWS;
 
   const displayNews = filteredNews.slice(0, limit);
 

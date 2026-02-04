@@ -65,9 +65,28 @@ export async function POST(request: Request) {
       );
     }
 
-    console.error("Scan API error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("Scan API error:", errorMessage);
+
+    // Check if it's an MCP connection error
+    if (errorMessage.includes("MCP API error")) {
+      return NextResponse.json(
+        {
+          error: "MCP server error",
+          details: errorMessage,
+          message:
+            "Unable to connect to the analysis server. Please ensure the MCP server is running.",
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to scan trades" },
+      {
+        error: "Failed to scan trades",
+        details: errorMessage,
+      },
       { status: 500 },
     );
   }

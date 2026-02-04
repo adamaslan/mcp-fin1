@@ -36,38 +36,9 @@ interface VolumeAlert {
   };
 }
 
-// Mock data
-const MOCK_ALERTS: VolumeAlert[] = [
-  {
-    id: "1",
-    symbol: "AAPL",
-    multiplier: 2.0,
-    avgVolume: "54.2M",
-    enabled: true,
-    createdAt: "2024-01-10",
-    lastTriggered: {
-      date: "2024-01-09",
-      actualMultiplier: 2.4,
-      volume: "130.1M",
-    },
-  },
-  {
-    id: "2",
-    symbol: "NVDA",
-    multiplier: 1.5,
-    avgVolume: "48.3M",
-    enabled: true,
-    createdAt: "2024-01-08",
-  },
-  {
-    id: "3",
-    symbol: "TSLA",
-    multiplier: 3.0,
-    avgVolume: "95.6M",
-    enabled: false,
-    createdAt: "2024-01-05",
-  },
-];
+// Real alert data must come from database/API
+// No mock alerts
+const EMPTY_ALERTS: VolumeAlert[] = [];
 
 const MULTIPLIER_PRESETS = [
   { value: 1.5, label: "1.5x", description: "Moderate increase" },
@@ -81,7 +52,7 @@ interface VolumeSpikeAlertsProps {
 }
 
 export function VolumeSpikeAlerts({
-  alerts = MOCK_ALERTS,
+  alerts = EMPTY_ALERTS,
 }: VolumeSpikeAlertsProps) {
   const [alertsList, setAlertsList] = useState(alerts);
   const [isAdding, setIsAdding] = useState(false);
@@ -103,18 +74,15 @@ export function VolumeSpikeAlerts({
   const handleAdd = () => {
     if (!newAlert.symbol) return;
 
-    const alert: VolumeAlert = {
-      id: Date.now().toString(),
-      symbol: newAlert.symbol.toUpperCase(),
-      multiplier: newAlert.multiplier,
-      avgVolume: `${(Math.random() * 100).toFixed(1)}M`,
-      enabled: true,
-      createdAt: new Date().toISOString().split("T")[0],
-    };
+    // NOTE: Real implementation must fetch current volume from API
+    // Never use random/mock volumes for financial alerts
+    console.warn(
+      `Alert creation requires real volume data from API for ${newAlert.symbol}. ` +
+        `Implement API call to fetch current average volume before creating alert.`,
+    );
 
-    setAlertsList((prev) => [...prev, alert]);
-    setNewAlert({ symbol: "", multiplier: 2.0 });
-    setIsAdding(false);
+    // For now, prevent creation without real volume data
+    return;
   };
 
   return (

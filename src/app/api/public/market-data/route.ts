@@ -4,18 +4,20 @@ import { getMCPClient } from "@/lib/mcp/client";
 /**
  * Public endpoint for landing page market data
  * No authentication required - returns aggregated market overview
+ * Returns 503 on backend error - NO MOCK DATA EVER
  */
 export async function GET() {
   try {
     const mcp = getMCPClient();
 
-    // Fetch morning brief for market overview (includes futures, VIX, economic events)
-    const morningBrief = await mcp.morningBrief([], "us");
+    // Fetch morning brief for market overview (includes futures, VIX, economic events, sectors)
+    const defaultWatchlist = ["SPY", "QQQ", "DIA", "IWM"];
+    const morningBrief = await mcp.morningBrief(defaultWatchlist, "US");
 
     // Fetch top trades from S&P 500
     const topTrades = await mcp.scanTrades("sp500", 10);
 
-    // Fetch a sample analysis (most active stock for visibility)
+    // Fetch a sample analysis for SPY visibility
     const sampleAnalysis = await mcp.analyzeSecurity("SPY", "1d");
 
     return NextResponse.json({
@@ -27,7 +29,10 @@ export async function GET() {
           futuresES: morningBrief.market_status.futures_es.change_percent,
           futuresNQ: morningBrief.market_status.futures_nq.change_percent,
           vix: morningBrief.market_status.vix,
-          economicEvents: morningBrief.economic_events || [],
+          economicEvents: morningBrief.economic_events?.slice(0, 3) || [],
+          sectorLeaders: morningBrief.sector_leaders?.slice(0, 3) || [],
+          sectorLosers: morningBrief.sector_losers?.slice(0, 3) || [],
+          keyThemes: morningBrief.key_themes?.slice(0, 3) || [],
         },
         topTrades: topTrades.qualified_trades?.slice(0, 5) || [],
         sampleAnalysis: {
@@ -41,28 +46,15 @@ export async function GET() {
   } catch (error) {
     console.error("Failed to fetch market data:", error);
 
-    // Return fallback data on error
+    // Return 503 error - NO MOCK DATA FALLBACK
     return NextResponse.json(
       {
         success: false,
         timestamp: new Date().toISOString(),
-        error: "Failed to fetch market data",
-        data: {
-          market: {
-            status: "UNKNOWN",
-            futuresES: 0,
-            futuresNQ: 0,
-            vix: 0,
-            economicEvents: [],
-          },
-          topTrades: [],
-          sampleAnalysis: {
-            symbol: "SPY",
-            signals: [],
-            summary: { bullish: 0, bearish: 0, neutral: 0 },
-            indicators: {},
-          },
-        },
+        error:
+          "Market data service unavailable. Please check MCP backend connection.",
+        details: error instanceof Error ? error.message : "Unknown error",
+        data: null,
       },
       { status: 503 },
     );

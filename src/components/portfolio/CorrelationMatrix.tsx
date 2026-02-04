@@ -14,17 +14,11 @@ interface CorrelationData {
   matrix: number[][];
 }
 
-// Mock data - in production, calculate from price history
-const MOCK_CORRELATION: CorrelationData = {
-  symbols: ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA"],
-  matrix: [
-    [1.0, 0.85, 0.78, 0.72, 0.45, 0.68],
-    [0.85, 1.0, 0.82, 0.75, 0.48, 0.72],
-    [0.78, 0.82, 1.0, 0.8, 0.42, 0.65],
-    [0.72, 0.75, 0.8, 1.0, 0.38, 0.58],
-    [0.45, 0.48, 0.42, 0.38, 1.0, 0.55],
-    [0.68, 0.72, 0.65, 0.58, 0.55, 1.0],
-  ],
+// Real data must be calculated from price history
+// No mock correlation data
+const EMPTY_CORRELATION: CorrelationData = {
+  symbols: [],
+  matrix: [],
 };
 
 function getCorrelationColor(value: number): string {
@@ -48,9 +42,26 @@ interface CorrelationMatrixProps {
   data?: CorrelationData;
 }
 
-export function CorrelationMatrix({
-  data = MOCK_CORRELATION,
-}: CorrelationMatrixProps) {
+export function CorrelationMatrix({ data }: CorrelationMatrixProps) {
+  if (!data || data.symbols.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Grid3X3 className="h-5 w-5" />
+            Correlation Matrix
+          </CardTitle>
+          <CardDescription>Portfolio correlation analysis</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            No data available. Add holdings to your portfolio to see
+            correlations.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
   const { symbols, matrix } = data;
 
   // Calculate average correlation (excluding self-correlation)
