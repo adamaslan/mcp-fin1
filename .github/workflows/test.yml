@@ -1,0 +1,100 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Layer 1: Structure Validation (fastest)
+  structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Validate file structure
+        run: npm run test:structure
+      - name: Validate imports
+        run: npm run validate:imports
+
+  # Layer 2: Build Validation
+  build:
+    needs: structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: TypeScript check
+        run: npx tsc --noEmit
+      - name: ESLint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+        env:
+          # Add required env vars for build
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY_TEST }}
+
+  # Layer 3: Component Tests
+  unit:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Component tests
+        run: npm run test:unit
+
+  # Layer 4: E2E Tests
+  e2e:
+    needs: unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          BASE_URL: http://localhost:3000
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+  # Layer 5: Production Smoke (on deploy)
+  smoke:
+    if: github.ref == 'refs/heads/main'
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+      - name: Run smoke tests
+        run: npm run test:e2e:smoke
+        env:
+          BASE_URL: ${{ secrets.PRODUCTION_URL }}
