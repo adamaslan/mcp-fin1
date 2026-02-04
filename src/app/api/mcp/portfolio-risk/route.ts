@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMCPClient } from "@/lib/mcp/client";
-import { TIER_LIMITS } from "@/lib/auth/tiers";
+import { TIER_LIMITS, canAccessAI } from "@/lib/auth/tiers";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
 
 export async function POST(request: Request) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { positions } = await request.json();
+    const { positions, use_ai = false } = await request.json();
 
     if (!positions || !Array.isArray(positions)) {
       return NextResponse.json(
@@ -25,9 +25,13 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if AI is allowed
+    const canUseAi = canAccessAI(tier, "portfolio_risk");
+    const useAiActual = use_ai && canUseAi;
+
     // Call MCP server
     const mcp = getMCPClient();
-    const result = await mcp.portfolioRisk(positions);
+    const result = await mcp.portfolioRisk(positions, useAiActual);
 
     // Filter hedge suggestions for tier
     let filteredResult = { ...result };
@@ -39,7 +43,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       ...filteredResult,
-      tierLimit: TIER_LIMITS[tier],
+      tierLimit: {
+        ...TIER_LIMITS[tier],
+        ai: canUseAi,
+      },
     });
   } catch (error) {
     console.error("Portfolio risk API error:", error);

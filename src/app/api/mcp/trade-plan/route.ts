@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMCPClient } from "@/lib/mcp/client";
-import { canAccessTimeframe, TIER_LIMITS } from "@/lib/auth/tiers";
+import { canAccessTimeframe, canAccessAI, TIER_LIMITS } from "@/lib/auth/tiers";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
 import type { TradePlan } from "@/lib/mcp/types";
 
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     // Initialize user in database and get their tier
     const { userId, tier } = await ensureUserInitialized();
 
-    const { symbol, period = "1mo" } = await request.json();
+    const { symbol, period = "1mo", use_ai = false } = await request.json();
 
     if (!symbol) {
       return NextResponse.json(
@@ -18,9 +18,13 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if AI is allowed
+    const canUseAi = canAccessAI(tier, "get_trade_plan");
+    const useAiActual = use_ai && canUseAi;
+
     // Call MCP server
     const mcp = getMCPClient();
-    const result = await mcp.getTradePlan(symbol, period);
+    const result = await mcp.getTradePlan(symbol, period, useAiActual);
 
     // Filter trade plans based on timeframe access
     let filteredPlans = (result.trade_plans || []) as TradePlan[];
@@ -41,7 +45,10 @@ export async function POST(request: Request) {
       ...result,
       trade_plans: filteredPlans,
       has_trades: filteredPlans.length > 0,
-      tierLimit: TIER_LIMITS[tier],
+      tierLimit: {
+        ...TIER_LIMITS[tier],
+        ai: canUseAi,
+      },
     });
   } catch (error) {
     console.error("Trade plan API error:", error);
