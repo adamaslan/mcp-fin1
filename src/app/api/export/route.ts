@@ -44,17 +44,17 @@ export async function GET(request: Request) {
 function generateCSV(trades: Trade[], userPositions: Position[]) {
   let csv = "Trade Journal\n";
   csv +=
-    "Symbol,Entry Price,Exit Price,Shares,Entry Date,Exit Date,P&L,P&L %,Status,Notes\n";
+    "Symbol,Entry Price,Exit Price,Shares,Entry Date,Exit Date,P&L,P&L %,Notes\n";
 
   trades.forEach((trade: Trade) => {
-    csv += `${trade.symbol},${trade.entry_price},${trade.exit_price || ""},${trade.shares},${trade.entry_date},${trade.exit_date || ""},${trade.pnl || ""},${trade.pnl_percent || ""},${trade.status},"${(trade.notes || "").replace(/"/g, '""')}"\n`;
+    csv += `${trade.symbol},${trade.entryPrice},${trade.exitPrice || ""},${trade.shares},${trade.entryDate},${trade.exitDate || ""},${trade.pnl || ""},${trade.pnlPercent || ""},"${(trade.notes || "").replace(/"/g, '""')}"\n`;
   });
 
   csv += "\n\nPortfolio Positions\n";
-  csv += "Symbol,Shares,Entry Price,Current Value\n";
+  csv += "Symbol,Shares,Entry Price,Status\n";
 
   userPositions.forEach((pos: Position) => {
-    csv += `${pos.symbol},${pos.shares},${pos.entry_price},${pos.current_value || ""}\n`;
+    csv += `${pos.symbol},${pos.shares},${pos.entryPrice},${pos.status || ""}\n`;
   });
 
   return new Response(csv, {
@@ -66,9 +66,9 @@ function generateCSV(trades: Trade[], userPositions: Position[]) {
 }
 
 function generateJSON(trades: Trade[], userPositions: Position[]) {
-  const closedTrades = trades.filter((t: Trade) => t.status === "closed");
+  const closedTrades = trades.filter((t: Trade) => t.exitDate !== null);
   const winningClosedTrades = trades.filter(
-    (t: Trade) => t.status === "closed" && (t.pnl || 0) > 0,
+    (t: Trade) => t.exitDate !== null && (t.pnl || 0) > 0,
   );
 
   const data = {
@@ -76,7 +76,7 @@ function generateJSON(trades: Trade[], userPositions: Position[]) {
     summary: {
       totalTrades: trades.length,
       closedTrades: closedTrades.length,
-      openTrades: trades.filter((t: Trade) => t.status === "open").length,
+      openTrades: trades.filter((t: Trade) => t.exitDate === null).length,
       totalPnL: trades.reduce((sum: number, t: Trade) => sum + (t.pnl || 0), 0),
       winRate:
         closedTrades.length > 0

@@ -35,7 +35,7 @@ export default function ScannerPage() {
   const { tier } = useTier();
   const [selectedUniverse, setSelectedUniverse] = useState("sp500");
   const [useAI, setUseAI] = useState(false);
-  const { data, loading, error, execute } = useLazyMCPQuery();
+  const { data, loading, error, execute } = useLazyMCPQuery<ScanResult>();
 
   const tierLimits = TIER_LIMITS[tier];
 
@@ -73,7 +73,7 @@ export default function ScannerPage() {
   const trades = data?.qualified_trades || [];
   const resultsLimited = data?.resultsLimited || false;
 
-  const getRiskQualityColor = (quality) => {
+  const getRiskQualityColor = (quality: string) => {
     switch (quality) {
       case "high":
         return "bg-green-500/10 text-green-700 dark:text-green-400";
@@ -132,7 +132,7 @@ export default function ScannerPage() {
             <Checkbox
               id="ai-toggle"
               checked={useAI}
-              onCheckedChange={(checked) => setUseAI(checked)}
+              onCheckedChange={(checked) => setUseAI(checked === true)}
               disabled={loading || tier === "free"}
             />
             <label
@@ -179,7 +179,7 @@ export default function ScannerPage() {
           {data?.ai_analysis && (
             <AIInsightsPanel
               analysis={data.ai_analysis}
-              tool="scan_securities"
+              tool="screen_securities"
               title="Scan AI Analysis"
             />
           )}

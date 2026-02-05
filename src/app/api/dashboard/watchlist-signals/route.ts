@@ -28,8 +28,10 @@ export async function GET() {
 
     // Collect all unique symbols across watchlists
     const allSymbols = Array.from(
-      new Set(userWatchlists.flatMap((w) => w.symbols)),
-    );
+      new Set(
+        userWatchlists.flatMap((w: (typeof userWatchlists)[0]) => w.symbols),
+      ),
+    ) as string[];
 
     const mcp = getMCPClient();
 
@@ -44,22 +46,24 @@ export async function GET() {
     });
 
     // Attach signals to each watchlist
-    const watchlistsWithSignals = userWatchlists.map((watchlist) => ({
-      ...watchlist,
-      signals: watchlist.symbols.map(
-        (symbol) =>
-          signalsBySymbol[symbol] || {
-            symbol,
-            price: 0,
-            change_percent: 0,
-            action: "HOLD" as const,
-            risk_assessment: "HOLD" as const,
-            top_signals: [],
-            key_support: 0,
-            key_resistance: 0,
-          },
-      ),
-    }));
+    const watchlistsWithSignals = userWatchlists.map(
+      (watchlist: (typeof userWatchlists)[0]) => ({
+        ...watchlist,
+        signals: watchlist.symbols.map(
+          (symbol: string) =>
+            signalsBySymbol[symbol] || {
+              symbol,
+              price: 0,
+              change_percent: 0,
+              action: "HOLD" as const,
+              risk_assessment: "HOLD" as const,
+              top_signals: [],
+              key_support: 0,
+              key_resistance: 0,
+            },
+        ),
+      }),
+    );
 
     return NextResponse.json({
       success: true,
