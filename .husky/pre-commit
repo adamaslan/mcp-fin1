@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Fast checks only - don't block commits with slow tests
+npm run lint
+npm run validate:imports
+npm run test:structure
