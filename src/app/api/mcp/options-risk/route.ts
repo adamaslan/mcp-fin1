@@ -75,11 +75,17 @@ export async function POST(request: Request) {
 
     // Apply tier-based filtering for scenarios
     let filteredScenarios = result.scenarios || [];
-    if (tier === "pro") {
-      // Pro tier: limit to 5 scenarios
+    let scenariosLimit = 5; // Default for pro and free
+
+    if (tier === "pro" || tier === "free") {
+      // Pro and Free tiers: limit to 5 scenarios
       filteredScenarios = filteredScenarios.slice(0, 5);
+      scenariosLimit = 5;
     }
     // Max tier: all scenarios (no filtering)
+    if (tier === "max") {
+      scenariosLimit = Infinity;
+    }
 
     // Return response with tier info
     return NextResponse.json({
@@ -87,7 +93,7 @@ export async function POST(request: Request) {
       scenarios: filteredScenarios,
       tierLimit: {
         ai: canUseAi,
-        scenariosAvailable: tier === "max" ? Infinity : 5,
+        scenariosAvailable: scenariosLimit,
         strategiesAvailable: tier === "max" ? ["all"] : ["basic"],
       },
     });

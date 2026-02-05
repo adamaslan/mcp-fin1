@@ -81,12 +81,10 @@ export class MorningBriefPage {
   async getWatchlistSymbols(): Promise<string[]> {
     const symbols = await this.page
       .locator('[data-testid="watchlist-signal"]')
-      .evaluate(
-        (elements) =>
-          Array.from(elements).map(
-            (el) => el.querySelector("h3")?.textContent || "",
-          ),
-        [],
+      .evaluateAll((elements) =>
+        (elements as Element[]).map(
+          (el) => el.querySelector("h3")?.textContent || "",
+        ),
       );
     return symbols;
   }
