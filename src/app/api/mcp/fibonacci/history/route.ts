@@ -282,9 +282,19 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Fibonacci history error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("Fibonacci history error:", {
+      message: errorMessage,
+      stack: errorStack,
+    });
+
     return NextResponse.json(
-      { error: "Failed to retrieve historical signal data" },
+      {
+        error: "Failed to retrieve historical signal data",
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
+      },
       { status: 500 },
     );
   }

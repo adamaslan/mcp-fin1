@@ -121,7 +121,38 @@ export async function POST(request: Request) {
       );
     }
 
-    console.error("Fibonacci analysis error:", error);
-    return NextResponse.json({ error: "Analysis failed" }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("Fibonacci analysis error:", {
+      message: errorMessage,
+      stack: errorStack,
+      userId,
+      tier,
+    });
+
+    // Check if it's an MCP connection error
+    if (
+      errorMessage.includes("MCP API error") ||
+      errorMessage.includes("ECONNREFUSED")
+    ) {
+      return NextResponse.json(
+        {
+          error: "MCP server error",
+          details: errorMessage,
+          message:
+            "Unable to connect to the analysis server. Please ensure the MCP server is running.",
+        },
+        { status: 503 },
+      );
+    }
+
+    return NextResponse.json(
+      {
+        error: "Analysis failed",
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
+      },
+      { status: 500 },
+    );
   }
 }
