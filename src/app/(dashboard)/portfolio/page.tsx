@@ -28,7 +28,7 @@ interface Position {
 
 export default function PortfolioPage() {
   const { tier } = useTier();
-  const [positions, setPositions] = useState([
+  const [positions, setPositions] = useState<Position[]>([
     { symbol: "AAPL", shares: 100, entry_price: 150 },
     { symbol: "MSFT", shares: 50, entry_price: 300 },
     { symbol: "GOOGL", shares: 25, entry_price: 140 },
@@ -37,14 +37,14 @@ export default function PortfolioPage() {
   const [newSymbol, setNewSymbol] = useState("");
   const [newShares, setNewShares] = useState("");
   const [newPrice, setNewPrice] = useState("");
-  const [formError, setFormError] = useState(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [useAI, setUseAI] = useState(false);
 
   const {
     data: riskData,
     loading,
-    error,
-  } = useMCPQuery({
+    error: queryError,
+  } = useMCPQuery<PortfolioRiskResult>({
     endpoint: "/api/mcp/portfolio-risk",
     params: {
       positions,
@@ -53,6 +53,8 @@ export default function PortfolioPage() {
     enabled: positions.length > 0,
     refetchOnParamsChange: true,
   });
+
+  const error = queryError as string | null;
 
   const handleAddPosition = () => {
     if (!newSymbol.trim() || !newShares || !newPrice) {
@@ -73,7 +75,7 @@ export default function PortfolioPage() {
     setFormError(null);
   };
 
-  const handleRemovePosition = (symbol) => {
+  const handleRemovePosition = (symbol: string) => {
     setPositions(positions.filter((p) => p.symbol !== symbol));
   };
 
@@ -157,27 +159,6 @@ export default function PortfolioPage() {
         </CardContent>
       </Card>
 
-      {/* AI Toggle */}
-      {positions.length > 0 && (
-        <Card className="border-purple-200 dark:border-purple-900">
-          <CardContent className="pt-6 flex items-center gap-2">
-            <Checkbox
-              id="portfolio-ai-toggle"
-              checked={useAI}
-              onCheckedChange={(checked) => setUseAI(checked)}
-              disabled={loading || tier === "free"}
-            />
-            <label
-              htmlFor="portfolio-ai-toggle"
-              className="text-sm cursor-pointer flex items-center gap-2"
-            >
-              <Sparkles className="h-4 w-4 text-purple-500" />
-              AI Risk Analysis {tier === "free" && "(Pro+)"}
-            </label>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Error */}
       {error && (
         <Card className="bg-red-500/10 border-red-200 dark:border-red-800">
@@ -201,7 +182,7 @@ export default function PortfolioPage() {
           {riskData.ai_analysis && (
             <AIInsightsPanel
               analysis={riskData.ai_analysis}
-              tool="portfolio_risk_analysis"
+              tool="portfolio_risk"
               title="Portfolio AI Analysis"
             />
           )}

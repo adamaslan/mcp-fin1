@@ -57,7 +57,7 @@ export default function MorningBriefPage() {
             <Checkbox
               id="ai-toggle"
               checked={useAI}
-              onCheckedChange={(checked) => setUseAI(checked)}
+              onCheckedChange={(checked) => setUseAI(checked === true)}
               disabled={loading || !canUseAi}
             />
             <label
@@ -111,10 +111,7 @@ export default function MorningBriefPage() {
 
       {/* Empty State */}
       {!loading && !error && !data && (
-        <MCPEmptyState
-          message="No market data available"
-          description="Check back during market hours or try refreshing the page"
-        />
+        <MCPEmptyState message="No market data available" />
       )}
     </div>
   );

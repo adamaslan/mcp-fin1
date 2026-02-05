@@ -91,6 +91,7 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
       "indicator_help",
       "morning_brief_limited",
       "basic_fibonacci",
+      "options_analysis",
     ],
     fibonacciLevels: ["RETRACE_236", "RETRACE_382", "RETRACE_618"],
     fibonacciCategories: ["FIB_PRICE_LEVEL", "FIB_BOUNCE"],
@@ -118,7 +119,7 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
       portfolio_risk: { enabled: false, ai: false },
       morning_brief: { enabled: true, daily: 1, ai: false },
       analyze_fibonacci: { enabled: true, daily: 3, ai: false },
-      options_risk_analysis: { enabled: false, ai: false },
+      options_risk_analysis: { enabled: true, monthly: 5, ai: false },
     },
   },
 
