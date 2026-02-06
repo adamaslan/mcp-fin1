@@ -210,6 +210,8 @@ pgpass
 *.plan.md
 *.todo.md
 
+/.futurecode
+
 # Frontend Documentation (local development reference only)
 # These docs are for developers and are not committed to git
 /front-docs/

@@ -126,8 +126,6 @@ export async function POST(request: Request) {
     console.error("Fibonacci analysis error:", {
       message: errorMessage,
       stack: errorStack,
-      userId,
-      tier,
     });
 
     // Check if it's an MCP connection error
