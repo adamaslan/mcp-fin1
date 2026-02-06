@@ -65,9 +65,36 @@ export async function POST(request: Request) {
       );
     }
 
-    console.error("Analyze API error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("Analyze API error:", {
+      message: errorMessage,
+      stack: errorStack,
+    });
+
+    // Check if it's an MCP connection error
+    if (
+      errorMessage.includes("MCP API error") ||
+      errorMessage.includes("ECONNREFUSED")
+    ) {
+      return NextResponse.json(
+        {
+          error: "MCP server error",
+          details: errorMessage,
+          message:
+            "Unable to connect to the analysis server. Please ensure the MCP server is running.",
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to analyze security" },
+      {
+        error: "Failed to analyze security",
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
+      },
       { status: 500 },
     );
   }

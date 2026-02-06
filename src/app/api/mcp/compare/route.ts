@@ -63,17 +63,33 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("[API /mcp/compare] Error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("[API /mcp/compare] Error:", {
+      message: errorMessage,
+      stack: errorStack,
+    });
 
-    if (error instanceof Error && error.message.includes("MCP API error")) {
+    if (
+      errorMessage.includes("MCP API error") ||
+      errorMessage.includes("ECONNREFUSED")
+    ) {
       return NextResponse.json(
-        { error: "Comparison service unavailable" },
+        {
+          error: "MCP server error",
+          message:
+            "Comparison service unavailable. Please ensure the MCP server is running.",
+        },
         { status: 503 },
       );
     }
 
     return NextResponse.json(
-      { error: "Failed to compare securities" },
+      {
+        error: "Failed to compare securities",
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
+      },
       { status: 500 },
     );
   }

@@ -49,9 +49,33 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Portfolio risk API error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("Portfolio risk API error:", {
+      message: errorMessage,
+      stack: errorStack,
+    });
+
+    if (
+      errorMessage.includes("MCP API error") ||
+      errorMessage.includes("ECONNREFUSED")
+    ) {
+      return NextResponse.json(
+        {
+          error: "MCP server error",
+          message:
+            "Portfolio risk service unavailable. Please ensure the MCP server is running.",
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to calculate portfolio risk" },
+      {
+        error: "Failed to calculate portfolio risk",
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
+      },
       { status: 500 },
     );
   }

@@ -51,9 +51,33 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Trade plan API error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("Trade plan API error:", {
+      message: errorMessage,
+      stack: errorStack,
+    });
+
+    if (
+      errorMessage.includes("MCP API error") ||
+      errorMessage.includes("ECONNREFUSED")
+    ) {
+      return NextResponse.json(
+        {
+          error: "MCP server error",
+          message:
+            "Trade plan service unavailable. Please ensure the MCP server is running.",
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
-      { error: "Failed to get trade plan" },
+      {
+        error: "Failed to get trade plan",
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
+      },
       { status: 500 },
     );
   }

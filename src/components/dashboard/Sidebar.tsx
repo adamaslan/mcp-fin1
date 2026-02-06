@@ -106,28 +106,28 @@ export function Sidebar() {
     },
     {
       label: "Calendar",
-      href: "/calendar",
+      href: "/dashboard/calendar",
       icon: <Calendar className="h-5 w-5" />,
     },
     {
       label: "News",
-      href: "/news",
+      href: "/dashboard/news",
       icon: <Newspaper className="h-5 w-5" />,
     },
     {
       label: "API Docs",
-      href: "/api-docs",
+      href: "/dashboard/api-docs",
       icon: <Code className="h-5 w-5" />,
       requiresTier: "max",
     },
     {
       label: "Learn",
-      href: "/learn/signals",
+      href: "/dashboard/learn",
       icon: <BookOpen className="h-5 w-5" />,
     },
     {
       label: "Settings",
-      href: "/settings",
+      href: "/dashboard/settings",
       icon: <Settings className="h-5 w-5" />,
     },
   ];
