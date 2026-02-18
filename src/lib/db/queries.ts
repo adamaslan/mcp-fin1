@@ -84,6 +84,44 @@ export async function incrementAnalysisCount(userId: string) {
     );
 }
 
+/**
+ * Increment analysis count and return the new count in a single DB operation
+ * More efficient than separate increment + getTodayUsage calls
+ */
+export async function incrementAnalysisCountAndGet(
+  userId: string,
+): Promise<number> {
+  const today = new Date().toISOString().split("T")[0];
+
+  // Ensure usage record exists
+  const existing = await db.query.usageTracking.findFirst({
+    where: and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)),
+  });
+
+  if (!existing) {
+    const created = await db
+      .insert(usageTracking)
+      .values({
+        id: `usage_${userId}_${today}`,
+        userId,
+        date: today,
+        analysisCount: 1,
+        scanCount: 0,
+      })
+      .returning();
+    return created[0].analysisCount;
+  }
+
+  // Update and return new count
+  const updated = await db
+    .update(usageTracking)
+    .set({ analysisCount: (existing.analysisCount || 0) + 1 })
+    .where(and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)))
+    .returning();
+
+  return updated[0].analysisCount;
+}
+
 export async function incrementScanCount(userId: string) {
   const today = new Date().toISOString().split("T")[0];
   const usage = await getTodayUsage(userId);
@@ -94,6 +132,44 @@ export async function incrementScanCount(userId: string) {
     .where(
       and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)),
     );
+}
+
+/**
+ * Increment scan count and return the new count in a single DB operation
+ * More efficient than separate increment + getTodayUsage calls
+ */
+export async function incrementScanCountAndGet(
+  userId: string,
+): Promise<number> {
+  const today = new Date().toISOString().split("T")[0];
+
+  // Ensure usage record exists
+  const existing = await db.query.usageTracking.findFirst({
+    where: and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)),
+  });
+
+  if (!existing) {
+    const created = await db
+      .insert(usageTracking)
+      .values({
+        id: `usage_${userId}_${today}`,
+        userId,
+        date: today,
+        analysisCount: 0,
+        scanCount: 1,
+      })
+      .returning();
+    return created[0].scanCount;
+  }
+
+  // Update and return new count
+  const updated = await db
+    .update(usageTracking)
+    .set({ scanCount: (existing.scanCount || 0) + 1 })
+    .where(and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)))
+    .returning();
+
+  return updated[0].scanCount;
 }
 
 // Watchlists

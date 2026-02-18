@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/api/webhooks/(.*)",
   "/api/health",
+  "/api/public/(.*)", // Public API endpoints (market data, etc.)
 ]);
 
 const isMaxOnlyRoute = createRouteMatcher([

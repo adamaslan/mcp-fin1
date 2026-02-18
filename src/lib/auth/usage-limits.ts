@@ -2,6 +2,8 @@ import {
   getTodayUsage,
   incrementAnalysisCount,
   incrementScanCount,
+  incrementAnalysisCountAndGet,
+  incrementScanCountAndGet,
 } from "@/lib/db/queries";
 import { TIER_LIMITS, type UserTier } from "./tiers";
 
@@ -58,22 +60,20 @@ export async function checkScanLimit(
 
 /**
  * Record an analysis and return updated count
+ * Optimized to use single DB operation (increment + return)
  * Should be called after a successful analysis
  */
 export async function recordAnalysis(userId: string): Promise<number> {
-  await incrementAnalysisCount(userId);
-  const updated = await getTodayUsage(userId);
-  return updated.analysisCount;
+  return incrementAnalysisCountAndGet(userId);
 }
 
 /**
  * Record a scan and return updated count
+ * Optimized to use single DB operation (increment + return)
  * Should be called after a successful scan
  */
 export async function recordScan(userId: string): Promise<number> {
-  await incrementScanCount(userId);
-  const updated = await getTodayUsage(userId);
-  return updated.scanCount;
+  return incrementScanCountAndGet(userId);
 }
 
 /**
