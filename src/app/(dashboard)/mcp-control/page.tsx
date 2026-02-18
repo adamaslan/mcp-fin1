@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTier } from "@/hooks/useTier";
+import { useLazyMCPQuery } from "@/hooks/useMCPQuery";
 import { TierGate } from "@/components/gating/TierGate";
 import { ToolSelector } from "@/components/mcp-control/ToolSelector";
 import { ParameterForm } from "@/components/mcp-control/ParameterForm";
@@ -19,78 +20,89 @@ const MCP_TOOLS = [
     name: "Analyze Security",
     description: "Deep analysis with 150+ signals",
     icon: "📊",
-    tier: "free",
+    tier: "free" as const,
   },
   {
     id: "analyze_fibonacci",
     name: "Fibonacci Analysis",
     description: "40+ levels, 200+ signals, confluence zones",
     icon: "📈",
-    tier: "free",
+    tier: "free" as const,
   },
   {
     id: "get_trade_plan",
     name: "Trade Plan",
     description: "Risk-qualified trade plans with stops & targets",
     icon: "🎯",
-    tier: "free",
+    tier: "free" as const,
   },
   {
     id: "compare_securities",
     name: "Compare Securities",
     description: "Compare multiple stocks side-by-side",
     icon: "⚖️",
-    tier: "pro",
+    tier: "pro" as const,
   },
   {
     id: "screen_securities",
     name: "Screen Securities",
     description: "Screen universe by technical criteria",
     icon: "🔍",
-    tier: "pro",
+    tier: "pro" as const,
   },
   {
     id: "scan_trades",
     name: "Scan Trades",
     description: "Find qualified trade setups (1-10 per universe)",
     icon: "🔎",
-    tier: "pro",
+    tier: "pro" as const,
   },
   {
     id: "portfolio_risk",
     name: "Portfolio Risk",
     description: "Assess aggregate portfolio risk",
     icon: "⚠️",
-    tier: "pro",
+    tier: "pro" as const,
   },
   {
     id: "morning_brief",
     name: "Morning Brief",
     description: "Daily market briefing with key themes",
     icon: "📰",
-    tier: "pro",
+    tier: "pro" as const,
   },
   {
     id: "options_risk_analysis",
     name: "Options Risk",
     description: "Options chain risk analysis (IV, Greeks, PCR)",
     icon: "📉",
-    tier: "pro",
+    tier: "pro" as const,
   },
 ];
 
 export default function MCPControlPage() {
   const router = useRouter();
-  const { tier, loading: tierLoading } = useTier();
+  const { tier } = useTier();
 
   const [selectedTool, setSelectedTool] = useState<string>("analyze_security");
   const [parameters, setParameters] = useState<Record<string, any>>({});
   const [result, setResult] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [executionTime, setExecutionTime] = useState<number | null>(null);
 
+  const {
+    loading,
+    error: queryError,
+    execute,
+    cancel,
+  } = useLazyMCPQuery<any>();
+
   const currentTool = MCP_TOOLS.find((t) => t.id === selectedTool);
+
+  // Cancel in-flight request when tool selection changes
+  useEffect(() => {
+    cancel();
+  }, [selectedTool, cancel]);
 
   const handleExecute = useCallback(async () => {
     if (!parameters.symbol && selectedTool !== "options_risk_analysis") {
@@ -98,63 +110,41 @@ export default function MCPControlPage() {
       return;
     }
 
-    setLoading(true);
     setError(null);
     setResult(null);
 
-    try {
-      const startTime = performance.now();
+    const startTime = performance.now();
 
-      const response = await fetch("/api/gcloud/execute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          toolName: selectedTool,
-          parameters,
-        }),
-      });
+    const data = await execute("/api/gcloud/execute", {
+      toolName: selectedTool,
+      parameters,
+    });
 
-      const data = await response.json();
-      const endTime = performance.now();
-      setExecutionTime(endTime - startTime);
+    const endTime = performance.now();
+    setExecutionTime(endTime - startTime);
 
-      if (!response.ok) {
-        setError(
-          data.error ||
-            data.message ||
-            `Error: ${response.status} ${response.statusText}`,
-        );
-        return;
-      }
-
+    if (data) {
       setResult(data.result || data);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Unknown error occurred";
-      setError(`Failed to execute tool: ${errorMessage}`);
-      console.error("Execute error:", err);
-    } finally {
-      setLoading(false);
     }
-  }, [selectedTool, parameters]);
+  }, [selectedTool, parameters, execute]);
+
+  // Update error state from query error
+  useEffect(() => {
+    if (queryError) {
+      setError(queryError);
+    }
+  }, [queryError]);
 
   const handleClearForm = useCallback(() => {
     setParameters({});
     setResult(null);
     setError(null);
-  }, []);
+    cancel();
+  }, [cancel]);
 
   const handleLoadPreset = useCallback((presetParams: Record<string, any>) => {
     setParameters(presetParams);
   }, []);
-
-  if (tierLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6 pb-12">

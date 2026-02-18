@@ -177,13 +177,18 @@ export function useMCPQuery<TData, TParams = Record<string, unknown>>({
 /**
  * Hook for lazy MCP queries that don't execute automatically.
  * Useful when you want to trigger the query on user action (e.g., button click).
+ * Supports request cancellation via AbortController.
  *
  * @example
  * ```tsx
- * const { data, loading, error, execute } = useLazyMCPQuery<ScanResult>();
+ * const { data, loading, error, execute, cancel } = useLazyMCPQuery<ScanResult>();
  *
  * const handleScan = () => {
  *   execute('/api/mcp/scan', { universe: 'sp500', maxResults: 10 });
+ * };
+ *
+ * const handleCancel = () => {
+ *   cancel();
  * };
  * ```
  */
@@ -195,17 +200,27 @@ export function useLazyMCPQuery<TData>(): {
     endpoint: string,
     params: Record<string, unknown>,
   ) => Promise<TData | null>;
+  cancel: () => void;
   reset: () => void;
 } {
   const [data, setData] = useState<TData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const execute = useCallback(
     async (
       endpoint: string,
       params: Record<string, unknown>,
     ): Promise<TData | null> => {
+      // Cancel any in-flight request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController();
+
       setLoading(true);
       setError(null);
 
@@ -214,10 +229,32 @@ export function useLazyMCPQuery<TData>(): {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(params),
+          signal: abortControllerRef.current.signal,
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
+
+          // Handle specific error codes
+          if (response.status === 401) {
+            throw new Error("Authentication required. Please sign in.");
+          }
+          if (response.status === 403) {
+            throw new Error(
+              errorData.error || "Upgrade required to access this feature.",
+            );
+          }
+          if (response.status === 429) {
+            throw new Error(
+              errorData.error || "Rate limit exceeded. Please try again later.",
+            );
+          }
+          if (response.status === 503) {
+            throw new Error(
+              "MCP service unavailable. Please check backend server.",
+            );
+          }
+
           throw new Error(
             errorData.error || `Request failed with status ${response.status}`,
           );
@@ -227,6 +264,11 @@ export function useLazyMCPQuery<TData>(): {
         setData(responseData);
         return responseData;
       } catch (err) {
+        // Ignore abort errors (expected when user cancels)
+        if (err instanceof Error && err.name === "AbortError") {
+          return null;
+        }
+
         console.error(`[useLazyMCPQuery] ${endpoint} error:`, err);
         const errorMessage =
           err instanceof Error ? err.message : "An unexpected error occurred";
@@ -239,10 +281,26 @@ export function useLazyMCPQuery<TData>(): {
     [],
   );
 
+  const cancel = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setLoading(false);
+  }, []);
+
   const reset = useCallback(() => {
     setData(null);
     setError(null);
     setLoading(false);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, []);
 
   return {
@@ -250,6 +308,7 @@ export function useLazyMCPQuery<TData>(): {
     loading,
     error,
     execute,
+    cancel,
     reset,
   };
 }

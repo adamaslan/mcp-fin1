@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
 ---
 
-### TIER 2: Better Approach (Recommended for Phase 6) 🎯 Medium Effort / Strong Security
+### TIER 2: JWT Service-to-Service Auth ✅ Implemented (Phase 6)
 
 **Approach**: JWT-based service-to-service authentication
 
@@ -237,11 +237,11 @@ export async function POST(request: Request) {
 
 ## Implementation Roadmap
 
-| Phase           | Tier   | Status           | Timeline    | Benefits                          |
-| --------------- | ------ | ---------------- | ----------- | --------------------------------- |
-| **5 (Current)** | Tier 1 | 🚀 Implement NOW | 30 mins     | Immediate security improvement    |
-| **6 (Next)**    | Tier 2 | ⏳ Plan          | 2-3 weeks   | Better audit trail, auto-rotation |
-| **7**           | Tier 3 | 📋 Backlog       | Post-launch | Enterprise-grade, GCP-native      |
+| Phase           | Tier   | Status      | Timeline    | Benefits                          |
+| --------------- | ------ | ----------- | ----------- | --------------------------------- |
+| **5**           | Tier 1 | ✅ Complete | Done        | Defense-in-depth, IP allowlist    |
+| **6 (Current)** | Tier 2 | ✅ Complete | Done        | JWT auto-expiry, service identity |
+| **7**           | Tier 3 | 📋 Backlog  | Post-launch | Enterprise-grade, GCP-native      |
 
 ---
 
