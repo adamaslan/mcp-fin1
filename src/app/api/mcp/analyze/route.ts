@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMCPClient } from "@/lib/mcp/client";
-import { TIER_LIMITS } from "@/lib/auth/tiers";
+import { TIER_LIMITS, canAccessAI } from "@/lib/auth/tiers";
 import { ensureUserInitialized } from "@/lib/auth/user-init";
 import {
   checkAnalysisLimit,
@@ -25,9 +25,13 @@ export async function POST(request: Request) {
       );
     }
 
+    // Only allow AI for Pro+ users
+    const canUseAi = canAccessAI(tier, "analyze_security");
+    const enableAi = useAi && canUseAi;
+
     // Call MCP server
     const mcp = getMCPClient();
-    const result = await mcp.analyzeSecurity(symbol, period, useAi);
+    const result = await mcp.analyzeSecurity(symbol, period, enableAi);
 
     // Record usage after successful analysis
     const analysisCount = await recordAnalysis(userId);

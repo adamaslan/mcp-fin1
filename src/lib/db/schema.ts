@@ -98,6 +98,44 @@ export const alerts = pgTable("alerts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// MCP Presets table (user's saved tool configurations)
+export const mcpPresets = pgTable("mcp_presets", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(), // e.g., "My Aggressive Setup"
+  description: text("description"),
+  toolName: text("tool_name").notNull(), // e.g., "analyze_security"
+  parameters: jsonb("parameters").notNull(), // { period: "1mo", use_ai: true }
+  isDefault: boolean("is_default").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// MCP Runs table (execution history for all tool runs)
+export const mcpRuns = pgTable("mcp_runs", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  toolName: text("tool_name").notNull(), // e.g., "analyze_security"
+  parameters: jsonb("parameters").notNull(), // { symbol: "AAPL", period: "1mo" }
+  result: jsonb("result"), // Full response from MCP
+  status: text("status").notNull().default("running"), // "running" | "success" | "error"
+  executionTime: integer("execution_time"), // Milliseconds
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Public Latest Runs table (cached for landing page)
+export const publicLatestRuns = pgTable("public_latest_runs", {
+  id: text("id").primaryKey(),
+  toolName: text("tool_name").notNull().unique(), // One per tool
+  symbol: text("symbol"), // For display (e.g., "SPY")
+  result: jsonb("result").notNull(), // Cached result from latest run
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Re-export Fibonacci signals from separate file
 export {
   fibonacciSignalHistory,

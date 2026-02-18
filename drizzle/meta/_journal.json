@@ -8,6 +8,13 @@
       "when": 1768876134680,
       "tag": "0000_real_norrin_radd",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770360518680,
+      "tag": "0001_odd_night_nurse",
+      "breakpoints": true
     }
   ]
 }
