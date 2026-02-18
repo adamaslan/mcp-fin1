@@ -18,6 +18,7 @@ import {
   Target,
   Scale,
   Activity,
+  FlaskConical,
 } from "lucide-react";
 
 interface NavItem {
@@ -26,6 +27,7 @@ interface NavItem {
   icon: React.ReactNode;
   requiresTier?: "pro" | "max";
   disabled?: boolean;
+  external?: boolean;
 }
 
 export function Sidebar() {
@@ -57,6 +59,14 @@ export function Sidebar() {
       label: "Fibonacci",
       href: "/dashboard/fibonacci",
       icon: <Target className="h-5 w-5" />,
+    },
+    {
+      label: "Options Lab",
+      href:
+        process.env.NEXT_PUBLIC_OPTIONS_LAB_URL ||
+        "http://localhost:8080/dashboard",
+      icon: <FlaskConical className="h-5 w-5" />,
+      external: true,
     },
     {
       label: "Compare",
@@ -129,6 +139,25 @@ export function Sidebar() {
 
       {navItems.map((item) => {
         const accessible = canAccess(item);
+
+        if (item.external) {
+          return (
+            <a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              {item.icon}
+              <span>{item.label}</span>
+              <span className="ml-auto text-xs text-muted-foreground/60">
+                &#8599;
+              </span>
+            </a>
+          );
+        }
+
         return (
           <Link
             key={item.href}
