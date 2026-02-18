@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { publicLatestRuns } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
+import { isAllowedIP, getClientIP } from "@/lib/auth/ip-allowlist";
 
 /**
  * GET /api/dashboard/latest-runs
@@ -60,7 +61,16 @@ export async function GET(request: Request) {
  * POST /api/dashboard/latest-runs
  *
  * Internal endpoint for updating the cached latest runs.
- * Should be called by a cron job after executing each tool.
+ * Requires both:
+ * 1. Valid API key in x-internal-api-key header
+ * 2. Request from allowed internal IP (GCP VPC or configured IPs)
+ *
+ * Should be called by a cron job (Cloud Scheduler) after executing each tool.
+ *
+ * SECURITY: Tier 1 Implementation
+ * - Static API key check (defense layer 1)
+ * - IP allowlist check (defense layer 2)
+ * - Audit logging of all updates (for monitoring)
  *
  * Body:
  * {
@@ -68,15 +78,36 @@ export async function GET(request: Request) {
  *   symbol: string,
  *   result: object
  * }
+ *
+ * See SECURITY_ENDPOINT_REMEDIATION.md for details on security tiers and future improvements
  */
 export async function POST(request: Request) {
+  const clientIP = getClientIP(request);
+
   try {
-    // Verify internal request (could add API key check here)
+    // DEFENSE LAYER 1: Verify API Key
     const authHeader = request.headers.get("x-internal-api-key");
     const internalKey = process.env.INTERNAL_API_KEY;
+    const hasValidKey = internalKey && authHeader === internalKey;
 
-    if (internalKey && authHeader !== internalKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // DEFENSE LAYER 2: Verify Client IP is from allowed range
+    const hasAllowedIP = isAllowedIP(clientIP);
+
+    // Both checks must pass
+    if (!hasValidKey || !hasAllowedIP) {
+      const reason = !hasValidKey ? "invalid-api-key" : "disallowed-ip";
+      console.warn("Cache update unauthorized", {
+        reason,
+        clientIP,
+        hasValidKey,
+        hasAllowedIP,
+        timestamp: new Date().toISOString(),
+      });
+
+      return NextResponse.json(
+        { error: "Unauthorized", details: `Failed: ${reason}` },
+        { status: 401 },
+      );
     }
 
     const { toolName, symbol, result } = await request.json();
@@ -87,6 +118,14 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    // Audit log: Record successful authentication and cache update
+    console.info("Cache update request authorized", {
+      action: "cache-update",
+      toolName,
+      clientIP,
+      timestamp: new Date().toISOString(),
+    });
 
     // Upsert the latest run for this tool
     const existingRun = await db
