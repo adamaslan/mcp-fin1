@@ -60,7 +60,9 @@ export default async function Home() {
         <div className="container text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to trade smarter?</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-       We can help you know when there is too much risk in a trade, when to sell, and when to buy.   </p>
+            We can help you know when there is too much risk in a trade, when to
+            sell, and when to buy.{" "}
+          </p>
           <a
             href="/sign-up"
             className="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 text-base font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"

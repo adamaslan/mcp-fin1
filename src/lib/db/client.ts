@@ -2,10 +2,29 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-// Initialize database connection
-let db: any;
+// Lazy-load database connection to avoid initialization during build
+let cachedDb: any = null;
+let dbInitialized = false;
+let initError: Error | null = null;
 
-if (process.env.DATABASE_URL) {
+function getDb() {
+  if (dbInitialized) {
+    if (initError) throw initError;
+    return cachedDb;
+  }
+
+  // Skip initialization if DATABASE_URL not set (allows build to complete)
+  if (!process.env.DATABASE_URL) {
+    if (process.env.NODE_ENV === "production") {
+      initError = new Error(
+        "DATABASE_URL is required in production. Please set it in your environment.",
+      );
+      throw initError;
+    }
+    // In development/build, just warn and continue
+    return null;
+  }
+
   try {
     // Create postgres connection
     const client = postgres(process.env.DATABASE_URL, {
@@ -15,23 +34,43 @@ if (process.env.DATABASE_URL) {
     });
 
     // Initialize Drizzle with schema for relational queries
-    db = drizzle(client, { schema });
+    cachedDb = drizzle(client, { schema });
+    dbInitialized = true;
 
-    console.info("✓ Connected to PostgreSQL database");
+    if (process.env.NODE_ENV === "development") {
+      console.info("✓ Connected to PostgreSQL database");
+    }
+    return cachedDb;
   } catch (error) {
-    console.error("Failed to connect to PostgreSQL:", error);
-    throw new Error(
-      "Database connection failed. Check DATABASE_URL and ensure PostgreSQL is running.",
-    );
+    initError = error instanceof Error ? error : new Error(String(error));
+    console.error("Failed to connect to PostgreSQL:", initError);
+    if (process.env.NODE_ENV === "production") {
+      throw initError;
+    }
+    return null;
   }
-} else {
-  throw new Error(
-    "DATABASE_URL is required. Please set it in your .env.local file.\n" +
-      "Example: DATABASE_URL=postgresql://user:password@localhost:5432/mcp_finance",
-  );
 }
 
-export { db };
+// Export db object that initializes lazily
+export const db = {
+  get query() {
+    return getDb()?.query;
+  },
+  get select() {
+    return getDb()?.select;
+  },
+  get insert() {
+    return getDb()?.insert;
+  },
+  get update() {
+    return getDb()?.update;
+  },
+  get delete() {
+    return getDb()?.delete;
+  },
+  // Allow any other Drizzle methods to be accessed
+  [Symbol.iterator]: () => getDb()?.[Symbol.iterator]?.(),
+} as any;
 
 // Re-export schema for convenience
 export * from "./schema";
