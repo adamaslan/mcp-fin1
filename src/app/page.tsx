@@ -67,7 +67,7 @@ export default async function Home() {
             href="/sign-up"
             className="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 text-base font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
           >
-            Get Started Free
+            Get Started Now
           </a>
         </div>
       </section>
