@@ -49,16 +49,16 @@ export class MCPClient {
    */
   async analyzeSecurity(
     symbol: string,
-    period = "1mo",
+    period = "3mo",
     useAi = false,
   ): Promise<AnalysisResult> {
-    const response = await fetch(`${this.baseUrl}/api/analyze`, {
+    const response = await fetch(`${this.baseUrl}/api/analyze-security`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ symbol, period, use_ai: useAi }),
+      body: JSON.stringify({ symbol, period }),
     });
 
-    return this.handleResponse(response, `/api/analyze (symbol=${symbol})`);
+    return this.handleResponse(response, `/api/analyze-security (symbol=${symbol})`);
   }
 
   /**
@@ -70,15 +70,15 @@ export class MCPClient {
     metric = "signals",
     useAi = false,
   ): Promise<ComparisonResult> {
-    const response = await fetch(`${this.baseUrl}/api/compare`, {
+    const response = await fetch(`${this.baseUrl}/api/compare-securities`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ symbols, metric, use_ai: useAi }),
+      body: JSON.stringify({ symbols, metric, period: "3mo" }),
     });
 
     return this.handleResponse<ComparisonResult>(
       response,
-      `/api/compare (symbols=${symbols.join(",")})`,
+      `/api/compare-securities (symbols=${symbols.join(",")})`,
     );
   }
 
