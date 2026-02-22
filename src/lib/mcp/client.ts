@@ -58,7 +58,10 @@ export class MCPClient {
       body: JSON.stringify({ symbol, period }),
     });
 
-    return this.handleResponse(response, `/api/analyze-security (symbol=${symbol})`);
+    return this.handleResponse(
+      response,
+      `/api/analyze-security (symbol=${symbol})`,
+    );
   }
 
   /**
