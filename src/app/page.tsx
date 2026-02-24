@@ -5,6 +5,7 @@ import { TickerComparison } from "@/components/landing/TickerComparison";
 import { FibonacciPreview } from "@/components/landing/FibonacciPreview";
 import { SampleTradePlan } from "@/components/landing/SampleTradePlan";
 import { PricingCards } from "@/components/landing/PricingCards";
+import { IndustryPerformers } from "@/components/landing/IndustryPerformers";
 
 async function fetchMarketData() {
   try {
@@ -66,6 +67,9 @@ export default async function Home() {
       <section className="py-16 border-t">
         <LiveMarketPulse data={marketData?.market} />
       </section>
+
+      {/* Industry Performance Table */}
+      <IndustryPerformers />
 
       {/* Decision engine surface */}
       <div id="tools">
