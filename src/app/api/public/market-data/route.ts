@@ -15,13 +15,11 @@ export async function GET(): Promise<NextResponse> {
   try {
     const mcp = getMCPClient();
 
-    // Fetch all data in parallel, allowing partial failures
-    const [morningBriefResult, comparisonResult, sampleAnalysisResult] =
-      await Promise.allSettled([
-        mcp.morningBrief(FEATURED_WATCHLIST, "US"),
-        mcp.compareSecurity(FEATURED_WATCHLIST, "signals"),
-        mcp.analyzeSecurity("GOOG", "3mo"),
-      ]);
+    // Phase 1: Fetch morning brief and comparison in parallel
+    const [morningBriefResult, comparisonResult] = await Promise.allSettled([
+      mcp.morningBrief(FEATURED_WATCHLIST, "US"),
+      mcp.compareSecurity(FEATURED_WATCHLIST, "signals"),
+    ]);
 
     // Extract results with graceful fallbacks
     const morningBrief =
@@ -30,20 +28,29 @@ export async function GET(): Promise<NextResponse> {
         : null;
 
     const comparisonRaw =
-      comparisonResult.status === "fulfilled"
-        ? comparisonResult.value
-        : null;
-
-    const sampleAnalysis =
-      sampleAnalysisResult.status === "fulfilled"
-        ? sampleAnalysisResult.value
-        : null;
+      comparisonResult.status === "fulfilled" ? comparisonResult.value : null;
 
     // Extract comparison array from either field name
     const comparisonData =
       (comparisonRaw as any)?.comparison ||
       (comparisonRaw as any)?.comparisons ||
       [];
+
+    // Phase 2: Analyze the top-scoring ticker from comparison (hits Firestore cache)
+    const winnerSymbol =
+      (comparisonRaw as any)?.winner?.symbol ||
+      (comparisonData.length > 0 ? comparisonData[0].symbol : "GOOG");
+
+    // Phase 2b: Fetch analysis + fibonacci for winner in parallel (both hit cache)
+    const [analysisResult, fibResult] = await Promise.allSettled([
+      mcp.analyzeSecurity(winnerSymbol, "3mo"),
+      mcp.analyzeFibonacci(winnerSymbol, "3mo"),
+    ]);
+
+    const sampleAnalysis =
+      analysisResult.status === "fulfilled" ? analysisResult.value : null;
+    const fibonacciData =
+      fibResult.status === "fulfilled" ? fibResult.value : null;
 
     // At least one data source must succeed
     if (!morningBrief && !comparisonRaw && !sampleAnalysis) {
@@ -69,12 +76,9 @@ export async function GET(): Promise<NextResponse> {
           futuresNQ:
             morningBrief?.market_status?.futures_nq?.change_percent ?? 0,
           vix: morningBrief?.market_status?.vix ?? 0,
-          economicEvents:
-            morningBrief?.economic_events?.slice(0, 3) || [],
-          sectorLeaders:
-            morningBrief?.sector_leaders?.slice(0, 3) || [],
-          sectorLosers:
-            morningBrief?.sector_losers?.slice(0, 3) || [],
+          economicEvents: morningBrief?.economic_events?.slice(0, 3) || [],
+          sectorLeaders: morningBrief?.sector_leaders?.slice(0, 3) || [],
+          sectorLosers: morningBrief?.sector_losers?.slice(0, 3) || [],
           keyThemes: morningBrief?.key_themes?.slice(0, 3) || [],
         },
         featuredTickers: FEATURED_WATCHLIST,
@@ -83,9 +87,26 @@ export async function GET(): Promise<NextResponse> {
           ? {
               symbol: sampleAnalysis.symbol || "GOOG",
               signals: sampleAnalysis.signals?.slice(0, 5) || [],
-              summary: sampleAnalysis.summary,
+              summary: {
+                bullish: sampleAnalysis.summary?.bullish ?? 0,
+                bearish: sampleAnalysis.summary?.bearish ?? 0,
+                neutral:
+                  (sampleAnalysis.summary?.total_signals ?? 0) -
+                  (sampleAnalysis.summary?.bullish ?? 0) -
+                  (sampleAnalysis.summary?.bearish ?? 0),
+              },
               indicators: sampleAnalysis.indicators,
               price: sampleAnalysis.price,
+            }
+          : null,
+        fibonacci: fibonacciData
+          ? {
+              symbol: fibonacciData.symbol,
+              price: fibonacciData.price,
+              levels: fibonacciData.levels?.slice(0, 5) || [],
+              signals: fibonacciData.signals?.slice(0, 5) || [],
+              clusters: fibonacciData.clusters?.slice(0, 3) || [],
+              summary: fibonacciData.summary,
             }
           : null,
       },
@@ -108,5 +129,7 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-// Revalidate every 2 minutes for ISR (Incremental Static Regeneration)
-export const revalidate = 120;
+// Revalidate every 5 minutes — aligned with backend Firestore cache TTL (300s)
+// This ensures each ISR revalidation hits a warm Firestore cache most of the time,
+// minimizing Finnhub/Alpha Vantage API calls
+export const revalidate = 300;

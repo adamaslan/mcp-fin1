@@ -27,7 +27,8 @@ export function SampleTradePlan({ data }: { data?: AnalysisData | null }) {
   const bearishCount = data?.summary?.bearish || 0;
   const neutralCount = data?.summary?.neutral || 0;
   const totalSignals = bullishCount + bearishCount + neutralCount;
-  const topSignal = data?.signals?.[0]?.name || "[Signal]";
+  const topSignal =
+    data?.signals?.[0]?.signal || data?.signals?.[0]?.name || "[Signal]";
 
   const getQualityBadge = () => {
     if (bullishCount > 70)
@@ -88,7 +89,10 @@ export function SampleTradePlan({ data }: { data?: AnalysisData | null }) {
                   Signal Score
                 </p>
                 <p className="text-2xl font-bold">
-                  {Math.round((bullishCount / totalSignals) * 100)}%
+                  {totalSignals > 0
+                    ? Math.round((bullishCount / totalSignals) * 100)
+                    : 0}
+                  %
                 </p>
               </div>
             </div>

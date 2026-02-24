@@ -5,12 +5,13 @@ import { TickerComparison } from "@/components/landing/TickerComparison";
 import { FibonacciPreview } from "@/components/landing/FibonacciPreview";
 import { SampleTradePlan } from "@/components/landing/SampleTradePlan";
 import { PricingCards } from "@/components/landing/PricingCards";
+import { IndustryPerformers } from "@/components/landing/IndustryPerformers";
 
 async function fetchMarketData() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/public/market-data`, {
-      next: { revalidate: 120 },
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {
@@ -67,6 +68,9 @@ export default async function Home() {
         <LiveMarketPulse data={marketData?.market} />
       </section>
 
+      {/* Industry Performance Table */}
+      <IndustryPerformers />
+
       {/* Decision engine surface */}
       <div id="tools">
         <ToolShowcase />
@@ -86,7 +90,7 @@ export default async function Home() {
       </section>
 
       {/* Supporting analysis */}
-      <FibonacciPreview />
+      <FibonacciPreview data={marketData?.fibonacci} />
 
       {/* Pricing section */}
       <section id="pricing" className="py-16 bg-muted/50 border-t">
@@ -101,10 +105,10 @@ export default async function Home() {
           </h2>
 
           <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
-            Stop jumping between scanners, indicators, and options tools.
-            This platform ranks the best opportunities, decides whether stock
-            or options are the right vehicle, and designs the trade with
-            quantified risk and payoff.
+            Stop jumping between scanners, indicators, and options tools. This
+            platform ranks the best opportunities, decides whether stock or
+            options are the right vehicle, and designs the trade with quantified
+            risk and payoff.
           </p>
 
           <p className="text-sm text-muted-foreground mb-8">
