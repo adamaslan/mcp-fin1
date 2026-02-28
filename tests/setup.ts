@@ -1,4 +1,4 @@
-import { expect, afterEach, afterAll, beforeAll, vi } from "vitest";
+import { afterEach, afterAll, beforeAll, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 
 // Cleanup after each test
@@ -47,7 +47,7 @@ vi.mock("@clerk/nextjs", () => ({
 // Suppress console errors in tests
 const originalError = console.error;
 beforeAll(() => {
-  console.error = (...args: any[]) => {
+  console.error = (...args: unknown[]) => {
     if (
       typeof args[0] === "string" &&
       args[0].includes("Warning: ReactDOM.render")

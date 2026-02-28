@@ -70,7 +70,7 @@ test.describe("Dashboard - Home Page", () => {
 test.describe("Dashboard - Sidebar Navigation", () => {
   test("sidebar displays free tier badge", async ({
     authenticatedPage,
-    tierHelper,
+    tierHelper: _tierHelper,
   }) => {
     const sidebar = new Sidebar(authenticatedPage);
     await authenticatedPage.goto("/dashboard");

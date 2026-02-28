@@ -13,7 +13,6 @@ import {
   canAccessFeature,
   canAccessTimeframe,
   canAccessUniverse,
-  UserTier,
 } from "../src/lib/auth/tiers";
 
 // Color codes for terminal output
@@ -65,14 +64,6 @@ function assertTrue(condition: boolean, message?: string) {
 function assertFalse(condition: boolean, message?: string) {
   if (condition) {
     throw new Error(message || "Assertion failed");
-  }
-}
-
-function assertIncludes(arr: any[], value: any, message?: string) {
-  if (!arr.includes(value)) {
-    throw new Error(
-      message || `Expected array to include ${value}, but it doesn't`,
-    );
   }
 }
 

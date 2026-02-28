@@ -1,5 +1,4 @@
 import { test, expect } from "../../e2e-utils/fixtures/authenticated-user";
-import { AuthHelper } from "../../e2e-utils/helpers/auth-helper";
 
 /**
  * Authentication tests for sign-in flow

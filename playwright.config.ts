@@ -1,8 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
 
-// Load test environment variables
-dotenv.config({ path: ".env.test" });
+// Load test environment variables (quiet suppresses dotenvx tip messages)
+dotenv.config({ path: ".env.test", quiet: true } as Parameters<
+  typeof dotenv.config
+>[0]);
 
 export default defineConfig({
   testDir: "./e2e",
