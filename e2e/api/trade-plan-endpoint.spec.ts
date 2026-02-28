@@ -224,12 +224,6 @@ test.describe("API: /api/mcp/trade-plan - Trade Plan Data", () => {
  * Tests error scenarios
  */
 test.describe("API: /api/mcp/trade-plan - Error Handling", () => {
-  let apiHelper: APIHelper;
-
-  test.beforeEach(async ({ request }) => {
-    apiHelper = new APIHelper(request);
-  });
-
   test("invalid symbol returns appropriate response", async ({ request }) => {
     const response = await request.post("/api/mcp/trade-plan", {
       data: { symbol: "NOTREAL999", period: "1mo" },

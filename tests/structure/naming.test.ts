@@ -14,7 +14,6 @@ test("component files follow naming conventions", async () => {
 
 test("no orphaned test files without source", async () => {
   const tests = await glob("tests/**/*.test.ts");
-  const sources = await glob("src/**/*.{ts,tsx}");
 
   // Each test file should have a corresponding source file
   // (This is a soft check - some tests may be integration tests)

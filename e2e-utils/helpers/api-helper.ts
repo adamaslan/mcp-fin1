@@ -1,5 +1,7 @@
 import { APIRequestContext, expect } from "@playwright/test";
 
+type ApiResponse = Record<string, unknown> | null;
+
 /**
  * Helper class for testing API endpoints
  * Provides methods to test MCP endpoints and validate tier-based access control
@@ -14,7 +16,7 @@ export class APIHelper {
   async testAnalyzeEndpoint(
     symbol: string = "AAPL",
     expectedStatus: number = 200,
-  ): Promise<any> {
+  ): Promise<ApiResponse> {
     const response = await this.request.post("/api/mcp/analyze", {
       data: { symbol, period: "1mo", useAi: false },
     });
@@ -24,7 +26,7 @@ export class APIHelper {
     if (expectedStatus === 200) {
       const data = await response.json();
       expect(data).toHaveProperty("signals");
-      return data;
+      return data as ApiResponse;
     }
 
     return null;
@@ -37,7 +39,7 @@ export class APIHelper {
   async testScanEndpoint(
     universe: string = "sp500",
     expectedStatus: number = 200,
-  ): Promise<any> {
+  ): Promise<ApiResponse> {
     const response = await this.request.post("/api/mcp/scan", {
       data: { universe, maxResults: 10 },
     });
@@ -47,7 +49,7 @@ export class APIHelper {
     if (expectedStatus === 200) {
       const data = await response.json();
       expect(data).toHaveProperty("qualified_trades");
-      return data;
+      return data as ApiResponse;
     }
 
     return null;
@@ -60,7 +62,7 @@ export class APIHelper {
   async testTradePlanEndpoint(
     symbol: string = "AAPL",
     expectedStatus: number = 200,
-  ): Promise<any> {
+  ): Promise<ApiResponse> {
     const response = await this.request.post("/api/mcp/trade-plan", {
       data: { symbol, period: "1mo" },
     });
@@ -70,7 +72,7 @@ export class APIHelper {
     if (expectedStatus === 200) {
       const data = await response.json();
       expect(data).toHaveProperty("trade_plans");
-      return data;
+      return data as ApiResponse;
     }
 
     return null;
@@ -80,7 +82,7 @@ export class APIHelper {
    * Test endpoint without authentication
    * Should return 401 Unauthorized
    */
-  async testUnauthenticatedRequest(endpoint: string): Promise<any> {
+  async testUnauthenticatedRequest(endpoint: string): Promise<ApiResponse> {
     const response = await this.request.post(endpoint, {
       data: { symbol: "AAPL" },
     });
@@ -88,14 +90,16 @@ export class APIHelper {
     // Should return 401 Unauthorized without valid auth
     expect(response.status()).toBe(401);
 
-    return await response.json();
+    return (await response.json()) as ApiResponse;
   }
 
   /**
    * Test /api/mcp/portfolio-risk endpoint
    * Tests portfolio risk analysis (pro+ feature)
    */
-  async testPortfolioRiskEndpoint(expectedStatus: number = 200): Promise<any> {
+  async testPortfolioRiskEndpoint(
+    expectedStatus: number = 200,
+  ): Promise<ApiResponse> {
     const response = await this.request.post("/api/mcp/portfolio-risk", {
       data: {
         positions: [
@@ -110,7 +114,7 @@ export class APIHelper {
     if (expectedStatus === 200) {
       const data = await response.json();
       expect(data).toHaveProperty("aggregate_risk");
-      return data;
+      return data as ApiResponse;
     }
 
     return null;
@@ -123,7 +127,7 @@ export class APIHelper {
   async testAlertsEndpoint(
     method: "GET" | "POST" = "GET",
     expectedStatus: number = 200,
-  ): Promise<any> {
+  ): Promise<ApiResponse> {
     let response;
 
     if (method === "GET") {
@@ -141,7 +145,7 @@ export class APIHelper {
     expect(response.status()).toBe(expectedStatus);
 
     if (expectedStatus === 200) {
-      return await response.json();
+      return (await response.json()) as ApiResponse;
     }
 
     return null;
@@ -150,26 +154,32 @@ export class APIHelper {
   /**
    * Validate response has expected structure
    */
-  validateAnalyzeResponse(data: any): void {
+  validateAnalyzeResponse(data: ApiResponse): void {
     expect(data).toHaveProperty("signals");
     expect(data).toHaveProperty("tierLimit");
-    expect(Array.isArray(data.signals)).toBe(true);
+    expect(Array.isArray((data as Record<string, unknown>)?.signals)).toBe(
+      true,
+    );
   }
 
   /**
    * Validate scan response has expected structure
    */
-  validateScanResponse(data: any): void {
+  validateScanResponse(data: ApiResponse): void {
     expect(data).toHaveProperty("qualified_trades");
-    expect(Array.isArray(data.qualified_trades)).toBe(true);
+    expect(
+      Array.isArray((data as Record<string, unknown>)?.qualified_trades),
+    ).toBe(true);
   }
 
   /**
    * Validate trade plan response has expected structure
    */
-  validateTradePlanResponse(data: any): void {
+  validateTradePlanResponse(data: ApiResponse): void {
     expect(data).toHaveProperty("trade_plans");
-    expect(Array.isArray(data.trade_plans)).toBe(true);
+    expect(Array.isArray((data as Record<string, unknown>)?.trade_plans)).toBe(
+      true,
+    );
   }
 
   /**
@@ -179,7 +189,7 @@ export class APIHelper {
   async testMorningBriefEndpoint(
     symbols: string[] = ["SPY", "QQQ", "AAPL"],
     expectedStatus: number = 200,
-  ): Promise<any> {
+  ): Promise<ApiResponse> {
     const response = await this.request.post("/api/mcp/morning-brief", {
       data: { symbols, region: "US", use_ai: false },
     });
@@ -190,7 +200,7 @@ export class APIHelper {
       const data = await response.json();
       expect(data).toHaveProperty("market_status");
       expect(data).toHaveProperty("watchlist_signals");
-      return data;
+      return data as ApiResponse;
     }
 
     return null;
@@ -199,7 +209,7 @@ export class APIHelper {
   /**
    * Validate morning brief response has expected structure
    */
-  validateMorningBriefResponse(data: any): void {
+  validateMorningBriefResponse(data: ApiResponse): void {
     expect(data).toHaveProperty("market_status");
     expect(data).toHaveProperty("economic_events");
     expect(data).toHaveProperty("watchlist_signals");
@@ -210,7 +220,10 @@ export class APIHelper {
     expect(data).toHaveProperty("tierLimit");
 
     // Validate market_status structure
-    const status = data.market_status;
+    const status = (data as Record<string, unknown>)?.market_status as Record<
+      string,
+      unknown
+    >;
     expect(status).toHaveProperty("market_status");
     expect(status).toHaveProperty("current_time");
     expect(status).toHaveProperty("futures_es");
@@ -218,10 +231,20 @@ export class APIHelper {
     expect(status).toHaveProperty("vix");
 
     // Validate arrays
-    expect(Array.isArray(data.economic_events)).toBe(true);
-    expect(Array.isArray(data.watchlist_signals)).toBe(true);
-    expect(Array.isArray(data.sector_leaders)).toBe(true);
-    expect(Array.isArray(data.sector_losers)).toBe(true);
-    expect(Array.isArray(data.key_themes)).toBe(true);
+    expect(
+      Array.isArray((data as Record<string, unknown>)?.economic_events),
+    ).toBe(true);
+    expect(
+      Array.isArray((data as Record<string, unknown>)?.watchlist_signals),
+    ).toBe(true);
+    expect(
+      Array.isArray((data as Record<string, unknown>)?.sector_leaders),
+    ).toBe(true);
+    expect(
+      Array.isArray((data as Record<string, unknown>)?.sector_losers),
+    ).toBe(true);
+    expect(Array.isArray((data as Record<string, unknown>)?.key_themes)).toBe(
+      true,
+    );
   }
 }

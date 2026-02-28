@@ -40,6 +40,7 @@ export const test = authenticatedTest.extend<{
       );
     }
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(helper);
   },
 });

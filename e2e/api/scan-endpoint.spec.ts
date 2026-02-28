@@ -43,8 +43,6 @@ test.describe("API: /api/mcp/scan - Free Tier", () => {
   });
 
   test("free tier cannot access nasdaq100 universe", async ({ request }) => {
-    const apiHelper = new APIHelper(request);
-
     // Try to scan nasdaq100 (pro+ feature)
     const response = await request.post("/api/mcp/scan", {
       data: { universe: "nasdaq100" },
@@ -57,8 +55,6 @@ test.describe("API: /api/mcp/scan - Free Tier", () => {
   test("free tier cannot access etf_large_cap universe", async ({
     request,
   }) => {
-    const apiHelper = new APIHelper(request);
-
     // Try to scan etf_large_cap (pro+ feature)
     const response = await request.post("/api/mcp/scan", {
       data: { universe: "etf_large_cap" },
@@ -69,8 +65,6 @@ test.describe("API: /api/mcp/scan - Free Tier", () => {
   });
 
   test("free tier cannot access crypto universe", async ({ request }) => {
-    const apiHelper = new APIHelper(request);
-
     // Try to scan crypto (max+ feature)
     const response = await request.post("/api/mcp/scan", {
       data: { universe: "crypto" },
@@ -208,12 +202,6 @@ test.describe("API: /api/mcp/scan - Result Limits", () => {
  * Tests error scenarios
  */
 test.describe("API: /api/mcp/scan - Error Handling", () => {
-  let apiHelper: APIHelper;
-
-  test.beforeEach(async ({ request }) => {
-    apiHelper = new APIHelper(request);
-  });
-
   test("invalid universe returns error", async ({ request }) => {
     const response = await request.post("/api/mcp/scan", {
       data: { universe: "invalid_universe_xyz" },

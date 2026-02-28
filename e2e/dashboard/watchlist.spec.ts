@@ -50,10 +50,11 @@ test.describe("Watchlist Page", () => {
 
   test("watchlist card shows symbol input", async ({ authenticatedPage }) => {
     // If watchlists exist, should show add symbol input
-    const symbolInput = authenticatedPage.locator(
-      'input[placeholder*="symbol" i]',
-    );
     // May or may not be visible depending on state
+    await authenticatedPage
+      .locator('input[placeholder*="symbol" i]')
+      .isVisible()
+      .catch(() => false);
   });
 
   test("displays signal information for symbols", async ({

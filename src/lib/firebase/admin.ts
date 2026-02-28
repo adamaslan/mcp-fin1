@@ -29,7 +29,7 @@ function getFirebaseAdmin(): { app: App; db: Firestore } {
 
     if (!clientEmail || !privateKey) {
       throw new Error(
-        "Set GOOGLE_APPLICATION_CREDENTIALS or FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY in .env.local"
+        "Set GOOGLE_APPLICATION_CREDENTIALS or FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY in .env.local",
       );
     }
 
