@@ -6,6 +6,22 @@ import { FibonacciPreview } from "@/components/landing/FibonacciPreview";
 import { SampleTradePlan } from "@/components/landing/SampleTradePlan";
 import { PricingCards } from "@/components/landing/PricingCards";
 import { IndustryPerformers } from "@/components/landing/IndustryPerformers";
+import { PortfolioRiskDemo } from "@/components/landing/PortfolioRiskDemo";
+import type { PortfolioRiskData } from "@/lib/firebase/types";
+
+async function fetchPortfolioDemo(): Promise<PortfolioRiskData | null> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const response = await fetch(`${baseUrl}/api/public/portfolio-demo`, {
+      next: { revalidate: 600 },
+    });
+    if (!response.ok) return null;
+    const result = await response.json();
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+}
 
 async function fetchMarketData() {
   try {
@@ -28,7 +44,14 @@ async function fetchMarketData() {
 }
 
 export default async function Home() {
-  const marketData = await fetchMarketData();
+  const [marketData, portfolioData] = await Promise.allSettled([
+    fetchMarketData(),
+    fetchPortfolioDemo(),
+  ]);
+
+  const market = marketData.status === "fulfilled" ? marketData.value : null;
+  const portfolio =
+    portfolioData.status === "fulfilled" ? portfolioData.value : null;
 
   return (
     <main className="min-h-screen bg-background">
@@ -65,7 +88,7 @@ export default async function Home() {
 
       {/* Live market pulse section */}
       <section className="py-16 border-t">
-        <LiveMarketPulse data={marketData?.market} />
+        <LiveMarketPulse data={market?.market} />
       </section>
 
       {/* Industry Performance Table */}
@@ -79,18 +102,21 @@ export default async function Home() {
       {/* Ranked opportunities */}
       <section className="py-16 border-t">
         <TickerComparison
-          comparison={marketData?.comparison}
-          featuredTickers={marketData?.featuredTickers}
+          comparison={market?.comparison}
+          featuredTickers={market?.featuredTickers}
         />
       </section>
 
       {/* Trade design (stock or options) */}
       <section className="py-16 bg-muted/50 border-t">
-        <SampleTradePlan data={marketData?.sampleAnalysis} />
+        <SampleTradePlan data={market?.sampleAnalysis} />
       </section>
 
       {/* Supporting analysis */}
-      <FibonacciPreview data={marketData?.fibonacci} />
+      <FibonacciPreview data={market?.fibonacci} />
+
+      {/* Portfolio risk demo — live from Firebase */}
+      <PortfolioRiskDemo data={portfolio} />
 
       {/* Pricing section */}
       <section id="pricing" className="py-16 bg-muted/50 border-t">
