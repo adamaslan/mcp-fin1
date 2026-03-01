@@ -36,7 +36,8 @@ async function getPortfolioSymbols(): Promise<string[]> {
     if (!snap.exists) return FEATURED_WATCHLIST;
 
     const data = snap.data() as PortfolioRiskData;
-    if (!data.positions || data.positions.length === 0) return FEATURED_WATCHLIST;
+    if (!data.positions || data.positions.length === 0)
+      return FEATURED_WATCHLIST;
 
     const sorted = [...data.positions].sort(
       (a, b) => b.current_value - a.current_value,
@@ -57,13 +58,11 @@ export async function GET(): Promise<NextResponse> {
 
     // ------------------------------------------------------------------
     // Phase 0: Resolve portfolio symbols + read signal scores from
-    //          Firestore `signals` collection in parallel.
+    //          Firestore `signals` collection.
     // ------------------------------------------------------------------
-    const [portfolioSymbols, firestoreSignals] = await Promise.all([
-      getPortfolioSymbols(),
-      // readPortfolioSignals returns [] silently if the collection is empty
-      getPortfolioSymbols().then((syms) => readPortfolioSignals(syms)),
-    ]);
+    const portfolioSymbols = await getPortfolioSymbols();
+    // readPortfolioSignals returns [] silently if the collection is empty
+    const firestoreSignals = await readPortfolioSignals(portfolioSymbols);
 
     // ------------------------------------------------------------------
     // Phase 1: MCP calls — morning brief + comparison in parallel.
@@ -133,11 +132,12 @@ export async function GET(): Promise<NextResponse> {
     // ------------------------------------------------------------------
     // Phase 2: MCP calls for the winner — analysis + fibonacci + trade plan
     // ------------------------------------------------------------------
-    const [analysisResult, fibResult, tradePlanResult] = await Promise.allSettled([
-      mcp.analyzeSecurity(winnerSymbol, "3mo"),
-      mcp.analyzeFibonacci(winnerSymbol, "3mo"),
-      mcp.getTradePlan(winnerSymbol, "1mo"),
-    ]);
+    const [analysisResult, fibResult, tradePlanResult] =
+      await Promise.allSettled([
+        mcp.analyzeSecurity(winnerSymbol, "3mo"),
+        mcp.analyzeFibonacci(winnerSymbol, "3mo"),
+        mcp.getTradePlan(winnerSymbol, "1mo"),
+      ]);
 
     const sampleAnalysisRaw =
       analysisResult.status === "fulfilled" ? analysisResult.value : null;
@@ -151,7 +151,10 @@ export async function GET(): Promise<NextResponse> {
         : null;
 
     const mcpHasData =
-      morningBrief || mcpComparisonRaw || sampleAnalysisRaw || firestoreSignals.length > 0;
+      morningBrief ||
+      mcpComparisonRaw ||
+      sampleAnalysisRaw ||
+      firestoreSignals.length > 0;
 
     // ------------------------------------------------------------------
     // Phase 3: If MCP is completely offline AND no Firestore signals,
@@ -234,8 +237,10 @@ export async function GET(): Promise<NextResponse> {
     const market = morningBrief
       ? {
           status: morningBrief.market_status?.market_status ?? "unknown",
-          futuresES: morningBrief.market_status?.futures_es?.change_percent ?? 0,
-          futuresNQ: morningBrief.market_status?.futures_nq?.change_percent ?? 0,
+          futuresES:
+            morningBrief.market_status?.futures_es?.change_percent ?? 0,
+          futuresNQ:
+            morningBrief.market_status?.futures_nq?.change_percent ?? 0,
           vix: morningBrief.market_status?.vix ?? 0,
           economicEvents: morningBrief.economic_events?.slice(0, 3) || [],
           sectorLeaders: morningBrief.sector_leaders?.slice(0, 3) || [],
