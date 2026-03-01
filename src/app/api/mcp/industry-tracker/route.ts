@@ -20,7 +20,9 @@ export async function POST(request: Request) {
     ];
     if (!validHorizons.includes(horizon)) {
       return NextResponse.json(
-        { error: `Invalid horizon. Must be one of: ${validHorizons.join(", ")}` },
+        {
+          error: `Invalid horizon. Must be one of: ${validHorizons.join(", ")}`,
+        },
         { status: 400 },
       );
     }

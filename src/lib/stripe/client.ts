@@ -18,9 +18,13 @@ export async function redirectToCheckout(sessionId: string): Promise<void> {
 
   // redirectToCheckout exists at runtime but was removed from Stripe.js v8 types
   interface StripeWithLegacyCheckout {
-    redirectToCheckout: (opts: { sessionId: string }) => Promise<{ error?: { message: string } }>;
+    redirectToCheckout: (opts: {
+      sessionId: string;
+    }) => Promise<{ error?: { message: string } }>;
   }
-  const result = await (stripe as unknown as StripeWithLegacyCheckout).redirectToCheckout({ sessionId });
+  const result = await (
+    stripe as unknown as StripeWithLegacyCheckout
+  ).redirectToCheckout({ sessionId });
   if (result?.error) {
     throw new Error(result.error.message);
   }

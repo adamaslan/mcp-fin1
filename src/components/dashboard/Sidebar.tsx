@@ -8,17 +8,12 @@ import {
   BarChart3,
   Zap,
   TrendingUp,
-  Settings,
-  AlertCircle,
-  Download,
   Briefcase,
   Bookmark,
-  Sparkles,
-  Code,
   Target,
   Scale,
   Activity,
-  FlaskConical,
+  Newspaper,
 } from "lucide-react";
 
 interface NavItem {
@@ -26,14 +21,14 @@ interface NavItem {
   href: string;
   icon: React.ReactNode;
   requiresTier?: "pro" | "max";
-  disabled?: boolean;
-  external?: boolean;
 }
 
 export function Sidebar() {
   const pathname = usePathname();
   const { tier } = useTier();
 
+  // The 9 core MCP tools only
+  // Non-MCP features (alerts, export, signals, api-docs, settings) are in /future-updates1
   const navItems: NavItem[] = [
     {
       label: "Dashboard",
@@ -61,12 +56,9 @@ export function Sidebar() {
       icon: <Target className="h-5 w-5" />,
     },
     {
-      label: "Options Lab",
-      href:
-        process.env.NEXT_PUBLIC_OPTIONS_LAB_URL ||
-        "http://localhost:8080/dashboard",
-      icon: <FlaskConical className="h-5 w-5" />,
-      external: true,
+      label: "Morning Brief",
+      href: "/dashboard",
+      icon: <Newspaper className="h-5 w-5" />,
     },
     {
       label: "Compare",
@@ -85,35 +77,6 @@ export function Sidebar() {
       href: "/dashboard/portfolio",
       icon: <Briefcase className="h-5 w-5" />,
       requiresTier: "pro",
-    },
-    {
-      label: "Alerts",
-      href: "/dashboard/alerts",
-      icon: <AlertCircle className="h-5 w-5" />,
-      requiresTier: "max",
-    },
-    {
-      label: "Export",
-      href: "/dashboard/export",
-      icon: <Download className="h-5 w-5" />,
-      requiresTier: "max",
-    },
-    {
-      label: "Signals",
-      href: "/dashboard/signals",
-      icon: <Sparkles className="h-5 w-5" />,
-      requiresTier: "max",
-    },
-    {
-      label: "API Docs",
-      href: "/dashboard/api-docs",
-      icon: <Code className="h-5 w-5" />,
-      requiresTier: "max",
-    },
-    {
-      label: "Settings",
-      href: "/dashboard/settings",
-      icon: <Settings className="h-5 w-5" />,
     },
   ];
 
@@ -140,27 +103,9 @@ export function Sidebar() {
       {navItems.map((item) => {
         const accessible = canAccess(item);
 
-        if (item.external) {
-          return (
-            <a
-              key={item.label}
-              href={item.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-            >
-              {item.icon}
-              <span>{item.label}</span>
-              <span className="ml-auto text-xs text-muted-foreground/60">
-                &#8599;
-              </span>
-            </a>
-          );
-        }
-
         return (
           <Link
-            key={item.href}
+            key={item.label}
             href={accessible ? item.href : "#"}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium",

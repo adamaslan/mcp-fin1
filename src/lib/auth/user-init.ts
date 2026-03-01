@@ -18,8 +18,8 @@ export async function ensureUserInitialized(): Promise<{
   }
 
   // Get tier from Clerk metadata (defaults to free)
-  const tier = ((sessionClaims?.publicMetadata as SessionPublicMetadata)?.tier ||
-    "free") as UserTier;
+  const tier = ((sessionClaims?.publicMetadata as SessionPublicMetadata)
+    ?.tier || "free") as UserTier;
 
   // Get email from currentUser
   const user = await currentUser();

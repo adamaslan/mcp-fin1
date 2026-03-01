@@ -21,3 +21,14 @@ export interface PortfolioRiskData {
   positions: PortfolioPosition[];
   seeded_at?: string;
 }
+
+export interface MCPToolCacheEntry {
+  result: Record<string, unknown>;
+  updated_at: string;
+  period?: string;
+}
+
+export interface PortfolioTickersCache {
+  tickers: string[];
+  updated_at: string;
+}

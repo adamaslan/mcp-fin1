@@ -76,6 +76,23 @@ export interface TierLimits {
   };
 }
 
+/**
+ * Free tier MCP tool access toggles.
+ * Set any tool to `false` to instantly restrict it to paid tiers only.
+ * These act as a master override — no other changes needed.
+ */
+export const FREE_TIER_MCP_ACCESS: Record<MCPTool, boolean> = {
+  analyze_security: true,
+  compare_securities: true,
+  screen_securities: true,
+  get_trade_plan: true,
+  scan_trades: true,
+  portfolio_risk: true,
+  morning_brief: true,
+  analyze_fibonacci: true,
+  options_risk_analysis: true,
+};
+
 export const TIER_LIMITS: Record<UserTier, TierLimits> = {
   free: {
     analysesPerDay: 5,
@@ -92,6 +109,8 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
       "morning_brief_limited",
       "basic_fibonacci",
       "options_analysis",
+      "compare_securities",
+      "portfolio_risk",
     ],
     fibonacciLevels: ["RETRACE_236", "RETRACE_382", "RETRACE_618"],
     fibonacciCategories: ["FIB_PRICE_LEVEL", "FIB_BOUNCE"],
@@ -112,11 +131,11 @@ export const TIER_LIMITS: Record<UserTier, TierLimits> = {
 
     tools: {
       analyze_security: { enabled: true, daily: 5, ai: false },
-      compare_securities: { enabled: false, maxSymbols: 0, ai: false },
+      compare_securities: { enabled: true, maxSymbols: 2, daily: 3, ai: false },
       screen_securities: { enabled: true, daily: 1, ai: false },
       get_trade_plan: { enabled: true, daily: 5, ai: false },
       scan_trades: { enabled: true, daily: 1, maxResults: 5, ai: false },
-      portfolio_risk: { enabled: false, ai: false },
+      portfolio_risk: { enabled: true, daily: 1, ai: false },
       morning_brief: { enabled: true, daily: 1, ai: false },
       analyze_fibonacci: { enabled: true, daily: 3, ai: false },
       options_risk_analysis: { enabled: true, monthly: 5, ai: false },
@@ -293,9 +312,12 @@ export function canAccessAI(tier: UserTier, tool: MCPTool): boolean {
 }
 
 /**
- * Check if a tool is enabled for a tier
+ * Check if a tool is enabled for a tier.
+ * For free tier, also checks FREE_TIER_MCP_ACCESS — set a tool to `false`
+ * there to instantly restrict it to paid tiers without touching anything else.
  */
 export function isToolEnabled(tier: UserTier, tool: MCPTool): boolean {
+  if (tier === "free" && !FREE_TIER_MCP_ACCESS[tool]) return false;
   return TIER_LIMITS[tier].tools[tool].enabled;
 }
 
