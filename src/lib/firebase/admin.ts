@@ -20,7 +20,7 @@ function getFirebaseAdmin(): { app: App; db: Firestore } {
   const projectId = process.env.FIREBASE_PROJECT_ID ?? "ttb-lang1";
 
   // Prefer GOOGLE_APPLICATION_CREDENTIALS (key file path) if set,
-  // otherwise fall back to explicit FIREBASE_* env vars.
+  // otherwise require both FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY.
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     app = initializeApp({ credential: applicationDefault(), projectId });
   } else {
@@ -29,7 +29,7 @@ function getFirebaseAdmin(): { app: App; db: Firestore } {
 
     if (!clientEmail || !privateKey) {
       throw new Error(
-        "Set GOOGLE_APPLICATION_CREDENTIALS or FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY in .env.local",
+        "❌ Missing Firebase credentials. Set GOOGLE_APPLICATION_CREDENTIALS, or both FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY in .env.local",
       );
     }
 

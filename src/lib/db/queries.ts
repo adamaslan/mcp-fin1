@@ -197,7 +197,7 @@ export async function updateWatchlist(
   name?: string,
   symbols?: string[],
 ) {
-  const updates: any = {};
+  const updates: { name?: string; symbols?: string[] } = {};
   if (name) updates.name = name;
   if (symbols) updates.symbols = symbols;
 
@@ -245,7 +245,7 @@ export async function updatePosition(
   entryPrice?: number,
   notes?: string,
 ) {
-  const updates: any = {};
+  const updates: { shares?: number; entryPrice?: number; notes?: string } = {};
   if (shares !== undefined) updates.shares = shares;
   if (entryPrice !== undefined) updates.entryPrice = entryPrice;
   if (notes !== undefined) updates.notes = notes;
@@ -276,7 +276,7 @@ export async function createTradeEntry(
   shares: number,
   entryDate: Date,
   notes?: string,
-  tradePlanSnapshot?: any,
+  tradePlanSnapshot?: Record<string, unknown>,
 ) {
   return db.insert(tradeJournal).values({
     id: `trade_${Date.now()}`,
@@ -326,7 +326,7 @@ export async function createAlert(
   userId: string,
   symbol: string,
   alertType: string,
-  condition: any,
+  condition: Record<string, unknown>,
 ) {
   return db.insert(alerts).values({
     id: `alert_${Date.now()}`,
@@ -342,7 +342,7 @@ export async function updateAlert(
   isActive: boolean,
   lastTriggered?: Date,
 ) {
-  const updates: any = { isActive };
+  const updates: { isActive: boolean; lastTriggered?: Date } = { isActive };
   if (lastTriggered) updates.lastTriggered = lastTriggered;
 
   return db.update(alerts).set(updates).where(eq(alerts.id, alertId));

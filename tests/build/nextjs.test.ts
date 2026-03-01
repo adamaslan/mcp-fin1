@@ -6,7 +6,7 @@ const execAsync = promisify(exec);
 
 test("Next.js build succeeds", async () => {
   try {
-    const { stdout, stderr } = await execAsync("npm run build", {
+    const { stderr } = await execAsync("npm run build", {
       timeout: 300000,
       env: { ...process.env, CI: "true" },
     });
@@ -19,7 +19,8 @@ test("Next.js build succeeds", async () => {
     if (stderr.includes("deprecated")) {
       console.warn("Deprecation warnings found:", stderr);
     }
-  } catch (error: any) {
-    throw new Error(`Build failed:\n${error.stderr || error.stdout}`);
+  } catch (error: unknown) {
+    const err = error as { stderr?: string; stdout?: string };
+    throw new Error(`Build failed:\n${err.stderr || err.stdout}`);
   }
 }, 360000);

@@ -216,9 +216,6 @@ export function CommandPalette() {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
 
   if (!isOpen) return null;
 
@@ -248,7 +245,10 @@ export function CommandPalette() {
             type="text"
             placeholder="Search symbols, pages, or actions..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelectedIndex(0);
+            }}
             className="flex-1 bg-transparent outline-none text-lg placeholder:text-muted-foreground"
           />
           <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground bg-muted rounded">
@@ -278,7 +278,7 @@ export function CommandPalette() {
                   <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase">
                     Pages
                   </div>
-                  {groupedItems.navigation.map((item, index) => {
+                  {groupedItems.navigation.map((item) => {
                     const globalIndex = displayItems.indexOf(item);
                     return (
                       <button

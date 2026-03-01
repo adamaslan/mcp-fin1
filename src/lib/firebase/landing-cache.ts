@@ -46,28 +46,28 @@ export interface MarketSnapshot {
   } | null;
   sampleAnalysis: {
     symbol: string;
-    signals: any[];
+    signals: Record<string, unknown>[];
     summary: { bullish: number; bearish: number; neutral: number };
-    indicators?: any;
-    price?: any;
+    indicators?: Record<string, unknown>;
+    price?: number;
   } | null;
   fibonacci: {
     symbol: string;
-    price?: any;
-    levels: any[];
-    signals: any[];
-    clusters: any[];
-    summary?: any;
+    price?: number;
+    levels: Record<string, unknown>[];
+    signals: Record<string, unknown>[];
+    clusters: Record<string, unknown>[];
+    summary?: Record<string, unknown>;
   } | null;
   market: {
     status: string;
     futuresES: number;
     futuresNQ: number;
     vix: number;
-    economicEvents: any[];
-    sectorLeaders: any[];
-    sectorLosers: any[];
-    keyThemes: any[];
+    economicEvents: Record<string, unknown>[];
+    sectorLeaders: Record<string, unknown>[];
+    sectorLosers: Record<string, unknown>[];
+    keyThemes: Record<string, unknown>[];
   } | null;
   updatedAt: string;
 }
@@ -158,6 +158,93 @@ export async function readPortfolioSignals(
     }
 
     return entries.sort((a, b) => b.score - a.score);
+  } catch {
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// mcp_tool_cache helpers
+// ---------------------------------------------------------------------------
+
+import type { MCPToolCacheEntry, PortfolioTickersCache } from "./types";
+
+/**
+ * Read a cached MCP tool result from Firestore mcp_tool_cache.
+ *
+ * Args:
+ *   toolName: Name of the tool (e.g., "analyze_security")
+ *   cacheKey: Cache key (e.g., symbol "AAPL" or multi-symbol key)
+ *
+ * Returns:
+ *   The cached result object or null if not found/error
+ */
+export async function readMCPToolResult(
+  toolName: string,
+  cacheKey: string,
+): Promise<MCPToolCacheEntry | null> {
+  try {
+    const db = getDb();
+    const doc = await db
+      .collection("mcp_tool_cache")
+      .doc(toolName)
+      .collection("results")
+      .doc(cacheKey)
+      .get();
+    if (!doc.exists) return null;
+    return doc.data() as MCPToolCacheEntry;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Read the most recently cached result for a tool (regardless of key).
+ *
+ * Used by frontend tool pages to display the latest cached data without
+ * specifying a specific key.
+ *
+ * Args:
+ *   toolName: Name of the tool (e.g., "analyze_security")
+ *
+ * Returns:
+ *   The most recent cached result or null if not found/error
+ */
+export async function readLatestMCPToolResult(
+  toolName: string,
+): Promise<MCPToolCacheEntry | null> {
+  try {
+    const db = getDb();
+    const snapshot = await db
+      .collection("mcp_tool_cache")
+      .doc(toolName)
+      .collection("results")
+      .orderBy("updated_at", "desc")
+      .limit(1)
+      .get();
+    if (snapshot.empty) return null;
+    return snapshot.docs[0].data() as MCPToolCacheEntry;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Read the portfolio tickers saved by the Python MCP backend.
+ *
+ * Returns:
+ *   List of stock symbols, or empty array if not found/error
+ */
+export async function readPortfolioTickers(): Promise<string[]> {
+  try {
+    const db = getDb();
+    const doc = await db
+      .collection("mcp_tool_cache")
+      .doc("portfolio_tickers")
+      .get();
+    if (!doc.exists) return [];
+    const data = doc.data() as PortfolioTickersCache;
+    return data.tickers || [];
   } catch {
     return [];
   }

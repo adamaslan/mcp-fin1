@@ -1,6 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+interface ClerkPublicMetadata {
+  tier?: string;
+}
+
 const isPublicRoute = createRouteMatcher([
   "/",
   "/pricing",
@@ -33,7 +37,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Get tier from Clerk metadata (admin-controlled, defaults to 'free')
   const tier =
-    ((sessionClaims?.publicMetadata as any)?.tier as string) || "free";
+    (sessionClaims?.publicMetadata as ClerkPublicMetadata)?.tier || "free";
 
   // Check Max-only routes
   if (isMaxOnlyRoute(req) && tier !== "max") {
