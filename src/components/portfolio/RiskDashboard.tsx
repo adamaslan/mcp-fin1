@@ -39,7 +39,7 @@ export function RiskDashboard({ riskData }: RiskDashboardProps) {
               ${riskData.total_value.toFixed(2)}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              {riskData.positions.length} positions
+              {(riskData.positions?.length || 0)} positions
             </p>
           </CardContent>
         </Card>
@@ -132,7 +132,7 @@ export function RiskDashboard({ riskData }: RiskDashboardProps) {
                 </tr>
               </thead>
               <tbody>
-                {riskData.positions.map((position, idx) => (
+                {(riskData.positions || []).map((position, idx) => (
                   <tr
                     key={idx}
                     className="border-b last:border-b-0 hover:bg-muted/50"

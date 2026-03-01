@@ -11,7 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Briefcase, Plus, X } from "lucide-react";
+import { Loader2, Briefcase, Plus, X, AlertCircle } from "lucide-react";
+import { SectorBreakdown } from "@/components/portfolio/SectorBreakdown";
+import { RiskDistribution } from "@/components/portfolio/RiskDistribution";
+import { PortfolioRiskResult, SectorSummary } from "@/lib/mcp/types";
 
 interface Position {
   symbol: string;
@@ -74,13 +77,12 @@ export default function PortfolioPage() {
     }
   }
 
-  const riskMetrics = result?.risk_metrics as
-    | Record<string, unknown>
-    | undefined;
-  const sectorExposure = result?.sector_exposure as
-    | Record<string, number>
-    | undefined;
-  const hedgeSuggestions = (result?.hedge_suggestions as string[]) || [];
+  const riskResult = result as unknown as PortfolioRiskResult | undefined;
+  const sectors = riskResult?.sectors as Record<string, SectorSummary> | undefined;
+  const allPositions = riskResult?.all_positions || riskResult?.positions || [];
+  const sectorConcentration = riskResult?.sector_concentration || {};
+  const hedgeSuggestions = riskResult?.hedge_suggestions || [];
+  const overallRiskLevel = riskResult?.overall_risk_level || "LOW";
 
   return (
     <div className="space-y-6">
@@ -183,72 +185,134 @@ export default function PortfolioPage() {
       )}
 
       {/* Results */}
-      {result && !loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Risk Metrics */}
-          {riskMetrics && (
+      {result && !loading && riskResult && (
+        <div className="space-y-6">
+          {/* Portfolio Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
-              <CardHeader>
-                <CardTitle>Risk Metrics</CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Total Value</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                {Object.entries(riskMetrics).map(([key, val]) => (
-                  <div key={key} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground capitalize">
-                      {key.replace(/_/g, " ")}
-                    </span>
-                    <span className="font-medium">
-                      {typeof val === "number" ? val.toFixed(3) : String(val)}
-                    </span>
-                  </div>
-                ))}
+              <CardContent>
+                <p className="text-3xl font-bold">
+                  ${riskResult.total_value.toLocaleString("en-US", {
+                    maximumFractionDigits: 0,
+                  })}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {allPositions.length} positions
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Max Loss</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-red-500">
+                  ${riskResult.total_max_loss.toLocaleString("en-US", {
+                    maximumFractionDigits: 0,
+                  })}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {riskResult.risk_percent_of_portfolio.toFixed(1)}% of portfolio
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Risk Level</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Badge
+                  className={
+                    overallRiskLevel === "LOW"
+                      ? "bg-green-500/10 text-green-700 dark:text-green-400 text-base"
+                      : overallRiskLevel === "MEDIUM"
+                        ? "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 text-base"
+                        : overallRiskLevel === "HIGH"
+                          ? "bg-orange-500/10 text-orange-700 dark:text-orange-400 text-base"
+                          : "bg-red-500/10 text-red-700 dark:text-red-400 text-base"
+                  }
+                >
+                  {overallRiskLevel}
+                </Badge>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Risk Concentration
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">
+                  {riskResult.risk_percent_of_portfolio.toFixed(1)}%
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  of total capital at risk
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Risk Alert */}
+          {(overallRiskLevel === "HIGH" || overallRiskLevel === "CRITICAL") && (
+            <Card className="bg-red-500/10 border-red-200 dark:border-red-800">
+              <CardContent className="pt-6 flex gap-3">
+                <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-red-700 dark:text-red-400">
+                    High Portfolio Risk
+                  </p>
+                  <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+                    Your portfolio risk exceeds recommended levels. Consider reducing
+                    position sizes or hedging high-risk sectors.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Sector Exposure */}
-          {sectorExposure && Object.keys(sectorExposure).length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Sector Exposure</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {Object.entries(sectorExposure)
-                  .sort(([, a], [, b]) => b - a)
-                  .map(([sector, pct]) => (
-                    <div key={sector} className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span>{sector}</span>
-                        <span className="font-medium">
-                          {(pct * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-1.5">
-                        <div
-                          className="bg-primary rounded-full h-1.5"
-                          style={{ width: `${Math.min(pct * 100, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-              </CardContent>
-            </Card>
+          {/* Risk Distribution */}
+          <RiskDistribution
+            positions={allPositions}
+            totalValue={riskResult.total_value}
+            totalMaxLoss={riskResult.total_max_loss}
+          />
+
+          {/* Sector Breakdown */}
+          {sectors && Object.keys(sectors).length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-4">11-Sector Breakdown</h2>
+              <SectorBreakdown
+                sectors={sectors}
+                sectorConcentration={sectorConcentration}
+                totalPortfolioValue={riskResult.total_value}
+              />
+            </div>
           )}
 
           {/* Hedge Suggestions */}
           {hedgeSuggestions.length > 0 && (
-            <Card className="md:col-span-2">
+            <Card>
               <CardHeader>
                 <CardTitle>Hedge Suggestions</CardTitle>
+                <CardDescription>
+                  Recommended hedges to manage sector concentration
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {hedgeSuggestions.map((suggestion, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm">
-                      <Badge variant="outline" className="mt-0.5 shrink-0">
+                    <div key={i} className="flex items-start gap-3 text-sm p-3 bg-muted/50 rounded-lg">
+                      <Badge variant="secondary" className="mt-0.5 shrink-0">
                         {i + 1}
                       </Badge>
-                      <span>{suggestion}</span>
+                      <span className="text-foreground">{suggestion}</span>
                     </div>
                   ))}
                 </div>
