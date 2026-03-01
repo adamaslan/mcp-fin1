@@ -109,7 +109,7 @@ export async function incrementAnalysisCountAndGet(
         scanCount: 0,
       })
       .returning();
-    return created[0].analysisCount;
+    return created[0].analysisCount ?? 0;
   }
 
   // Update and return new count
@@ -119,7 +119,7 @@ export async function incrementAnalysisCountAndGet(
     .where(and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)))
     .returning();
 
-  return updated[0].analysisCount;
+  return updated[0].analysisCount ?? 0;
 }
 
 export async function incrementScanCount(userId: string) {
@@ -159,7 +159,7 @@ export async function incrementScanCountAndGet(
         scanCount: 1,
       })
       .returning();
-    return created[0].scanCount;
+    return created[0].scanCount ?? 0;
   }
 
   // Update and return new count
@@ -169,7 +169,7 @@ export async function incrementScanCountAndGet(
     .where(and(eq(usageTracking.userId, userId), eq(usageTracking.date, today)))
     .returning();
 
-  return updated[0].scanCount;
+  return updated[0].scanCount ?? 0;
 }
 
 // Watchlists
