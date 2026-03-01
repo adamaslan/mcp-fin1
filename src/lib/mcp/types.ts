@@ -130,7 +130,32 @@ export interface PortfolioPosition {
   max_loss_dollar: number;
   max_loss_percent: number;
   stop_level: number;
+  stop_loss_percent?: number;
   risk_quality: RiskQuality;
+  risk_level?: "low" | "moderate" | "high";
+  sector?: string;
+}
+
+export interface SectorRiskMetrics {
+  total_max_loss_dollar: number;
+  max_loss_percent_of_sector: number;
+  avg_stop_loss_percent: number;
+}
+
+export interface SectorRiskDistribution {
+  low_risk_count: number;
+  moderate_risk_count: number;
+  high_risk_count: number;
+}
+
+export interface SectorSummary {
+  total_value: number;
+  percent_of_portfolio: number;
+  position_count: number;
+  positions: PortfolioPosition[];
+  metrics: SectorRiskMetrics;
+  risk_distribution: SectorRiskDistribution;
+  hedge_etf?: string;
 }
 
 export interface PortfolioRiskResult {
@@ -138,9 +163,14 @@ export interface PortfolioRiskResult {
   total_max_loss: number;
   risk_percent_of_portfolio: number;
   overall_risk_level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  positions: PortfolioPosition[];
+  timestamp: string;
+  // New sector-organized structure
+  sectors?: Record<string, SectorSummary>;
   sector_concentration: Record<string, number>;
-  hedge_suggestions: string[];
+  all_positions?: PortfolioPosition[];
+  // Legacy structure for backward compatibility
+  positions?: PortfolioPosition[];
+  hedge_suggestions?: string[];
   ai_analysis?: AIAnalysis;
 }
 
