@@ -14,7 +14,7 @@ import {
   X,
   Sparkles,
   Target,
-  Shield,
+  CheckCircle2,
 } from "lucide-react";
 
 interface OnboardingStep {
@@ -33,38 +33,41 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: "welcome",
     title: "Welcome to MCP Finance",
-    description: "AI-powered technical analysis for smarter trading decisions.",
+    description:
+      "9 professional analysis tools powered by real market data — built for traders who refuse to guess.",
     icon: <Sparkles className="h-12 w-12 text-primary" />,
     features: [
-      "Get actionable trade plans with entry, exit, and stop-loss levels",
-      "Scan markets for high-probability setups",
-      "Track your portfolio risk in real-time",
+      "3 free tools: Analyze Security, Fibonacci Analysis, Trade Plan",
+      "6 Pro tools: Compare, Screen, Scan, Portfolio Risk, Morning Brief, Options Risk",
+      "Every result comes from live data — no mock data, ever",
     ],
   },
   {
     id: "analyze",
-    title: "Analyze Any Symbol",
-    description: "Enter any stock ticker to get a comprehensive trade plan.",
+    title: "Analyze, Fibonacci & Trade Plan",
+    description:
+      "Your three free tools — each giving you a different angle on any stock.",
     icon: <TrendingUp className="h-12 w-12 text-green-500" />,
     features: [
-      "Technical indicators analyzed automatically",
-      "Risk/reward ratios calculated for you",
-      "Position sizing based on your risk tolerance",
+      "Analyze Security: 150+ signals scored, volatility regime, support/resistance",
+      "Fibonacci Analysis: 40+ levels, golden pocket, multi-timeframe confluences",
+      "Trade Plan: exact entry, stop-loss, and profit target with risk/reward ratio",
     ],
     action: {
-      label: "Try Analyzing AAPL",
+      label: "Analyze AAPL Now",
       href: "/analyze/AAPL",
     },
   },
   {
     id: "scanner",
-    title: "Scan for Opportunities",
-    description: "Find trade setups across S&P 500, NASDAQ, and ETFs.",
+    title: "Compare, Screen & Scan Trades",
+    description:
+      "Three Pro tools that help you find the best setups across the whole market.",
     icon: <BarChart3 className="h-12 w-12 text-blue-500" />,
     features: [
-      "Pre-built scans for different trading styles",
-      "Filter by sector, market cap, and more",
-      "Ranked by signal strength",
+      "Compare Securities: head-to-head signal strength and relative ranking",
+      "Screen Securities: filter 500+ stocks by trend, momentum, and signal score",
+      "Scan Trades: auto-ranked setups with entry/stop/target already calculated",
     ],
     action: {
       label: "Open Scanner",
@@ -73,43 +76,46 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     id: "portfolio",
-    title: "Manage Portfolio Risk",
-    description: "Track your positions and understand your risk exposure.",
+    title: "Portfolio Risk Engine",
+    description:
+      "Know exactly how much you can lose before a single stop is hit.",
     icon: <Briefcase className="h-12 w-12 text-purple-500" />,
     features: [
-      "Sector concentration analysis",
-      "Maximum drawdown calculation",
-      "Hedge suggestions for protection",
+      "ATR-based stop levels calculated per position — not guesswork",
+      "Total max-loss in dollars if every stop hits simultaneously",
+      "Sector concentration breakdown with overweight detection",
+      "Hedge suggestions when you're overexposed (Max tier)",
     ],
     action: {
-      label: "View Portfolio",
+      label: "View Portfolio Risk",
       href: "/portfolio",
     },
   },
   {
-    id: "alerts",
-    title: "Set Price Alerts",
-    description: "Get notified when your targets are hit.",
+    id: "intelligence",
+    title: "Morning Brief & Options Risk",
+    description:
+      "Two Pro tools for market intelligence before you place a trade.",
     icon: <Bell className="h-12 w-12 text-orange-500" />,
     features: [
-      "Price target alerts",
-      "Technical signal notifications",
-      "Email and in-app alerts",
+      "Morning Brief: pre-market sentiment, sector rotation, key catalysts daily",
+      "Options Risk Analysis: implied volatility, put/call ratio, Greeks-based metrics",
+      "Both tools pull live data — no delayed or synthetic results",
     ],
     action: {
-      label: "Set Up Alerts",
-      href: "/alerts",
+      label: "See Pro Tools",
+      href: "#pricing",
     },
   },
   {
     id: "ready",
     title: "You're Ready to Trade!",
-    description: "Start making data-driven trading decisions today.",
+    description: "Start with the 3 free tools — upgrade when you need more.",
     icon: <Target className="h-12 w-12 text-primary" />,
     features: [
       "Press ⌘K anytime to search symbols or navigate",
-      "Press ? to see all keyboard shortcuts",
-      "Visit Settings to manage your subscription",
+      "Free: Analyze Security, Fibonacci Analysis, Trade Plan",
+      "Visit Settings to manage your subscription and tier",
     ],
     action: {
       label: "Go to Dashboard",
@@ -204,7 +210,7 @@ export function OnboardingFlow() {
           <ul className="space-y-3 mb-8">
             {step.features.map((feature, index) => (
               <li key={index} className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <span className="text-sm">{feature}</span>
               </li>
             ))}

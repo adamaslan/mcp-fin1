@@ -40,5 +40,5 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-// Revalidate every 10 minutes — demo data is static but we want ISR freshness
-export const revalidate = 600;
+// Revalidate every 5 minutes for fresher data
+export const revalidate = 300;
