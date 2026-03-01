@@ -13,7 +13,7 @@ async function fetchPortfolioDemo(): Promise<PortfolioRiskData | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/public/portfolio-demo`, {
-      next: { revalidate: 600 },
+      next: { revalidate: 300 },
     });
     if (!response.ok) return null;
     const result = await response.json();
@@ -103,13 +103,16 @@ export default async function Home() {
       <section className="py-16 border-t">
         <TickerComparison
           comparison={market?.comparison}
-          featuredTickers={market?.featuredTickers}
+          featuredTickers={market?.portfolioSymbols}
         />
       </section>
 
       {/* Trade design (stock or options) */}
       <section className="py-16 bg-muted/50 border-t">
-        <SampleTradePlan data={market?.sampleAnalysis} />
+        <SampleTradePlan
+          data={market?.sampleAnalysis}
+          tradePlan={market?.tradePlan}
+        />
       </section>
 
       {/* Supporting analysis */}
