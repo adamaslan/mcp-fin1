@@ -216,7 +216,6 @@ export function CommandPalette() {
     }
   }, [isOpen]);
 
-
   if (!isOpen) return null;
 
   const groupedItems = {

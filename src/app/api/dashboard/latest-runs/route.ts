@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { publicLatestRuns } from "@/lib/db/schema";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { isAllowedIP, getClientIP } from "@/lib/auth/ip-allowlist";
 import { verifyBearerToken } from "@/lib/auth/service-tokens";
 
@@ -31,8 +31,8 @@ export async function GET(request: Request) {
       .limit(9);
 
     // Group by tool name for easier frontend consumption
-    const runsMap: Record<string, any> = {};
-    runs.forEach((run: any) => {
+    const runsMap: Record<string, unknown> = {};
+    runs.forEach((run) => {
       runsMap[run.toolName] = {
         toolName: run.toolName,
         symbol: run.symbol,
@@ -182,7 +182,7 @@ export async function POST(request: Request) {
     const existingRun = await db
       .select()
       .from(publicLatestRuns)
-      .where((t: any) => t.toolName === toolName)
+      .where(eq(publicLatestRuns.toolName, toolName))
       .limit(1);
 
     let updated;
@@ -192,10 +192,10 @@ export async function POST(request: Request) {
         .update(publicLatestRuns)
         .set({
           symbol: symbol || existingRun[0].symbol,
-          result: result as any,
+          result: result as Record<string, unknown>,
           updatedAt: new Date(),
         })
-        .where((t: any) => t.toolName === toolName)
+        .where(eq(publicLatestRuns.toolName, toolName))
         .returning();
     } else {
       // Insert new
@@ -206,7 +206,7 @@ export async function POST(request: Request) {
           id: nanoid(),
           toolName,
           symbol: symbol || null,
-          result: result as any,
+          result: result as Record<string, unknown>,
         })
         .returning();
     }

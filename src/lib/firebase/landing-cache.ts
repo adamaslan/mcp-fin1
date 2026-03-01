@@ -15,6 +15,14 @@
  */
 
 import { getDb } from "./admin";
+import type {
+  Signal,
+  FibonacciLevel,
+  FibonacciSignal,
+  FibonacciCluster,
+  EconomicEvent,
+  SectorMovement,
+} from "@/lib/mcp/types";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -46,17 +54,17 @@ export interface MarketSnapshot {
   } | null;
   sampleAnalysis: {
     symbol: string;
-    signals: Record<string, unknown>[];
+    signals: Signal[];
     summary: { bullish: number; bearish: number; neutral: number };
-    indicators?: Record<string, unknown>;
+    indicators?: { rsi: number; macd: number; adx: number; volume: number };
     price?: number;
   } | null;
   fibonacci: {
     symbol: string;
     price?: number;
-    levels: Record<string, unknown>[];
-    signals: Record<string, unknown>[];
-    clusters: Record<string, unknown>[];
+    levels: FibonacciLevel[];
+    signals: FibonacciSignal[];
+    clusters: FibonacciCluster[];
     summary?: Record<string, unknown>;
   } | null;
   market: {
@@ -64,10 +72,10 @@ export interface MarketSnapshot {
     futuresES: number;
     futuresNQ: number;
     vix: number;
-    economicEvents: Record<string, unknown>[];
-    sectorLeaders: Record<string, unknown>[];
-    sectorLosers: Record<string, unknown>[];
-    keyThemes: Record<string, unknown>[];
+    economicEvents: EconomicEvent[];
+    sectorLeaders: SectorMovement[];
+    sectorLosers: SectorMovement[];
+    keyThemes: string[];
   } | null;
   updatedAt: string;
 }

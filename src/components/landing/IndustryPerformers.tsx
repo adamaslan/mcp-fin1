@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
 
 interface Performer {
   industry: string;
@@ -57,32 +57,28 @@ export function IndustryPerformers() {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        // Service unavailable - hide the section gracefully
+        setError("unavailable");
+        return;
       }
 
       const result: IndustryTrackerResponse = await response.json();
 
       if (result.success && result.data) {
-        // Combine top and worst performers, or use top performers if available
         const allPerformers = [
           ...(result.data.top_performers || []),
           ...(result.data.worst_performers || []),
         ];
-
-        // Add rank
         const ranked = allPerformers.map((p, i) => ({
           ...p,
           rank: i + 1,
         }));
-
         setPerformers(ranked);
       } else {
-        throw new Error("Invalid response format");
+        setError("unavailable");
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch data";
-      setError(message);
-      console.error("[IndustryPerformers] Error:", err);
+    } catch {
+      setError("unavailable");
     } finally {
       setLoading(false);
     }
@@ -108,13 +104,19 @@ export function IndustryPerformers() {
     "1m": "Last Month",
   };
 
+  // Hide section entirely when service is unavailable
+  if (error === "unavailable" && !loading) {
+    return null;
+  }
+
   return (
     <section className="py-16 border-t">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Industry Performance</h2>
           <p className="text-muted-foreground">
-            Top 50 industries ranked by recent performance. Live data from GCloud.
+            Top 50 industries ranked by recent performance. Live data from
+            GCloud.
           </p>
         </div>
 
@@ -135,19 +137,6 @@ export function IndustryPerformers() {
           ))}
         </div>
 
-        {/* Error state */}
-        {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800 p-4 mb-6 flex gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium text-red-900 dark:text-red-100">
-                Failed to load data
-              </p>
-              <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
-            </div>
-          </div>
-        )}
-
         {/* Loading state */}
         {loading && (
           <div className="flex items-center justify-center py-12">
@@ -164,7 +153,9 @@ export function IndustryPerformers() {
                 <thead className="border-b bg-muted/50">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">Rank</th>
-                    <th className="px-4 py-3 text-left font-medium">Industry</th>
+                    <th className="px-4 py-3 text-left font-medium">
+                      Industry
+                    </th>
                     <th className="px-4 py-3 text-left font-medium">ETF</th>
                     <th className="px-4 py-3 text-right font-medium">
                       Return ({horizonLabels[horizon]})
@@ -182,7 +173,9 @@ export function IndustryPerformers() {
                         <td className="px-4 py-3 text-muted-foreground font-medium">
                           #{performer.rank || idx + 1}
                         </td>
-                        <td className="px-4 py-3 font-medium">{performer.industry}</td>
+                        <td className="px-4 py-3 font-medium">
+                          {performer.industry}
+                        </td>
                         <td className="px-4 py-3">
                           <span className="px-2 py-1 rounded bg-muted text-sm font-mono">
                             {performer.etf}
@@ -192,7 +185,8 @@ export function IndustryPerformers() {
                           className={`px-4 py-3 text-right font-semibold ${getReturnColor(returnValue)}`}
                         >
                           <div className="flex items-center justify-end gap-2">
-                            {returnValue !== undefined && returnValue.toFixed(2)}
+                            {returnValue !== undefined &&
+                              returnValue.toFixed(2)}
                             {returnValue !== undefined && "%"}
                             {getReturnIcon(returnValue)}
                           </div>
@@ -216,8 +210,9 @@ export function IndustryPerformers() {
         {/* Data source notice */}
         <div className="mt-6 text-xs text-muted-foreground p-3 rounded-lg bg-muted/30 border border-muted">
           <p>
-            📊 Data sourced from GCloud industry tracker API with multi-source fallback
-            (Finnhub → Alpha Vantage → yfinance). Updates reflect live market data.
+            📊 Data sourced from GCloud industry tracker API with multi-source
+            fallback (Finnhub → Alpha Vantage → yfinance). Updates reflect live
+            market data.
           </p>
         </div>
       </div>

@@ -10,21 +10,32 @@ import { useLazyMCPQuery } from "@/hooks/useMCPQuery";
 import { ParameterForm } from "@/components/mcp-control/ParameterForm";
 import { PresetSelector } from "@/components/mcp-control/PresetSelector";
 import { ResultsDisplay } from "@/components/mcp-control/ResultsDisplay";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, RefreshCw, Clock } from "lucide-react";
+import type { MCPToolCacheEntry } from "@/lib/firebase/types";
 
 interface ToolPageProps {
   toolId: string;
   toolName: string;
   description: string;
+  cacheKey?: string; // Optional cache key for specific results (e.g., symbol)
 }
 
-export function ToolPage({ toolId, toolName, description }: ToolPageProps) {
+export function ToolPage({
+  toolId,
+  toolName,
+  description,
+  cacheKey,
+}: ToolPageProps) {
   const router = useRouter();
   const { tier } = useTier();
   const [useAi, setUseAi] = useState(false);
   const [parameters, setParameters] = useState<Record<string, any>>({});
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [cachedResult, setCachedResult] = useState<MCPToolCacheEntry | null>(
+    null,
+  );
+  const [isCachedLoading, setIsCachedLoading] = useState(true);
 
   const {
     loading,
@@ -33,6 +44,34 @@ export function ToolPage({ toolId, toolName, description }: ToolPageProps) {
     reset,
     cancel,
   } = useLazyMCPQuery<any>();
+
+  // Load cached data on component mount
+  useEffect(() => {
+    async function loadCachedData() {
+      try {
+        setIsCachedLoading(true);
+        const params = new URLSearchParams({ tool: toolId });
+        if (cacheKey) {
+          params.set("key", cacheKey);
+        } else {
+          params.set("latest", "true");
+        }
+        const response = await fetch(`/api/dashboard/tool-cache?${params}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            setCachedResult(data.data);
+          }
+        }
+      } catch (err) {
+        // Silently fail — cached data is optional
+        console.debug("Failed to load cached tool result:", err);
+      } finally {
+        setIsCachedLoading(false);
+      }
+    }
+    loadCachedData();
+  }, [toolId, cacheKey]);
 
   useEffect(() => {
     if (queryError) {
@@ -153,7 +192,7 @@ export function ToolPage({ toolId, toolName, description }: ToolPageProps) {
         </div>
 
         {/* Right panel: Results */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-4">
           {error && (
             <Card className="border-destructive">
               <CardHeader>
@@ -184,19 +223,102 @@ export function ToolPage({ toolId, toolName, description }: ToolPageProps) {
             <ResultsDisplay toolName={toolId} result={result} tier={tier} />
           )}
 
-          {!result && !loading && !error && (
-            <Card>
-              <CardContent className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Configure parameters and click Execute to see results
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Cached data banner — shown when no live result yet */}
+          {!result &&
+            !loading &&
+            !error &&
+            cachedResult &&
+            !isCachedLoading && (
+              <CachedResultBanner
+                cachedResult={cachedResult}
+                onRefresh={handleExecute}
+                isRefreshDisabled={Object.keys(parameters).length === 0}
+              >
+                <ResultsDisplay
+                  toolName={toolId}
+                  result={cachedResult.result}
+                  tier={tier}
+                />
+              </CachedResultBanner>
+            )}
+
+          {/* Default message — shown when no cached or live result */}
+          {!result &&
+            !loading &&
+            !error &&
+            (!cachedResult || isCachedLoading) && (
+              <Card>
+                <CardContent className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Configure parameters and click Execute to see results
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Banner component that displays cached results with timestamp and refresh action.
+ */
+function CachedResultBanner({
+  cachedResult,
+  onRefresh,
+  isRefreshDisabled,
+  children,
+}: {
+  cachedResult: MCPToolCacheEntry;
+  onRefresh: () => void;
+  isRefreshDisabled: boolean;
+  children: React.ReactNode;
+}) {
+  const getTimeAgo = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (secondsAgo < 60) return "just now";
+    if (secondsAgo < 3600) return `${Math.floor(secondsAgo / 60)}m ago`;
+    if (secondsAgo < 86400) return `${Math.floor(secondsAgo / 3600)}h ago`;
+    return `${Math.floor(secondsAgo / 86400)}d ago`;
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card className="border-blue-200 bg-blue-50">
+        <CardContent className="pt-4">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3 flex-1">
+              <Clock className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-blue-900">
+                  Showing cached data from portfolio analysis
+                </p>
+                <p className="text-xs text-blue-700 mt-1">
+                  Last updated {getTimeAgo(cachedResult.updated_at)}
+                  {cachedResult.period && ` (period: ${cachedResult.period})`}
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onRefresh}
+              disabled={isRefreshDisabled}
+              className="shrink-0"
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Refresh
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      {children}
     </div>
   );
 }

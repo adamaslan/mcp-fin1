@@ -68,6 +68,7 @@ python -m your_backend_module
 ### Time Horizons
 
 The table supports switching between:
+
 - **1w** - Last week (5 trading days)
 - **2w** - Last 2 weeks (10 trading days)
 - **1m** - Last month (21 trading days)
@@ -75,6 +76,7 @@ The table supports switching between:
 ### Data Display
 
 Each row shows:
+
 1. **Rank** - Position in performance ranking
 2. **Industry** - Industry name (e.g., "Mining")
 3. **ETF** - Representative ETF ticker (e.g., "XME")
@@ -100,6 +102,7 @@ Each row shows:
 ### POST `/api/mcp/industry-tracker`
 
 **Request:**
+
 ```json
 {
   "horizon": "1w",
@@ -108,10 +111,12 @@ Each row shows:
 ```
 
 **Parameters:**
+
 - `horizon` (required): One of `1w`, `2w`, `1m`, `2m`, `3m`, `6m`, `52w`, `2y`, `3y`, `5y`, `10y`
 - `top_n` (optional): Number of results to return (default: 50)
 
 **Response (Success - 200):**
+
 ```json
 {
   "success": true,
@@ -131,6 +136,7 @@ Each row shows:
 ```
 
 **Response (Error):**
+
 - `400`: Invalid horizon
 - `503`: Backend service unavailable
 - `500`: Server error
@@ -148,6 +154,7 @@ Each row shows:
 ### With Mock Data (Development)
 
 If backend is unavailable, the component will:
+
 - Show error message
 - Allow you to debug the API connection
 - Display "No data available" state
@@ -174,6 +181,7 @@ If backend is unavailable, the component will:
 
 **Problem:** Backend service not running or not responding
 **Solution:**
+
 1. Check `MCP_BACKEND_URL` is correct
 2. Ensure Python backend is running on that port
 3. Check backend logs for errors
@@ -183,6 +191,7 @@ If backend is unavailable, the component will:
 
 **Problem:** Backend returning unexpected data structure
 **Solution:**
+
 1. Verify backend returns the expected JSON structure
 2. Check backend service is the correct version
 3. Review API logs in browser DevTools (Network tab)
@@ -190,11 +199,13 @@ If backend is unavailable, the component will:
 ### No industries showing (Empty table)
 
 **Problem:** Could mean:
+
 - All data loaded but no performers for selected horizon
 - API returned empty results
 - Data not available in GCloud
 
 **Solution:**
+
 1. Check browser console for errors
 2. Verify GCloud credentials
 3. Try different time horizon

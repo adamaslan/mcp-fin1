@@ -77,6 +77,7 @@ export const test = base.extend<{
 
     const page = await context.newPage();
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(page);
 
     await context.close();
@@ -84,6 +85,7 @@ export const test = base.extend<{
 
   authHelper: async ({ authenticatedPage }, use) => {
     const helper = new AuthHelper(authenticatedPage);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(helper);
   },
 });
