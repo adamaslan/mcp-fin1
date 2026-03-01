@@ -19,8 +19,8 @@ export function getStripeServer(): Stripe {
 
 // Export as a getter for backwards compatibility
 export const stripe = new Proxy({} as Stripe, {
-  get(_, prop) {
-    return (getStripeServer() as any)[prop];
+  get(_: object, prop: string | symbol): unknown {
+    return getStripeServer()[prop as keyof Stripe];
   },
 });
 

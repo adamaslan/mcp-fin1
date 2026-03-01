@@ -2,6 +2,10 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { getOrCreateUser } from "@/lib/db/queries";
 import type { UserTier } from "./tiers";
 
+interface SessionPublicMetadata {
+  tier?: string;
+}
+
 export async function ensureUserInitialized(): Promise<{
   userId: string;
   email: string;
@@ -14,7 +18,7 @@ export async function ensureUserInitialized(): Promise<{
   }
 
   // Get tier from Clerk metadata (defaults to free)
-  const tier = (((sessionClaims?.publicMetadata as any)?.tier as string) ||
+  const tier = ((sessionClaims?.publicMetadata as SessionPublicMetadata)?.tier ||
     "free") as UserTier;
 
   // Get email from currentUser

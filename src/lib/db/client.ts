@@ -1,9 +1,10 @@
 import { drizzle } from "drizzle-orm/postgres-js";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
 // Lazy-load database connection to avoid initialization during build
-let cachedDb: any = null;
+let cachedDb: PostgresJsDatabase<typeof schema> | null = null;
 let dbInitialized = false;
 let initError: Error | null = null;
 
@@ -70,7 +71,7 @@ export const db = {
   },
   // Allow any other Drizzle methods to be accessed
   [Symbol.iterator]: () => getDb()?.[Symbol.iterator]?.(),
-} as any;
+} as unknown as PostgresJsDatabase<typeof schema>;
 
 // Re-export schema for convenience
 export * from "./schema";
