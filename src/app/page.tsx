@@ -13,7 +13,7 @@ async function fetchPortfolioDemo(): Promise<PortfolioRiskData | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/public/portfolio-demo`, {
-      next: { revalidate: 600 },
+      next: { revalidate: 300 },
     });
     if (!response.ok) return null;
     const result = await response.json();
