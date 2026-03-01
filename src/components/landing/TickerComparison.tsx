@@ -46,7 +46,7 @@ export function TickerComparison({
         <p className="text-muted-foreground">
           {hasData
             ? `Real-time signal analysis across ${tickers.join(", ")}`
-            : "Run head-to-head comparisons on signal strength, momentum, and risk"}
+            : "Top holdings from the portfolio, ranked by live signal strength"}
         </p>
       </div>
 
@@ -57,7 +57,7 @@ export function TickerComparison({
               <span>
                 {hasData
                   ? `${tickers.length} Tickers Compared`
-                  : "Featured Watchlist"}
+                  : "Stocks With Highest Signal Strength"}
               </span>
               {hasData && (
                 <Badge
@@ -191,8 +191,8 @@ export function TickerComparison({
                   </>
                 ) : (
                   <>
-                    Compare any set of stocks with real-time signal analysis.
-                    See bullish/bearish counts, scores, and rankings.
+                    Top portfolio holdings ranked by live signal strength. See
+                    bullish/bearish counts, scores, and rankings in real time.
                   </>
                 )}
               </p>

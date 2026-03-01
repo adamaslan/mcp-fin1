@@ -103,13 +103,16 @@ export default async function Home() {
       <section className="py-16 border-t">
         <TickerComparison
           comparison={market?.comparison}
-          featuredTickers={market?.featuredTickers}
+          featuredTickers={market?.portfolioSymbols}
         />
       </section>
 
       {/* Trade design (stock or options) */}
       <section className="py-16 bg-muted/50 border-t">
-        <SampleTradePlan data={market?.sampleAnalysis} />
+        <SampleTradePlan
+          data={market?.sampleAnalysis}
+          tradePlan={market?.tradePlan}
+        />
       </section>
 
       {/* Supporting analysis */}
