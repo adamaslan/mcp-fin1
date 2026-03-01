@@ -69,8 +69,6 @@ export const db = {
   get delete() {
     return getDb()?.delete;
   },
-  // Allow any other Drizzle methods to be accessed
-  [Symbol.iterator]: () => getDb()?.[Symbol.iterator]?.(),
 } as unknown as PostgresJsDatabase<typeof schema>;
 
 // Re-export schema for convenience
