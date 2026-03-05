@@ -20,6 +20,13 @@ interface ToolPageProps {
   cacheKey?: string; // Optional cache key for specific results (e.g., symbol)
 }
 
+// Tools that can execute with no user-provided parameters (all params optional)
+const ALL_OPTIONAL_TOOLS = [
+  "morning_brief",
+  "scan_trades",
+  "screen_securities",
+];
+
 export function ToolPage({
   toolId,
   toolName,
@@ -80,7 +87,10 @@ export function ToolPage({
   }, [queryError]);
 
   const handleExecute = useCallback(async () => {
-    if (!parameters || Object.keys(parameters).length === 0) {
+    if (
+      !ALL_OPTIONAL_TOOLS.includes(toolId) &&
+      (!parameters || Object.keys(parameters).length === 0)
+    ) {
       setError("Please fill in required parameters");
       return;
     }
@@ -171,7 +181,11 @@ export function ToolPage({
 
               <Button
                 onClick={handleExecute}
-                disabled={loading || Object.keys(parameters).length === 0}
+                disabled={
+                  loading ||
+                  (!ALL_OPTIONAL_TOOLS.includes(toolId) &&
+                    Object.keys(parameters).length === 0)
+                }
                 className="w-full"
               >
                 {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}

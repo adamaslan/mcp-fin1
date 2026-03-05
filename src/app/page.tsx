@@ -8,19 +8,10 @@ import { PricingCards } from "@/components/landing/PricingCards";
 import { IndustryPerformers } from "@/components/landing/IndustryPerformers";
 import { PortfolioRiskDemo } from "@/components/landing/PortfolioRiskDemo";
 import type { PortfolioRiskData } from "@/lib/firebase/types";
+import { getPortfolioRiskData } from "@/lib/firebase/portfolio-data";
 
 async function fetchPortfolioDemo(): Promise<PortfolioRiskData | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/public/portfolio-demo`, {
-      next: { revalidate: 300 },
-    });
-    if (!response.ok) return null;
-    const result = await response.json();
-    return result.data ?? null;
-  } catch {
-    return null;
-  }
+  return getPortfolioRiskData();
 }
 
 async function fetchMarketData() {

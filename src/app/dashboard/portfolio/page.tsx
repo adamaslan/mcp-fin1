@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -34,6 +34,28 @@ export default function PortfolioPage() {
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Preload Firebase cached data on mount
+  useEffect(() => {
+    const preloadFirebaseData = async () => {
+      try {
+        const res = await fetch("/api/public/portfolio-demo");
+        const json = await res.json();
+
+        if (res.ok && json.data?.positions) {
+          // Pre-populate the result state with Firebase data
+          setResult(json.data);
+          // Show a banner that this is cached data
+          console.log("Loaded cached portfolio data from Firebase");
+        }
+      } catch (err) {
+        // Silently fail — this is optional preload
+        console.debug("Could not preload Firebase data:", err);
+      }
+    };
+
+    preloadFirebaseData();
+  }, []);
+
   function addPosition() {
     const sym = newSymbol.trim().toUpperCase();
     const shares = parseFloat(newShares);
@@ -66,7 +88,31 @@ export default function PortfolioPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || data.message || "Portfolio assessment failed");
+        const errorMsg =
+          data.error || data.message || "Portfolio assessment failed";
+        setError(errorMsg);
+
+        // Fallback to Firebase cache if MCP server is unavailable
+        if (
+          res.status === 503 ||
+          errorMsg.includes("Analysis server") ||
+          errorMsg.includes("MCP")
+        ) {
+          try {
+            const cacheRes = await fetch("/api/public/portfolio-demo");
+            const cacheJson = await cacheRes.json();
+
+            if (cacheRes.ok && cacheJson.data) {
+              setResult(cacheJson.data);
+              setError(
+                "Using cached portfolio data from Firebase (live analysis unavailable)",
+              );
+              return;
+            }
+          } catch {
+            // Also failed — show original error
+          }
+        }
       } else {
         setResult(data);
       }
@@ -78,7 +124,9 @@ export default function PortfolioPage() {
   }
 
   const riskResult = result as unknown as PortfolioRiskResult | undefined;
-  const sectors = riskResult?.sectors as Record<string, SectorSummary> | undefined;
+  const sectors = riskResult?.sectors as
+    | Record<string, SectorSummary>
+    | undefined;
   const allPositions = riskResult?.all_positions || riskResult?.positions || [];
   const sectorConcentration = riskResult?.sector_concentration || {};
   const hedgeSuggestions = riskResult?.hedge_suggestions || [];
@@ -150,18 +198,41 @@ export default function PortfolioPage() {
             </Button>
           </div>
 
-          <Button
-            onClick={runRiskAssessment}
-            disabled={loading || positions.length === 0}
-            className="w-full sm:w-auto"
-          >
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              <Briefcase className="h-4 w-4 mr-2" />
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+            <Button
+              onClick={runRiskAssessment}
+              disabled={loading || positions.length === 0}
+              className="w-full sm:w-auto"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Briefcase className="h-4 w-4 mr-2" />
+              )}
+              Assess Portfolio Risk
+            </Button>
+
+            {positions.length === 0 && (
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    const res = await fetch("/api/public/portfolio-demo");
+                    const json = await res.json();
+                    if (json.data?.positions) {
+                      setPositions(json.data.positions.slice(0, 12)); // Load top 12
+                      setResult(json.data);
+                    }
+                  } catch (err) {
+                    console.error("Failed to load cached positions:", err);
+                  }
+                }}
+                className="w-full sm:w-auto"
+              >
+                Load Cached Portfolio
+              </Button>
             )}
-            Assess Portfolio Risk
-          </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -187,15 +258,34 @@ export default function PortfolioPage() {
       {/* Results */}
       {result && !loading && riskResult && (
         <div className="space-y-6">
+          {/* INFO: Show if data source is from Firebase cache */}
+          {(result?.source === "firestore_cache" ||
+            result?.source === "firestore_demo") && (
+            <Card className="bg-blue-500/10 border-blue-200 dark:border-blue-800">
+              <CardContent className="pt-4">
+                <p className="text-sm text-blue-700 dark:text-blue-400">
+                  📦 Showing cached portfolio data from Firebase
+                  {result?.source === "firestore_demo"
+                    ? " (demo)"
+                    : " (recent analysis)"}
+                  — click "Assess Portfolio Risk" with live data to refresh.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Portfolio Summary */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Value
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold">
-                  ${riskResult.total_value.toLocaleString("en-US", {
+                  $
+                  {riskResult.total_value.toLocaleString("en-US", {
                     maximumFractionDigits: 0,
                   })}
                 </p>
@@ -211,19 +301,23 @@ export default function PortfolioPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-3xl font-bold text-red-500">
-                  ${riskResult.total_max_loss.toLocaleString("en-US", {
+                  $
+                  {riskResult.total_max_loss.toLocaleString("en-US", {
                     maximumFractionDigits: 0,
                   })}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {riskResult.risk_percent_of_portfolio.toFixed(1)}% of portfolio
+                  {riskResult.risk_percent_of_portfolio.toFixed(1)}% of
+                  portfolio
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Risk Level</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Risk Level
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Badge
@@ -269,8 +363,8 @@ export default function PortfolioPage() {
                     High Portfolio Risk
                   </p>
                   <p className="text-sm text-red-700 dark:text-red-400 mt-1">
-                    Your portfolio risk exceeds recommended levels. Consider reducing
-                    position sizes or hedging high-risk sectors.
+                    Your portfolio risk exceeds recommended levels. Consider
+                    reducing position sizes or hedging high-risk sectors.
                   </p>
                 </div>
               </CardContent>
@@ -308,7 +402,10 @@ export default function PortfolioPage() {
               <CardContent>
                 <div className="space-y-2">
                   {hedgeSuggestions.map((suggestion, i) => (
-                    <div key={i} className="flex items-start gap-3 text-sm p-3 bg-muted/50 rounded-lg">
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 text-sm p-3 bg-muted/50 rounded-lg"
+                    >
                       <Badge variant="secondary" className="mt-0.5 shrink-0">
                         {i + 1}
                       </Badge>

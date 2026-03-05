@@ -14,6 +14,7 @@ import {
   Scale,
   Activity,
   Newspaper,
+  Building2,
 } from "lucide-react";
 
 interface NavItem {
@@ -57,8 +58,13 @@ export function Sidebar() {
     },
     {
       label: "Morning Brief",
-      href: "/dashboard",
+      href: "/tools/morning-brief",
       icon: <Newspaper className="h-5 w-5" />,
+    },
+    {
+      label: "Industry Tracker",
+      href: "/tools/industry-tracker",
+      icon: <Building2 className="h-5 w-5" />,
     },
     {
       label: "Compare",

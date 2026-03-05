@@ -156,6 +156,34 @@ async function seed(): Promise<void> {
   console.log(
     `✅ Seeded ${positions.length} positions to sub-collection (demo/portfolio_risk/positions)`,
   );
+
+  // Also seed to mcp_tool_cache so the frontend fallback chain works
+  const positionsKey = positions
+    .map((p: any) => p.symbol)
+    .sort()
+    .join("_");
+
+  const cacheEntry = {
+    result: {
+      total_value: portfolioDoc.total_value,
+      total_max_loss: portfolioDoc.total_max_loss,
+      risk_percent_of_portfolio: portfolioDoc.risk_percent_of_portfolio,
+      positions,
+    },
+    updated_at: new Date().toISOString(),
+    period: "3mo",
+  };
+
+  await db
+    .collection("mcp_tool_cache")
+    .doc("portfolio_risk")
+    .collection("results")
+    .doc(positionsKey)
+    .set(cacheEntry);
+  console.log(
+    `✅ Seeded to Firestore mcp_tool_cache/portfolio_risk/results/${positionsKey}`,
+  );
+
   console.log("🎉 Done! Run the app to verify the landing page distribution.");
 }
 
