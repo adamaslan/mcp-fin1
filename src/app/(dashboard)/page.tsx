@@ -12,7 +12,6 @@ import {
   ArrowRight,
   TrendingUp,
   AlertCircle,
-  BookOpen,
   Activity,
   Zap,
 } from "lucide-react";
@@ -322,23 +321,6 @@ export default async function DashboardPage() {
             <Button asChild className="w-full gap-2">
               <a href="/scanner">
                 Start Scan <ArrowRight className="h-4 w-4" />
-              </a>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
-              Learn Signals
-            </CardTitle>
-            <CardDescription>Understand the signals</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild variant="outline" className="w-full gap-2">
-              <a href="/learn/signals">
-                View Signals <ArrowRight className="h-4 w-4" />
               </a>
             </Button>
           </CardContent>
