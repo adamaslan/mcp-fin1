@@ -1,98 +1,94 @@
 import { NextResponse } from "next/server";
+import { getDb } from "@/lib/firebase/admin";
+
+const VALID_HORIZONS = [
+  "1w",
+  "2w",
+  "1m",
+  "2m",
+  "3m",
+  "6m",
+  "52w",
+  "2y",
+  "3y",
+  "5y",
+  "10y",
+];
+
+interface IndustryDoc {
+  industry: string;
+  etf: string;
+  updated: string;
+  returns: Record<string, number | null>;
+}
 
 export async function POST(request: Request) {
   try {
     const { horizon = "1w", top_n = 50 } = await request.json();
 
-    // Validate horizon
-    const validHorizons = [
-      "1w",
-      "2w",
-      "1m",
-      "2m",
-      "3m",
-      "6m",
-      "52w",
-      "2y",
-      "3y",
-      "5y",
-      "10y",
-    ];
-    if (!validHorizons.includes(horizon)) {
+    if (!VALID_HORIZONS.includes(horizon)) {
       return NextResponse.json(
         {
-          error: `Invalid horizon. Must be one of: ${validHorizons.join(", ")}`,
+          error: `Invalid horizon. Must be one of: ${VALID_HORIZONS.join(", ")}`,
         },
         { status: 400 },
       );
     }
 
-    // Call the GCloud industry tracker via the Python MCP backend
-    const mcpBackendUrl =
-      process.env.MCP_BACKEND_URL || "http://localhost:5000";
-    const response = await fetch(`${mcpBackendUrl}/industry-tracker/top`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.MCP_BACKEND_TOKEN || ""}`,
-      },
-      body: JSON.stringify({
-        horizon,
-        top_n,
-      }),
-      signal: AbortSignal.timeout(30000), // 30 second timeout
-    });
+    // Read directly from Firestore industry_cache collection
+    // (written by the Python industry tracker scripts)
+    const db = getDb();
+    const snapshot = await db.collection("industry_cache").get();
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("[API /mcp/industry-tracker] Backend error:", {
-        status: response.status,
-        error: errorData,
-      });
-
+    if (snapshot.empty) {
       return NextResponse.json(
-        {
-          error: "Failed to fetch industry data",
-          message:
-            process.env.NODE_ENV === "development"
-              ? errorData.message || "Backend error"
-              : undefined,
-        },
-        { status: response.status },
+        { error: "No industry data available" },
+        { status: 404 },
       );
     }
 
-    const data = await response.json();
+    const performances: IndustryDoc[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data() as IndustryDoc;
+      if (data.returns?.[horizon] !== undefined) {
+        performances.push(data);
+      }
+    });
 
-    // Add metadata
+    // Sort by return for the requested horizon
+    const sorted = performances
+      .filter((p) => p.returns[horizon] !== null)
+      .sort((a, b) => (b.returns[horizon] ?? 0) - (a.returns[horizon] ?? 0));
+
+    const count = Math.min(top_n, sorted.length);
+    const half = Math.ceil(count / 2);
+
+    const top_performers = sorted.slice(0, half);
+    const worst_performers = sorted.slice(-half).reverse();
+
+    const returnValues = sorted
+      .map((p) => p.returns[horizon] ?? 0)
+      .filter((v) => v !== null);
+
+    const metrics = {
+      average_return:
+        returnValues.length > 0
+          ? returnValues.reduce((a, b) => a + b, 0) / returnValues.length
+          : 0,
+      positive_count: returnValues.filter((v) => v > 0).length,
+      negative_count: returnValues.filter((v) => v < 0).length,
+    };
+
     return NextResponse.json({
       success: true,
       horizon,
       top_n,
-      data: data.data || data,
+      data: { top_performers, worst_performers, metrics },
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    const errorStack = error instanceof Error ? error.stack : undefined;
-
-    console.error("[API /mcp/industry-tracker] Error:", {
-      message: errorMessage,
-      stack: errorStack,
-    });
-
-    if (
-      errorMessage.includes("timeout") ||
-      errorMessage.includes("ECONNREFUSED")
-    ) {
-      return NextResponse.json(
-        {
-          error: "Industry tracker service unavailable",
-          message: "GCloud industry tracker backend is not responding",
-        },
-        { status: 503 },
-      );
-    }
+    console.error("[API /mcp/industry-tracker] Error:", errorMessage);
 
     return NextResponse.json(
       {
